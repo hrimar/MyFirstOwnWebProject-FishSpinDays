@@ -1,0 +1,28 @@
+﻿
+@model IEnumerable<SectionShortViewModel>
+@{
+    ViewData["Title"] = "All Sections";
+}
+
+
+<h2 class="text-center">All Sections</h2>
+
+
+<div class="jumbotron jumbotron-fluid ">
+    <a asp-area="Admin" asp-controller="Sections" asp-action="Create" class="btn btn-primary">
+        <i class="glyphicon glyphicon-plus"> </i> Create new section
+    </a>
+
+    @*<ul>
+            @foreach (var course in Model)
+            {
+                <li>
+                    <a asp-action="Details" asp-route-id="@course.Id">@course.Name</a>
+                </li>
+            }
+        </ul>*@
+
+    <ul>
+        @Html.DisplayForModel()
+    </ul>
+</div>

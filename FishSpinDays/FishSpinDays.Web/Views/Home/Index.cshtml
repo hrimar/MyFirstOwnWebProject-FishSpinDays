@@ -1,0 +1,44 @@
+﻿@model IEnumerable<PublicationShortViewModel>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h1 class="text-center">Welcome to our Fishing Storues with Spinning Road</h1>
+
+@{
+    foreach (var pulication in @Model)
+    {
+       <div class="container well">
+            <div class="row">
+                <h1 class="text-center"> @pulication.Title</h1>
+                <div class="list-group">
+                    <div class="media col-md-3">
+                        <figure class="pull-left">
+
+                            @{
+                                if (@pulication.CoverImage == string.Empty)
+                                {
+                                    <img class="media-object img-rounded img-responsive" src=http://www.svinostugby.com/wp-content/uploads/2016/02/fishing2.jpg alt="placehold.it/350x250">
+                                }
+                                else
+                                {
+                                    <img class="media-object img-rounded img-responsive" src=@pulication.CoverImage alt="placehold.it/350x250">                          
+                                }
+                            }
+                            
+                        </figure>
+                    </div>
+                    <div class="col-md-6">                       
+                        <p class="list-group-item-text">
+                            @Html.Raw(@pulication.Description)
+                        </p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <h4>  <small> by </small> @pulication.Author</h4>
+                        <button type="button" class="btn btn-primary btn-lg btn-block">Read more</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
