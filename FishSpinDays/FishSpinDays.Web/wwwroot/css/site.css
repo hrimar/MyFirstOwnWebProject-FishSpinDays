@@ -51,3 +51,8 @@ a.list-group-item {
 .stars {
     margin: 20px auto 1px;
 }
+
+#headPicture {
+    width: 100%;
+}
+

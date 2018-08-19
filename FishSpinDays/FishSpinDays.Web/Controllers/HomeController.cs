@@ -10,32 +10,23 @@ using FishSpinDays.Services.Base.Interfaces;
 
 namespace FishSpinDays.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        private readonly IBasePublicationsService baseService;
-
-        public HomeController(IBasePublicationsService baseService)
-        {
-            this.baseService = baseService;
-        }
+        public HomeController(IBasePublicationsService baseService) 
+            : base(baseService)
+        {  }
 
         public IActionResult Index()
         {
-            var publications = this.baseService.GetAllPublications();
+            var publications = this.BaseService.GetAllPublications();
 
             return View(publications);
         }
 
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
+       
         public IActionResult Contact()
         {
-            ViewData["Message"] = "Your contact page.";
+           // ViewData["Message"] = "Your contact page.";
 
             return View();
         }

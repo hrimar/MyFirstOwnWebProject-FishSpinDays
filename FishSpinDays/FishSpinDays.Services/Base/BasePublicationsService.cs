@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace FishSpinDays.Services.Base
 {
@@ -21,20 +22,31 @@ namespace FishSpinDays.Services.Base
         public IEnumerable<PublicationShortViewModel> GetAllPublications()
         {
             var publications = this.DbContext.Publications.ToList();
-            //  var model = this.Mapper.Map<IEnumerable<PublicationShortViewModel>>(publications);
 
             var model = publications.Select(p => new PublicationShortViewModel
             {
                 Id = p.Id,
                 Title = p.Title,
                 Author = GetAutorById(p.AuthorId),
-                Description = GetOnlyTextFromDescription(p.Description),//p.Description,
+                Description = GetOnlyTextFromDescription(p.Description),
                 CoverImage = GetMainImage(p.Description)
             })
             .ToList();
 
             return model;
         }
+
+        public async Task<PublicationViewModel> GetPublication(int id)
+        {
+            var publication = await this.DbContext.Publications.FindAsync(id);
+            publication.Author = await this.DbContext.Users.FindAsync(publication.AuthorId);
+            publication.Section =await  this.DbContext.Sections.FindAsync(publication.SectionId);
+                      
+            var model = this.Mapper.Map<PublicationViewModel>(publication);
+                       
+            return model;
+        }
+
 
 
         private string GetOnlyTextFromDescription(string description)
@@ -64,7 +76,6 @@ namespace FishSpinDays.Services.Base
 
         private string GetMainImage(string description)
         {
-
             var regex = new Regex("<img[^>]+src=\"([^\">]+)\"");
             var matched = regex.Match(description);
 
@@ -76,5 +87,8 @@ namespace FishSpinDays.Services.Base
 
             return image;
         }
+
+        
+       
     }
 }

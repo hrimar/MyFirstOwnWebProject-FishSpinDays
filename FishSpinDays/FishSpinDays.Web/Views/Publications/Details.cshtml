@@ -1,0 +1,34 @@
+﻿@model PublicationViewModel
+@{
+    ViewData["Title"] = "Publication Details";
+}
+@using System.Globalization;
+
+@*<div class="jumbotron jumbotron-fluid">
+        <h2>@Model.Title</h2>
+        <h4>  <small> by </small> @Model.Author</h4>
+        <div class="col-md-6">
+            <p class="list-group-item-text">
+                @Html.Raw(Model.Description)
+            </p>
+        </div>
+
+        <h4> @Model.Likes <small> likes </small> </h4>
+        <h4>  <small> published in:  </small> @Model.Section</h4>
+    </div>*@
+
+<br /><br />
+<div class="container well">
+    <div class="row">
+        <h1 class="text-center"> @Model.Title</h1>
+        <h4 class="text-center">  <small> by </small> @Model.Author</h4>
+        <div class="list-group text-center">
+            <p class="list-group-item-text ">
+                @Html.Raw(@Model.Description)
+            </p>
+            <h4>  <small> published in:  </small> @Model.Section <small> on:  </small> 
+            @Model.CreationDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)</h4>
+            <h4> @Model.Likes <small> likes </small> </h4>
+        </div>
+    </div>
+</div>

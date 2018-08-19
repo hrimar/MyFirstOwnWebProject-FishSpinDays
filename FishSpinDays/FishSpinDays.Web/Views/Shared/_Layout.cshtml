@@ -8,7 +8,7 @@
     <environment include="Development">
         <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.css">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
         <link rel="stylesheet" href="~/css/site.css"/>
         <link href="~/lib/bootstrap/dist/css/font-awesome.min.css" rel="stylesheet" />
         <link href="~/lib/bootstrap/dist/css/summernote.css" rel="stylesheet" />
@@ -35,7 +35,8 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-
+                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact us</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">All publications</a></li>
                     @if (this.User.IsInRole("Administrator"))
                     {
                         <li><a asp-area="Admin" asp-controller="Sections" asp-action="Index">All sections</a></li>
@@ -44,7 +45,7 @@
                     }
                     else if (this.Context.User.Identity.IsAuthenticated)
                     {
-                        <li><a asp-area="" asp-controller="Sections" asp-action="All">All authenticated</a></li>
+                        @*<li><a asp-area="" asp-controller="Sections" asp-action="All">All authenticated</a></li>*@
                         <li><a asp-area="Identity" asp-controller="Publications" asp-action="Add">Add publication</a></li>
 
                     }
@@ -52,12 +53,24 @@
                     {
                         <li><a asp-area="" asp-controller="Courses" asp-action="All">All courses</a></li>
                     }
-
                 </ul>
                 <partial name="_LoginPartial" />
+                               
+                <form asp-area="Identity" asp-page="/Search"  method="get"  class="navbar-form" role="search">
+                    <div class="form-group" style="display:inline;">
+                        <div class="input-group" style="display:table;">
+                            <input autocapitalize="off" autocomplete="off" autocorrect="off" class="form-control" id="search-input" placeholder="Search..." type="text">
+                            <span class="input-group-addon" style="width:1%;"><span class="glyphicon glyphicon-search"></span></span>
+                        </div>
+                    </div>
+                </form>
+
             </div>
         </div>
     </nav>
+    <div class="text-center">
+        <img id="headPicture" src="~/images/fsdHead.jpg" />
+    </div>
 
     <partial name="_CookieConsentPartial" />
 

@@ -1,0 +1,23 @@
+﻿@page "{name?}"
+@model SearchModel
+@{
+    ViewData["Title"] = "Search";
+}
+
+<h2>Search results: @Model.SearchTerm</h2>
+
+<ul>
+    @{
+        if (@Model.Publications != null)
+        {
+            foreach (var publication in Model.Publications)
+            {
+                <li><a asp-page="/Authors/Details" asp-route-id="author.Id">@Html.Raw(publication.Description) </a> (author)</li>
+                <li><a href="/Authors/Details/author.Id">@Html.Raw(publication.Description) </a> </li>
+                    @*string url = Url.Page($"/Authors/Details", new { id = publication.Id });
+                <li><a href="@url">@Html.Raw(publication.Description) </a> (author)</li>*@
+            }
+        }               
+    }
+</ul>
+

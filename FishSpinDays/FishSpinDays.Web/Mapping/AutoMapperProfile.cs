@@ -17,7 +17,8 @@ using AutoMapper;
             this.CreateMap<Section, SectionShortViewModel>();
 
             this.CreateMap<Section, SectionDetailsViewModel>();
-            this.CreateMap<Publication, PublicationViewModel>();
+            this.CreateMap<Publication, PublicationViewModel>()
+                .ForMember(lvm => lvm.Section, option => option.MapFrom(src => src.Section.Name));
 
             //this.CreateMap<InstancesCreationBindingModel, CourseInstance>();
             //this.CreateMap<LectureCreatingBindingModel, Lecture>();
