@@ -47,23 +47,9 @@
                     {
                         @*<li><a asp-area="" asp-controller="Sections" asp-action="All">All authenticated</a></li>*@
                         <li><a asp-area="Identity" asp-controller="Publications" asp-action="Add">Add publication</a></li>
-
-                    }
-                    else
-                    {
-                        <li><a asp-area="" asp-controller="Courses" asp-action="All">All courses</a></li>
-                    }
+                    }                   
                 </ul>
                 <partial name="_LoginPartial" />
-                               
-                <form asp-area="Identity" asp-page="/Search"  method="get"  class="navbar-form" role="search">
-                    <div class="form-group" style="display:inline;">
-                        <div class="input-group" style="display:table;">
-                            <input autocapitalize="off" autocomplete="off" autocorrect="off" class="form-control" id="search-input" placeholder="Search..." type="text">
-                            <span class="input-group-addon" style="width:1%;"><span class="glyphicon glyphicon-search"></span></span>
-                        </div>
-                    </div>
-                </form>
 
             </div>
         </div>

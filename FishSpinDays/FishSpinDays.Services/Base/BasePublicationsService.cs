@@ -4,6 +4,7 @@ using FishSpinDays.Common.Identity.ViewModels;
 using FishSpinDays.Data;
 using FishSpinDays.Models;
 using FishSpinDays.Services.Base.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,12 +37,15 @@ namespace FishSpinDays.Services.Base
             return model;
         }
 
-        public async Task<PublicationViewModel> GetPublication(int id)
+        public PublicationViewModel GetPublication(int id)
         {
-            var publication = await this.DbContext.Publications.FindAsync(id);
-            publication.Author = await this.DbContext.Users.FindAsync(publication.AuthorId);
-            publication.Section =await  this.DbContext.Sections.FindAsync(publication.SectionId);
-                      
+            var publication =  this.DbContext.Publications
+                .Include(s => s.Comments)
+                 .Include(s => s.Author)
+                 .Include(s=>s.Section)
+                 .FirstOrDefault(s => s.Id == id);
+            
+            
             var model = this.Mapper.Map<PublicationViewModel>(publication);
                        
             return model;
@@ -51,14 +55,33 @@ namespace FishSpinDays.Services.Base
 
         private string GetOnlyTextFromDescription(string description)
         {
-            var template = @"<img.*?\\?.*?>";
-            var regex = new Regex(template);
+            //var template = @"<img.*?\\?.*?>";
+            //var regex = new Regex(template);
+            //var matched = regex.Match(description);
+
+            //var image = matched.Groups[0].Value;
+            //var result = Regex.Replace(description, template, "");
+
+            //string shortResult = Truncate(result, WebConstants.DescriptinMaxLength);
+            //return shortResult;
+
+            var imgTemplate = @"<img.*?\\?.*?>";
+
+            var regex = new Regex(imgTemplate);
             var matched = regex.Match(description);
 
             var image = matched.Groups[0].Value;
-            var result = Regex.Replace(description, template, "");
+            var result = Regex.Replace(description, imgTemplate, "");
 
-            string shortResult = Truncate(result, WebConstants.DescriptinMaxLength);
+            var youtubeTemplate = @"<iframe.*?<\/iframe>";
+
+            var regexY = new Regex(imgTemplate);
+            var matchedY = regexY.Match(result);
+
+            var youtube = matched.Groups[0].Value;
+            var finalResult= Regex.Replace(result, youtubeTemplate, "");
+
+            string shortResult = Truncate(finalResult, WebConstants.DescriptinMaxLength);
             return shortResult;
         }
 

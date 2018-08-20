@@ -1,7 +1,8 @@
 ﻿namespace FishSpinDays.Common.Identity.ViewModels
 {
     using System;
-
+    using System.Collections.Generic;
+   
     public class PublicationViewModel
     {
         public int Id { get; set; }
@@ -17,5 +18,7 @@
         public string Author { get; set; }
 
         public string Section { get; set; }
+
+        public ICollection<CommentViewModel> Comments { get; set; }
     }
 }

@@ -38,7 +38,7 @@ namespace FishSpinDays.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]       
+       // [ValidateAntiForgeryToken]       
         public  IActionResult Create(CreateSectionBindingModel model)
         {
             if (!ModelState.IsValid)

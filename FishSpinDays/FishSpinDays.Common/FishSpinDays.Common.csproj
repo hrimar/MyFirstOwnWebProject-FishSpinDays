@@ -10,8 +10,4 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Identity\BindingModels\" />
-  </ItemGroup>
-
 </Project>

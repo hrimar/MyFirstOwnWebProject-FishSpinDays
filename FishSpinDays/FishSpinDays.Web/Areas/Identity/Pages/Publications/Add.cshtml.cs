@@ -72,7 +72,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
 
 
 
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public IActionResult OnPostCreatePublication()
         {
             if (!ModelState.IsValid)
@@ -83,7 +83,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
             User author = this.userManager.GetUserAsync(this.User).Result;
             var sectionId = this.DbContext.Sections.Find(this.SectionId).Id;
 
-            Publication publication = new Publication()
+            Publication publication = new Publication() // TODO: do this with Mapper!
             {
                 SectionId = sectionId,
                 Title = this.Title,
@@ -102,8 +102,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
                     Message = "You have created succesfully a new publication."
                 });
 
-                // return RedirectToPage("/Books/Details", new { id = publication.Id }); // -OK      TODO
-                return Redirect("/"); // TODO - make details and redirect there
+                return Redirect($"/Publications/Details/{publication.Id}");
             }
             catch (Exception)
             {

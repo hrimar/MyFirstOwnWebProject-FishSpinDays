@@ -4,19 +4,6 @@
 }
 @using System.Globalization;
 
-@*<div class="jumbotron jumbotron-fluid">
-        <h2>@Model.Title</h2>
-        <h4>  <small> by </small> @Model.Author</h4>
-        <div class="col-md-6">
-            <p class="list-group-item-text">
-                @Html.Raw(Model.Description)
-            </p>
-        </div>
-
-        <h4> @Model.Likes <small> likes </small> </h4>
-        <h4>  <small> published in:  </small> @Model.Section</h4>
-    </div>*@
-
 <br /><br />
 <div class="container well">
     <div class="row">
@@ -26,9 +13,38 @@
             <p class="list-group-item-text ">
                 @Html.Raw(@Model.Description)
             </p>
-            <h4>  <small> published in:  </small> @Model.Section <small> on:  </small> 
-            @Model.CreationDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)</h4>
+            <h4>
+                <small> published in:  </small> @Model.Section <small> on:  </small>
+                @Model.CreationDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)
+            </h4>
             <h4> @Model.Likes <small> likes </small> </h4>
+
+            @if (this.Context.User.Identity.IsAuthenticated)
+            {
+                <a asp-area="Identity" asp-controller="Publications" asp-action="Like" asp-route-id="@Model.Id">
+                    <span class="glyphicon glyphicon-thumbs-up"></span> Like this publikation
+                </a>
+            }
+            <br />
+            <hr />
+            <h4 class="text-center"><strong>Comments:</strong></h4>
+                @{
+                    foreach (var comment in Model.Comments)
+                    {
+                    <div class="container">
+                        <i class="glyphicon glyphicon-arrow-right"></i> @comment.Text - @comment.CreationDate <small>by</small> @comment.Author
+                    </div>
+                    }
+                }
+
+            <br />
+            @if (this.Context.User.Identity.IsAuthenticated)
+            {
+                <a class="btn btn-primary" asp-area="Identity" asp-controller="Comments" asp-action="Add" asp-route-id="@Model.Id">
+                    <span class="glyphicon glyphicon-plus"></span> Add your comment
+                </a>
+            }
         </div>
+
     </div>
 </div>

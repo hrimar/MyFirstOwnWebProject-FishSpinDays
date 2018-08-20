@@ -16,6 +16,7 @@ namespace FishSpinDays.Web.Controllers
             : base(baseService)
         {  }
 
+      
         public IActionResult Index()
         {
             var publications = this.BaseService.GetAllPublications();
@@ -23,11 +24,9 @@ namespace FishSpinDays.Web.Controllers
             return View(publications);
         }
 
-       
         public IActionResult Contact()
         {
            // ViewData["Message"] = "Your contact page.";
-
             return View();
         }
 

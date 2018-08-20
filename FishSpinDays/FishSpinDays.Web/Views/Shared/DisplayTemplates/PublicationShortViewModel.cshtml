@@ -1,37 +1,31 @@
 ﻿@model PublicationShortViewModel
 
-
-<div class="container well row">
-     <h2 class="text-left">&nbsp; @Model.Title</h2><br/>
-        <div class="list-group">
-            <div class="media col-md-3">
-                <figure class="pull-left">
-
-                    @{
-                        if (@Model.CoverImage == string.Empty)
-                        {
-                            <img class="media-object img-rounded img-responsive" src=http://www.svinostugby.com/wp-content/uploads/2016/02/fishing2.jpg alt="placehold.it/400x300">
-                        }
-                        else
-                        {
-                            <img class="media-object img-rounded img-responsive" src=@Model.CoverImage alt="placehold.it/400x300">
-                        }
+<div class="media col-md-11">
+    <h3 class="text-left">&nbsp; @Model.Title</h3><br />
+    <div class="list-group">
+        <div class="media col-md-3">
+            <figure class="pull-left">
+                @{
+                    if (@Model.CoverImage == string.Empty)
+                    {
+                        <img class="media-object img-rounded img-responsive" src=http://www.svinostugby.com/wp-content/uploads/2016/02/fishing2.jpg alt="placehold.it/400x300">
                     }
-
-                </figure>
-            </div>
-            <div class="col-md-6">
-                <p class="list-group-item-text">
-                    @Html.Raw(@Model.Description)
-                </p>
-            </div>
-            <div class="col-md-2 text-center">
-                <h4>  <small> by </small> @Model.Author</h4>
-                <a asp-controller="Publications" asp-action="Details" asp-route-id="@Model.Id"
-                   class="btn btn-primary btn-lg btn-block">Read more</a>
-            </div>
+                    else
+                    {
+                        <img class="media-object img-rounded img-responsive" src=@Model.CoverImage alt="placehold.it/400x300">
+                    }
+                }
+            </figure>
         </div>
-  </div>
-
-
-
+        <div class="col-md-6">
+            <p class="list-group-item-text">
+                @Html.Raw(@Model.Description)
+            </p>
+        </div>
+        <div class="col-md-3 text-center">
+            <h4>  <small> by </small> @Model.Author</h4>
+            <a asp-controller="Publications" asp-action="Details" asp-route-id="@Model.Id"
+               class="btn btn-primary btn-lg btn-block">Read more</a>
+        </div>
+    </div>
+</div>

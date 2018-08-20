@@ -9,6 +9,6 @@ namespace FishSpinDays.Services.Base.Interfaces
     {
         IEnumerable<PublicationShortViewModel> GetAllPublications();
 
-       Task<PublicationViewModel> GetPublication(int id);
+       PublicationViewModel GetPublication(int id);
     }
 }

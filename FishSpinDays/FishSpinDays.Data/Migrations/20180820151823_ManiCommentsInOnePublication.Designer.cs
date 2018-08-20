@@ -4,14 +4,16 @@ using FishSpinDays.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FishSpinDays.Data.Migrations
 {
     [DbContext(typeof(FishSpinDaysDbContext))]
-    partial class FishSpinDaysDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180820151823_ManiCommentsInOnePublication")]
+    partial class ManiCommentsInOnePublication
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,17 +29,11 @@ namespace FishSpinDays.Data.Migrations
 
                     b.Property<string>("AuthorId");
 
-                    b.Property<DateTime>("CreationDate");
-
-                    b.Property<int>("Likes");
-
                     b.Property<string>("PublicationId");
 
                     b.Property<int?>("PublicationId1");
 
                     b.Property<string>("Text");
-
-                    b.Property<int>("UnLikes");
 
                     b.HasKey("Id");
 

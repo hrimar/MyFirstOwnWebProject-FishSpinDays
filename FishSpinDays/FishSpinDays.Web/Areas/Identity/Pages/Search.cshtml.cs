@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FishSpinDays.Common.Base.ViewModels;
+using FishSpinDays.Common.Constants;
 using FishSpinDays.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using FishSpinDays.Web.Helpers;
 
 namespace FishSpinDays.Web.Areas.Identity.Pages
 {
@@ -14,38 +16,45 @@ namespace FishSpinDays.Web.Areas.Identity.Pages
     {
         public SearchModel(FishSpinDaysDbContext dbContex) 
             : base(dbContex)
-        {  }
+        {
+            this.SearchResults = new List<SearchPublicationViewModel>();
+        }
 
-        public List<SearchPublicationViewModel> Publications { get; set; }
+        public List<SearchPublicationViewModel> SearchResults { get; set; }
 
         [BindProperty(SupportsGet = true)] 
         public string SearchTerm { get; set; }
 
-        public void OnGet(string name)
+        public void OnGet()
         {
-            this.SearchTerm = this.Request.HttpContext.Request
-                .QueryString.ToString().Split('=').Last();
+            if (string.IsNullOrEmpty(this.SearchTerm))
+            {
+                return;
+            }
 
-            this.Publications = this.DbContext.Publications
-                  .Where(a => a.Description.Contains(this.SearchTerm))
-                  .Select(a => new SearchPublicationViewModel
-                  {
-                      Id = a.Id,
-                      Description = a.Description
-                  })
-                  .ToList();
+            var foundPublications = this.DbContext.Publications
+                .Where(a => a.Description.ToLower().Contains(this.SearchTerm.ToLower()))
+                .OrderBy(a => a.CreationDate)
+                .Select(a => new SearchPublicationViewModel()
+                {
+                    Id = a.Id,                    
+                    SearchResult = a.Description.GetOnlyTextFromDescription(),
+                    Title = a.Title
+                })
+                .ToList();
            
-            foreach (var publication in this.Publications)
+            this.SearchResults.AddRange(foundPublications);
+        
+            foreach (var result in this.SearchResults)
             {
                 string markedResult = Regex.Replace(
-                    publication.Description,
+                    result.SearchResult,
                     $"({Regex.Escape(this.SearchTerm)})",
                     match => $"<strong class=\"text-danger\">{match.Groups[0].Value}</strong>",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-                publication.Description = markedResult;
-            }
-                       
+                result.SearchResult = markedResult;
+            }            
         }
+                       
     }
 }

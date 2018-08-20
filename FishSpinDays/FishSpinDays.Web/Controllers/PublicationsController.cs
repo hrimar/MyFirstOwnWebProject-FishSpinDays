@@ -13,9 +13,9 @@ namespace FishSpinDays.Web.Controllers
             : base(baseService)
         {  }
 
-        public async Task<IActionResult> Details(int id)
+        public IActionResult Details(int id)
         {
-            var publicationModel = await this.BaseService.GetPublication(id);
+            var publicationModel = this.BaseService.GetPublication(id);
             return View(publicationModel);
         }
     }

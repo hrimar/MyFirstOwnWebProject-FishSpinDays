@@ -1,6 +1,7 @@
 ﻿@model SectionShortViewModel
 
 
-<li>
-    <a asp-action="Details" asp-route-id="@Model.Id">@Model.Name</a>
-</li>
+<p class="text-center">
+    <a asp-action="Details" asp-route-id="@Model.Id">
+        <i class="glyphicon glyphicon-arrow-right"></i> @Model.Name</a>
+</p>

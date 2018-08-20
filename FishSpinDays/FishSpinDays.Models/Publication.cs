@@ -1,6 +1,7 @@
 ﻿namespace FishSpinDays.Models
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using FishSpinDays.Common.Constants;
 
@@ -33,5 +34,7 @@
 
         public int SectionId { get; set; }
         public Section Section { get; set; }
+
+        public ICollection<Comment> Comments { get; set; }
     }
 }

@@ -26,7 +26,8 @@
         public SectionDetailsViewModel SectionDetails(int id)
         {
             var section =  this.DbContext.Sections
-                // .Include(s=>s.Publications)
+                 .Include(s=>s.Publications)
+                 .ThenInclude(s => s.Author)
                  .FirstOrDefault(s => s.Id == id);
 
             SectionDetailsViewModel model = this.Mapper.Map<SectionDetailsViewModel>(section);

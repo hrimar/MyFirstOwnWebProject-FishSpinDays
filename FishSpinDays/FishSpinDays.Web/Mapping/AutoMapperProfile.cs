@@ -20,11 +20,13 @@ using AutoMapper;
             this.CreateMap<Publication, PublicationViewModel>()
                 .ForMember(lvm => lvm.Section, option => option.MapFrom(src => src.Section.Name));
 
+            this.CreateMap<Comment, CommentViewModel>();
+
             //this.CreateMap<InstancesCreationBindingModel, CourseInstance>();
             //this.CreateMap<LectureCreatingBindingModel, Lecture>();
 
             //// If the mane of the prop-s are different:
-            //this.CreateMap<User, LecturerShortViewModel>()
+            //this.CreateMap<User, CommentViewModel>()
             //    .ForMember(lvm => lvm.Name, option => option.MapFrom(src => src.UserName));
         }
 
