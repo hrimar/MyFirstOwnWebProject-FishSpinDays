@@ -1,6 +1,7 @@
-﻿@model IEnumerable<PublicationShortViewModel>
+﻿
+@model IEnumerable<PublicationShortViewModel>
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Page 3";
 }
 
 
@@ -15,9 +16,10 @@
 <div class="row">
     <div class="col-xs-10">
 
-        <h2 class="text-center">The latest publications</h2>
+        <h2 class="text-center">The latest publications - Page 3</h2>
         @Html.DisplayForModel()
-
+         
+      
         @*Pagination*@
         <nav aria-label="Page navigation" class="text-center">
             <ul class="pagination">
@@ -33,18 +35,7 @@
             </ul>
         </nav>
 
-        @*@{ 
-            var page = Model.Count()/10;
-        }
-        <nav aria-label="..." class="text-center">
-            <ul class="pager">
-                <li><a asp-area="" asp-controller="Home" asp-action="Page2" asp-route-id="page">Previous</a></li>
-                <li><a href="#">Next</a></li>
-            </ul>
-        </nav>*@
-
     </div>
     <partial name="_RightPartialIndex" />
 </div>
-
 

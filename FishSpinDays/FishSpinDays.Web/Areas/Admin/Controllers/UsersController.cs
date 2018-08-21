@@ -10,6 +10,7 @@
     using FishSpinDays.Models;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
 
     public class UsersController : AdminController
     {
@@ -30,38 +31,36 @@
             User currentUser = GetCurrentUser();
 
             var users = this.contex.Users
-                .Where(u => u.Id != currentUser.Id) // ToString - test this!
+                .Where(u => u.Id != currentUser.Id) 
                 .ToList();
 
             var model = this.mapper.Map<IEnumerable<UserShortViewModel>>(users);
 
             return View(model);
         }
-       
 
-        //public  IActionResult Details(string id)
-        //{
-        //    var currentUser = GetCurrentUser();
 
-        //    if (id == currentUser.Id)
-        //    {
-        //        return Unauthorized();
-        //    }
-            
-        //    var user =  this.contex.Users.Find(id);
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
+        public IActionResult Details(string id)
+        {
+            var currentUser = GetCurrentUser();
 
-        //    var roles =  this.userManager.GetRolesAsync(user).Result; // remove this!
+            if (id == currentUser.Id)
+            {
+                return Unauthorized();
+            }
 
-        //    var model = this.mapper.Map<UserDetailsViewModel>(user);
+            var user = this.contex.Users
+                .Include(u=>u.Publications)
+                .FirstOrDefault(u=>u.Id == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+                        
+            var model = this.mapper.Map<UserDetailsViewModel>(user);
 
-        //    model.Roles = roles; //  TODO: Change this with his Publications.Names !!!
-
-        //    return View(model);
-        //}
+            return View(model);
+        }
 
         public IActionResult Ban(string id)
         {

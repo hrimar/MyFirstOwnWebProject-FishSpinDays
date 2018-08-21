@@ -21,13 +21,11 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
     [Authorize]
     public class AddModel : BaseModel
     {
-        private readonly IMapper mapper;
         private readonly UserManager<User> userManager;
 
-        public AddModel(FishSpinDaysDbContext dbContext, IMapper mapper, UserManager<User> userManager)
+        public AddModel(FishSpinDaysDbContext dbContext, UserManager<User> userManager)
       : base(dbContext)
-        {
-            this.mapper = mapper;
+        {           
             this.userManager = userManager;
 
             //this.PublicationForm = new PublicationBindingModel();
@@ -83,7 +81,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
             User author = this.userManager.GetUserAsync(this.User).Result;
             var sectionId = this.DbContext.Sections.Find(this.SectionId).Id;
 
-            Publication publication = new Publication() // TODO: do this with Mapper!
+            Publication publication = new Publication() 
             {
                 SectionId = sectionId,
                 Title = this.Title,

@@ -11,8 +11,10 @@ using AutoMapper;
         public AutoMapperProfile()
         {
             this.CreateMap<User, UserShortViewModel>();
-            this.CreateMap<User, UserDetailsViewModel>();
-
+            this.CreateMap<User, FishSpinDays.Common.Admin.ViewModels.UserDetailsViewModel>();
+            this.CreateMap<User, FishSpinDays.Common.Identity.ViewModels.UserDetailsViewModel>();
+            this.CreateMap<Publication, PublicationConciseViewModel>();
+            
             this.CreateMap<CreateSectionBindingModel, Section>();
             this.CreateMap<Section, SectionShortViewModel>();
 

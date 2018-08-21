@@ -1,19 +1,19 @@
-﻿@model FishSpinDays.Common.Admin.ViewModels.UserDetailsViewModel
-
+﻿@page "{id}"
+@model DetailsModel
+@{
+}
 <div class="text-center">
-    <p><strong>Username: </strong>@Model.UserName</p>
-    <p><strong>Email: </strong><a href="mailto://@Model.Email">@Model.Email</a></p>
-    <strong><b>Publicatuins:</b> </strong>
+    <h3><strong> All publications by </strong>@Model.UserModel.UserName</h3>    
 </div>
 
 <div class="jumbotron jumbotron-fluid">
 
-    @if (!Model.Publications.Any())
+    @if (!Model.UserModel.Publications.Any())
     {
         <p>No publications yet. </p>
     }
 
-    @foreach (var publication in Model.Publications)
+    @foreach (var publication in Model.UserModel.Publications)
     {
         <p>
             <a asp-area="" asp-controller="Publications" asp-action="Details"
@@ -23,10 +23,10 @@
             <div class="text-center">
                 by @publication.Author,
                 date: @publication.CreationDate.ToString("dd.MM.yyyy"), @publication.Likes <small> likes</small>
+            , @publication.Comments.Count <small> comments</small>
             </div>
         </p>
     }
-
 </div>
 
-
+<p class="text-center"><strong>Email: </strong>@Model.UserModel.Email</p>

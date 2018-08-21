@@ -8,29 +8,27 @@ using FishSpinDays.Web.Helpers.Messages;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
-{
-    public class LikeModel : BaseModel
+namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
+{    
+    public class UnLikeModel : BaseModel
     {
-        public LikeModel(FishSpinDaysDbContext dbContex) 
+        public UnLikeModel(FishSpinDaysDbContext dbContex)
             : base(dbContex)
-        {  }
+        { }
 
-        public IActionResult OnGetLike(int id)
+        public IActionResult OnGet(int id)
         {
-            var publication = this.DbContext.Publications.FirstOrDefault(p=>p.Id == id);
-            publication.Likes++;
+            var comment = this.DbContext.Comments.FirstOrDefault(p => p.Id == id);
+            comment.UnLikes++;
             this.DbContext.SaveChanges();
 
             this.TempData.Put("__Message", new MessageModel()
             {
                 Type = MessageType.Info,
-                Message = "Thank you for your vote."
+                Message = "Thank you for your vote about this comment."
             });
 
-            return Redirect($"/Publications/Details/{id}");          
+            return Redirect("/");
         }
-
-
     }
 }

@@ -1,0 +1,28 @@
+﻿@model CommentViewModel
+@using System.Globalization;
+
+<div class="container table-bordered col-xs-10  col-xs-offset-1">
+    <small>by</small> @Model.Author, on: @Model.CreationDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)
+    <p> <i class="glyphicon glyphicon-arrow-right"></i><b> @Model.Text</b> </p>
+    <h5>
+
+        @if (this.Context.User.Identity.IsAuthenticated)
+        {
+            @Model.Likes <small> likes </small>
+            <a asp-area="Identity" asp-controller="Comments" asp-action="Like" asp-route-id="@Model.Id">
+                <span class="glyphicon glyphicon-thumbs-up"></span>
+                <span> / </span>
+            </a>
+            @Model.UnLikes <small> unlikes </small>
+            <a asp-area="Identity" asp-controller="Comments" asp-action="UnLike" asp-route-id="@Model.Id">
+                <span class="glyphicon glyphicon-thumbs-down"></span>
+            </a>
+        }
+        else
+        {
+            @Model.Likes <small> likes </small>
+            @Model.UnLikes <small> unlikes </small>
+        }
+
+    </h5>
+</div><br />

@@ -47,19 +47,20 @@
                     {
                         @*<li><a asp-area="" asp-controller="Sections" asp-action="All">All authenticated</a></li>*@
                         <li><a asp-area="Identity" asp-controller="Publications" asp-action="Add">Add publication</a></li>
-                    }                   
+                    }
                 </ul>
                 <partial name="_LoginPartial" />
 
             </div>
         </div>
     </nav>
+
     <div class="text-center">
         <img id="headPicture" src="~/images/fsdHead.jpg" />
     </div>
 
     <partial name="_CookieConsentPartial" />
-
+    <span id="topofpage"></span>
     <div class="container body-content">
 
         <partial name="_Messages" />
@@ -69,8 +70,9 @@
 
         @*<partial name="_SelectLeanguage" />*@
 
+        <a href="#topofpage">Go to top</a>
         <footer>
-            <p>&copy; 2018 - FishSpinDays</p>
+            <p class="text-center">&copy; 2018 - FishSpinDays</p>
         </footer>
     </div>
 

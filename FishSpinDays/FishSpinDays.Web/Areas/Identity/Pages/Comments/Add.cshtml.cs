@@ -17,20 +17,15 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
 {
     public class AddModel : BaseModel
     {
-        private readonly IMapper mapper;
         private readonly UserManager<User> userManager;
 
-        public AddModel(FishSpinDaysDbContext dbContext, IMapper mapper, UserManager<User> userManager)
+        public AddModel(FishSpinDaysDbContext dbContext, UserManager<User> userManager)
       : base(dbContext)
-        {
-            this.mapper = mapper;
+        {            
             this.userManager = userManager;
 
-            //this.PublicationForm = new PublicationBindingModel();           
+            this.CreationDate = DateTime.Now;                
         }
-
-        //[BindProperty]
-        //public PublicationBindingModel PublicationForm { get; set; }
 
        
         [BindProperty]
@@ -38,6 +33,12 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
         public string Text { get; set; }
 
         public string Author { get; set; }
+
+        public DateTime CreationDate { get; set; }
+
+        public int Likes { get; set; }
+
+        public int UnLikes { get; set; }
 
         public void OnGet()
         {
@@ -56,7 +57,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
 
             this.Author = author.UserName;
 
-            Comment comment = new Comment() // TODO: do this with Mapper!
+            Comment comment = new Comment() 
             {
                 Publication = publcation,
                 Text = this.Text,

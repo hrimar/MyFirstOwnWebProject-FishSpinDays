@@ -1,6 +1,7 @@
-﻿@model PublicationViewModel
+﻿
+@model PublicationViewModel
 @{
-    ViewData["Title"] = "Publication Details";
+    ViewData["Title"] = "The most readed publication details";
 }
 @using System.Globalization;
 
@@ -8,11 +9,7 @@
 <div class="container well">
     <div class="row">
         <h1 class="text-center"> @Model.Title</h1>
-        <h4 class="text-center">
-            <small> by </small>
-            <a asp-area="Identity" asp-controller="Users" asp-action="Details" asp-route-id="@Model.AuthorId">  @Model.Author </a>
-        </h4>
-        
+        <h4 class="text-center">  <small> by </small> @Model.Author</h4>
         <div class="list-group text-center">
             <p class="list-group-item-text ">
                 @Html.Raw(@Model.Description)
@@ -29,12 +26,19 @@
                     <span class="glyphicon glyphicon-thumbs-up"></span> Like this publikation
                 </a>
             }
-            <br />   <hr />
+            <br />
+            <hr />
             <h4 class="text-center"><strong>Comments:</strong></h4>
+            @{
+                foreach (var comment in Model.Comments)
+                {
+                    <div class="container">
+                        <i class="glyphicon glyphicon-arrow-right"></i> @comment.Text - @comment.CreationDate <small>by</small> @comment.Author
+                    </div>
+                }
+            }
 
-            @Html.DisplayFor(m => m.Comments)
-           
-
+            <br />
             @if (this.Context.User.Identity.IsAuthenticated)
             {
                 <a class="btn btn-primary" asp-area="Identity" asp-controller="Comments" asp-action="Add" asp-route-id="@Model.Id">
@@ -42,7 +46,6 @@
                 </a>
             }
         </div>
+
     </div>
 </div>
-
-

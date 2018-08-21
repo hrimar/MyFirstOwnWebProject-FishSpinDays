@@ -19,7 +19,28 @@ namespace FishSpinDays.Web.Controllers
       
         public IActionResult Index()
         {
-            var publications = this.BaseService.GetAllPublications();
+            var publications = this.BaseService.GetAllPublications(0, 10);
+
+            return View(publications);
+        }
+
+        public IActionResult Page2() 
+        {
+            var publications = this.BaseService.GetAllPublications(10, 10);
+
+            return View(publications);
+        }
+
+        public IActionResult Page3() 
+        {
+            var publications = this.BaseService.GetAllPublications(20, 10);
+
+            return View(publications);
+        }
+
+        public IActionResult Sea()
+        {
+            var publications = this.BaseService.GetAllSeaPublications();
 
             return View(publications);
         }

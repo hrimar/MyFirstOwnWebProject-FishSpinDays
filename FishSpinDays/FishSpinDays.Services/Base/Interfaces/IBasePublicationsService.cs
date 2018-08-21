@@ -1,14 +1,18 @@
 ﻿using FishSpinDays.Common.Identity.ViewModels;
-using System;
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FishSpinDays.Services.Base.Interfaces
 {
-   public interface IBasePublicationsService
+    public interface IBasePublicationsService
     {
-        IEnumerable<PublicationShortViewModel> GetAllPublications();
+        IEnumerable<PublicationShortViewModel> GetAllPublications(int page, int results);
 
-       PublicationViewModel GetPublication(int id);
-    }
+        PublicationViewModel GetPublication(int id);
+
+        PublicationViewModel MostReaded();
+
+        IEnumerable<PublicationShortViewModel> GetAllSeaPublications();
+     }
 }

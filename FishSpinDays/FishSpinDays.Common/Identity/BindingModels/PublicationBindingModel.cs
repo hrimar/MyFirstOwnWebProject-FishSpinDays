@@ -15,9 +15,9 @@ namespace FishSpinDays.Common.Identity.BindingModels
             this.CreationDate = DateTime.Now;
         }
 
-        //[StringLength(WebConstants.NameMaxLength, MinimumLength = WebConstants.NameMinLength)]
         [Required(ErrorMessage = "You have to specify a section.")]
         [Display(Name = "Section")]
+        [StringLength(WebConstants.NameMaxLength, MinimumLength = WebConstants.NameMinLength)]
         public int SectionId { get; set; }
 
         public IEnumerable<SelectListItem> Sections { get; set; }

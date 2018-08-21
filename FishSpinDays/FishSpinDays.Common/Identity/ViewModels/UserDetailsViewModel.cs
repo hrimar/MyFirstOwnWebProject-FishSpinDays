@@ -1,4 +1,4 @@
-﻿namespace FishSpinDays.Common.Admin.ViewModels
+﻿namespace FishSpinDays.Common.Identity.ViewModels
 {
     using FishSpinDays.Common.Identity.ViewModels;
     using System.Collections.Generic;
@@ -11,6 +11,8 @@
        
         public string Email { get; set; }
 
-        public ICollection<PublicationConciseViewModel> Publications { get; set; }
+        public ICollection<PublicationViewModel> Publications { get; set; }
+
+        public ICollection<CommentViewModel> Comments { get; set; }
     }
 }

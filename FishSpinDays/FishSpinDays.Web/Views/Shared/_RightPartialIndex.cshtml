@@ -1,7 +1,7 @@
 ﻿
 
 
-
+<br />
 <form asp-area="Identity" asp-page="/Search" method="get" class="navbar-form">
     <div class="form-group" style="display:inline;">
         <div class="input-group" style="display:table;">
@@ -15,27 +15,50 @@
     </div>
 </form>
 
-
-It is a long established fact that a reader will be distracted by the rea
-dable content of a page when looking at its layout. The point of using Lorem
- Ipsum is that it has a more-or-less normal distribution of letters, as opposed
- to using 'Content here, content here', making it look like readable English. Many
-desktop publishing packages and web page editors now use Lorem Ipsum as their defaul
-t model text, and a search for 'lorem ipsum' will uncover many web sites still in their
-infancy. Various versions have evolved over the years, sometimes by accident, sometimes
-on purpose (injected humour and the like).
-
-It is a long established fact that a reader will be distracted by the readabl
-e content of a page when looking at its layout. The point of using Lorem Ipsum
-is that it has a more-or-less normal distribution of letters, as opposed to using
-'Content here, content here', making it look like readable English. Many desktop
-publishing packages and web page editors now use Lorem Ipsum as their default model
-text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy.
- Various versions have evolved over the years, sometimes by accident, sometimes on purpose
-(injected humour and the like).. It is a long established fact that a reader will be distracted
-by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is
-that it has a more-or-less normal distribution of letters, as opposed to using 'Content here,
-content here', making it look like readable English. Many desktop publishing packages and web
-page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum'
-will uncover many web sites still in their infancy. Various versions have evolved over the years,
-sometimes by accident, sometimes on purpose (injected humour and the like).
+<br />
+<nav class="navbar navbar-default col-xs-2" role="navigation">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" asp-controller="Publications" asp-action="MostReaded">Most readed</a>
+        <hr />
+    </div>
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav">
+            <li><a href="#">Actions</a></li>
+            <li><a href="#">Events</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sections <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a asp-area="" asp-controller="Home" asp-action="Sea">Sea fishing</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="Fresh">Freshwater fishing</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li><a href="#">Separated link</a></li>
+                    <li><a href="#">One more separated link</a></li>
+                </ul>
+            </li>
+        </ul>
+        @*<form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>*@
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Link</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Fishes <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li><a href="#">Separated link</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div><!-- /.navbar-collapse -->
+</nav>
