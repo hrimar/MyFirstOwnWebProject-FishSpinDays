@@ -45,7 +45,7 @@ namespace FishSpinDays.Web
 
             services.AddDbContext<FishSpinDaysDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("SoftUniClone"),
+                    Configuration.GetConnectionString("FishSpinDays"),
                           dbOptions => dbOptions.MigrationsAssembly("FishSpinDays.Data")));
 
             services.AddDbContext<FishSpinDaysDbContext>(options =>
@@ -148,13 +148,9 @@ namespace FishSpinDays.Web
 
         private static void RegisterServiceLayer(IServiceCollection services)
         {
-            services.AddScoped<IIdentitySectionsService, IdentitySectionsService>(); // in order to inject this service to CoursesController
+          //  services.AddScoped<IIdentitySectionsService, IdentitySectionsService>(); 
             services.AddScoped<IAdminSectionsService, AdminSectionsService>();
-            services.AddScoped<IBasePublicationsService, BasePublicationsService>();
-
-            //services.AddScoped<ILecturerCourseInstancesService, LecturerCourseInstancesService>(); // in order to inject this service to CourseInstancesController
-            //services.AddScoped<IStudentCourseInstancesService, StudentCourseInstancesService>();
-            //services.AddScoped<ILecturerCoursesService, LecturerCoursesService>();
+            services.AddScoped<IBasePublicationsService, BasePublicationsService>();                      
         }
     }
 }

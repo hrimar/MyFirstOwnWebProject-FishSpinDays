@@ -11,10 +11,11 @@ using FishSpinDays.Web.Helpers;
 using FishSpinDays.Web.Helpers.Messages;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
 {
+    [Authorize]
     public class AddModel : BaseModel
     {
         private readonly UserManager<User> userManager;

@@ -4,14 +4,16 @@ using FishSpinDays.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FishSpinDays.Data.Migrations
 {
     [DbContext(typeof(FishSpinDaysDbContext))]
-    partial class FishSpinDaysDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180821163716_MainSection")]
+    partial class MainSection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

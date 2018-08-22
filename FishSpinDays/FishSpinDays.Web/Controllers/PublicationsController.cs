@@ -24,7 +24,7 @@ namespace FishSpinDays.Web.Controllers
             return View(publicationModel);
         }
 
-        public IActionResult MostReaded()
+        public IActionResult MostRated()
         {
             var publicationModel = this.BaseService.MostReaded();
             if (publicationModel == null)

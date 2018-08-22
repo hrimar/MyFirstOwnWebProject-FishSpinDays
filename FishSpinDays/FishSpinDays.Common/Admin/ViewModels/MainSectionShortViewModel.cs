@@ -1,6 +1,6 @@
-﻿namespace FishSpinDays.Common.Identity.ViewModels
+﻿namespace FishSpinDays.Common.Admin.ViewModels
 {
-    public class SectionShortViewModel
+   public class MainSectionShortViewModel
     {
         public int Id { get; set; }
 

@@ -1,0 +1,26 @@
+[
+  {
+    "Name": "Fishing trips",
+    "Sections": [
+      "Sea fishing",
+      "Freshwater fishing"
+    ]
+  },
+  {
+    "Name": "Tackles and lures",
+    "Sections": [
+      "Rods and reels",
+      "Lures",
+      "Handmade lures"
+    ]
+  },
+  {
+    "Name": "Actions",
+    "Sections": [
+      "Eco actions",
+      "Fishing school",
+      "Anti-poaching",
+      "Fish breeding"
+    ]
+  }
+]

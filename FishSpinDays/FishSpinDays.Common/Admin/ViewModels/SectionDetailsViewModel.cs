@@ -1,4 +1,4 @@
-﻿namespace FishSpinDays.Common.Identity.ViewModels
+﻿namespace FishSpinDays.Common.Admin.ViewModels
 {
     using FishSpinDays.Common.Identity.ViewModels;
     using System.Collections.Generic;

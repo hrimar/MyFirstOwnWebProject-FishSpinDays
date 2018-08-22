@@ -1,0 +1,20 @@
+﻿
+@model IEnumerable<MainSectionShortViewModel>
+@{
+    ViewData["Title"] = "All Sections";
+}
+
+
+<h2 class="text-center">All main sections</h2>
+
+<div class="jumbotron jumbotron-fluid ">
+
+    @Html.DisplayForModel()
+
+    <div class="text-center">
+        <a asp-area="Admin" asp-controller="MainSections" asp-action="Create" class="btn btn-primary">
+            <i class="glyphicon glyphicon-plus"> </i> Create new main section
+        </a>
+    </div>
+
+</div>

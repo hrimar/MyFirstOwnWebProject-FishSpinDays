@@ -15,26 +15,32 @@ namespace FishSpinDays.Web.Areas.Admin.Controllers
     public class SectionsController : AdminController
     {
         private readonly IAdminSectionsService adminSectionService;
-        private readonly IIdentitySectionsService sectionService;
+     
 
-        public SectionsController( IAdminSectionsService adminSectionService, IIdentitySectionsService sectionService) 
+        public SectionsController( IAdminSectionsService adminSectionService) 
         {
            this.adminSectionService = adminSectionService;
-            this.sectionService = sectionService;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
-            var modelSection = this.sectionService.GetSections();
+            var modelSection = this.adminSectionService.GetSections();
 
             return View(modelSection);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult Create(int id)
         {
-            return View();
+            var model = this.adminSectionService.PrepareSectionForCreation(id); //mainSectionId
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+            //return View();
         }
 
         [HttpPost]
@@ -46,7 +52,7 @@ namespace FishSpinDays.Web.Areas.Admin.Controllers
                 return View();
             }
                        
-            var section = this.adminSectionService.AddCourse(model);
+            var section = this.adminSectionService.AddSection(model);
 
             this.TempData.Put("__Message", new MessageModel()
             {
@@ -61,7 +67,7 @@ namespace FishSpinDays.Web.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Details(int id)
         {           
-            var courseModel =  this.sectionService.SectionDetails(id);
+            var courseModel =  this.adminSectionService.SectionDetails(id);
             return View(courseModel);
         }
     }

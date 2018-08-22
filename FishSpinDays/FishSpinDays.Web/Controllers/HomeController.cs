@@ -34,14 +34,24 @@ namespace FishSpinDays.Web.Controllers
         public IActionResult Page3() 
         {
             var publications = this.BaseService.GetAllPublications(20, 10);
-
             return View(publications);
         }
 
         public IActionResult Sea()
         {
             var publications = this.BaseService.GetAllSeaPublications();
+            return View(publications);
+        }
 
+        public IActionResult Freshwater()
+        {
+            var publications = this.BaseService.GetAllFreshwaterPublications();
+            return View(publications);
+        }
+
+        public IActionResult Trips()
+        {
+            var publications = this.BaseService.GetAllTripsPublications();
             return View(publications);
         }
 

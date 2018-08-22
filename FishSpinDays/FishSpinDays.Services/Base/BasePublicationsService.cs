@@ -66,23 +66,54 @@ namespace FishSpinDays.Services.Base
             return model;
         }
 
+
        public  IEnumerable<PublicationShortViewModel> GetAllSeaPublications()
         {
-            var publications = this.DbContext.Publications
-                .Where(p=>p.SectionId == 1)
-                .ToList();
+            List<Publication> publications = GetTargetSection(WebConstants.SeaSection);
+            List<PublicationShortViewModel> model = GetAllTargetPublications(publications);
 
-            var model = publications.Select(p => new PublicationShortViewModel
+            return model;
+        }
+
+       
+        public IEnumerable<PublicationShortViewModel> GetAllFreshwaterPublications()
+        {
+            List<Publication> publications = GetTargetSection(WebConstants.FreshwaterSection);
+            List<PublicationShortViewModel> model = GetAllTargetPublications(publications);
+
+            return model;
+        }
+
+        public IEnumerable<PublicationShortViewModel> GetAllTripsPublications()
+        {
+            List<Publication> publications = this.DbContext.Publications
+                            .Where(p => p.Section.Name == WebConstants.SeaSection &&
+                           p.Section.Name == WebConstants.FreshwaterSection)
+                            .ToList();
+            List<PublicationShortViewModel> model = GetAllTargetPublications(publications);
+
+            return model;
+        }
+
+
+        private List<PublicationShortViewModel> GetAllTargetPublications(List<Publication> publications)
+        {
+            return publications.Select(p => new PublicationShortViewModel
             {
                 Id = p.Id,
                 Title = p.Title,
                 Author = GetAutorById(p.AuthorId),
                 Description = GetOnlyTextFromDescription(p.Description),
                 CoverImage = GetMainImage(p.Description)
-            })            
+            })
             .ToList();
+        }
 
-            return model;
+        private List<Publication> GetTargetSection(string targetSection)
+        {
+            return this.DbContext.Publications
+                            .Where(p => p.Section.Name == targetSection)
+                            .ToList();
         }
 
 
@@ -134,7 +165,6 @@ namespace FishSpinDays.Services.Base
             return image;
         }
 
-
-
+        
     }
 }

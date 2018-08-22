@@ -11,6 +11,7 @@ namespace FishSpinDays.Data
             : base(options)
         {
         }
+        public DbSet<MainSection> MainSections { get; set; }
 
         public DbSet<Section> Sections { get; set; }
 
@@ -38,11 +39,13 @@ namespace FishSpinDays.Data
                 .WithOne(p => p.Section)
                 .HasForeignKey(p => p.SectionId);
 
-            builder.Entity<Section>()
-               .HasIndex(s => s.Name)
-               .IsUnique();
-
-           base.OnModelCreating(builder);
+            builder
+               .Entity<MainSection>()
+               .HasMany(t => t.Sections)
+               .WithOne(p => p.MainSection)
+               .HasForeignKey(p => p.MainSectionId);
+                       
+            base.OnModelCreating(builder);
         }
     }
 }

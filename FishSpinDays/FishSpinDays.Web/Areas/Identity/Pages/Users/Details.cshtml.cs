@@ -1,18 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using FishSpinDays.Data;
-using FishSpinDays.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using FishSpinDays.Common.Identity.ViewModels;
-
 namespace FishSpinDays.Web.Areas.Identity.Pages.Users
 {
+    using System.Linq;
+    using AutoMapper;
+    using FishSpinDays.Data;
+    using FishSpinDays.Models;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.RazorPages;
+    using Microsoft.EntityFrameworkCore;
+    using FishSpinDays.Common.Identity.ViewModels;
+    using Microsoft.AspNetCore.Authorization;
+
+    [Authorize]
     public class DetailsModel : BaseModel
     {
         private readonly UserManager<User> userManager;

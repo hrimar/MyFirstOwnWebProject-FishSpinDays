@@ -1,0 +1,32 @@
+﻿@model IEnumerable<PublicationShortViewModel>
+    @{
+        ViewData["Title"] = "Freshwater fishing";
+    }
+
+    <div class="row">
+        <div class="col-xs-10">
+
+            <h2 class="text-center">The latest freshwater fishing publications</h2>
+            @Html.DisplayForModel()
+
+            @*Pagination*@
+            <nav aria-label="Page navigation" class="text-center">
+                <ul class="pagination">
+                    <li>
+                        <span aria-hidden="true">&laquo;</span>
+                    </li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">1</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="Page2">2</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="Page3">3</a></li>
+                    <li>
+                        <span aria-hidden="true">&raquo;</span>
+                    </li>
+                </ul>
+            </nav>
+
+
+
+        </div>
+        <partial name="_RightPartialIndex" />
+    </div>
+

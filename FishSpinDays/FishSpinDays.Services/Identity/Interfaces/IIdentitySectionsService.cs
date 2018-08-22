@@ -6,9 +6,9 @@
 
     public interface IIdentitySectionsService
     {
-        IEnumerable<SectionShortViewModel> GetSections();
+        //IEnumerable<SectionShortViewModel> GetSections();
 
-        SectionDetailsViewModel SectionDetails(int id);
+        //SectionDetailsViewModel SectionDetails(int id);
 
     }
 }

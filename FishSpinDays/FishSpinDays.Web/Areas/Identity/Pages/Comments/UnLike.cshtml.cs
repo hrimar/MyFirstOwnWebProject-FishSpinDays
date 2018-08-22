@@ -1,15 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FishSpinDays.Data;
-using FishSpinDays.Web.Helpers;
-using FishSpinDays.Web.Helpers.Messages;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-
 namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
-{    
+{
+    using System.Linq;
+    using FishSpinDays.Data;
+    using FishSpinDays.Web.Helpers;
+    using FishSpinDays.Web.Helpers.Messages;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Authorization;
+
+    [Authorize]
     public class UnLikeModel : BaseModel
     {
         public UnLikeModel(FishSpinDaysDbContext dbContex)

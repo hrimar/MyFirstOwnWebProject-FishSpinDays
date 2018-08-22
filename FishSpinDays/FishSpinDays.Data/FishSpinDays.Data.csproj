@@ -9,6 +9,7 @@
     <Compile Remove="Migrations\20180818082117_AddSectionsWithPublicationsWithComments.cs" />
     <Compile Remove="Migrations\20180818083049_AddSectionsWithPublicationsWithComments.cs" />
     <Compile Remove="Migrations\20180818083219_AddSectionsWithPublicationsWithComments.cs" />
+    <Compile Remove="Migrations\20180821163411_MainSection.cs" />
   </ItemGroup>
 
   <ItemGroup>

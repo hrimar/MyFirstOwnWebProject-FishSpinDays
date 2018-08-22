@@ -1,23 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using FishSpinDays.Common.Constants;
-using FishSpinDays.Common.Identity.BindingModels;
-using FishSpinDays.Data;
-using FishSpinDays.Models;
-using FishSpinDays.Web.Helpers;
-using FishSpinDays.Web.Helpers.Messages;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-
 namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using AutoMapper;
+    using FishSpinDays.Common.Constants;
+    using FishSpinDays.Common.Identity.BindingModels;
+    using FishSpinDays.Data;
+    using FishSpinDays.Models;
+    using FishSpinDays.Web.Helpers;
+    using FishSpinDays.Web.Helpers.Messages;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.RazorPages;
+    using Microsoft.AspNetCore.Mvc.Rendering;
+
     [Authorize]
     public class AddModel : BaseModel
     {
@@ -67,8 +67,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
                 })
                 .ToList();
         }
-
-
+        
 
        // [ValidateAntiForgeryToken]
         public IActionResult OnPostCreatePublication()

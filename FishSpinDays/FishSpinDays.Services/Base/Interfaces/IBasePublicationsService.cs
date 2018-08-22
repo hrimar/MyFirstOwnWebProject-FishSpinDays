@@ -14,5 +14,9 @@ namespace FishSpinDays.Services.Base.Interfaces
         PublicationViewModel MostReaded();
 
         IEnumerable<PublicationShortViewModel> GetAllSeaPublications();
-     }
+
+        IEnumerable<PublicationShortViewModel> GetAllFreshwaterPublications();
+
+        IEnumerable<PublicationShortViewModel> GetAllTripsPublications();
+    }
 }
