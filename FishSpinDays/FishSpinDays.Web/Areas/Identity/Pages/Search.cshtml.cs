@@ -8,7 +8,7 @@ using FishSpinDays.Common.Constants;
 using FishSpinDays.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using FishSpinDays.Web.Helpers;
+using FishSpinDays.Common.Extensions;
 
 namespace FishSpinDays.Web.Areas.Identity.Pages
 {

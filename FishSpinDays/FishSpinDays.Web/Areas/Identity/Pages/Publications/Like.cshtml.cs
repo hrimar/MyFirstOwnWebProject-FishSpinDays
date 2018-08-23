@@ -10,17 +10,34 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.RazorPages;
     using Microsoft.AspNetCore.Authorization;
+    using FishSpinDays.Models;
 
     [Authorize]
     public class LikeModel : BaseModel
     {
-        public LikeModel(FishSpinDaysDbContext dbContex) 
-            : base(dbContex)
-        {  }
+        private readonly UserManager<User> userManager;
 
-        public IActionResult OnGetLike(int id)
+        public LikeModel(FishSpinDaysDbContext dbContex, UserManager<User> userManager)
+            : base(dbContex)
         {
-            var publication = this.DbContext.Publications.FirstOrDefault(p=>p.Id == id);
+            this.userManager = userManager;
+        }
+
+        public IActionResult OnGet(int id)
+        {      
+            var publication = this.DbContext.Publications.FirstOrDefault(p => p.Id == id);
+            if (publication == null)
+            {
+                return NotFound();
+            }
+
+            var publicationAuthorId = publication.AuthorId;
+            var currentUser = this.userManager.GetUserAsync(this.User).Result;
+            if (publicationAuthorId == currentUser.Id)
+            {
+                return Unauthorized();
+            }
+
             publication.Likes++;
             this.DbContext.SaveChanges();
 
@@ -30,7 +47,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
                 Message = "Thank you for your vote."
             });
 
-            return Redirect($"/Publications/Details/{id}");          
+            return Redirect($"/Publications/Details/{id}");
         }
 
 

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using FishSpinDays.Common.Extensions;
 
 namespace FishSpinDays.Services.Base
 {
@@ -29,7 +29,7 @@ namespace FishSpinDays.Services.Base
                 Id = p.Id,
                 Title = p.Title,
                 Author = GetAutorById(p.AuthorId),
-                Description = GetOnlyTextFromDescription(p.Description),
+                Description = p.Description.GetOnlyTextFromDescription(), 
                 CoverImage = GetMainImage(p.Description)
             })
             .Skip(page)
@@ -103,46 +103,19 @@ namespace FishSpinDays.Services.Base
                 Id = p.Id,
                 Title = p.Title,
                 Author = GetAutorById(p.AuthorId),
-                Description = GetOnlyTextFromDescription(p.Description),
+                Description = p.Description.GetOnlyTextFromDescription(),
                 CoverImage = GetMainImage(p.Description)
             })
             .ToList();
         }
+        
 
         private List<Publication> GetTargetSection(string targetSection)
         {
             return this.DbContext.Publications
                             .Where(p => p.Section.Name == targetSection)
                             .ToList();
-        }
-
-
-        private string GetOnlyTextFromDescription(string description)
-        {            
-            var imgTemplate = @"<img.*?\\?.*?>";
-
-            var regex = new Regex(imgTemplate);
-            var matched = regex.Match(description);
-
-            var image = matched.Groups[0].Value;
-            var result = Regex.Replace(description, imgTemplate, "");
-
-            var youtubeTemplate = @"<iframe.*?<\/iframe>";
-
-            var regexY = new Regex(imgTemplate);
-            var matchedY = regexY.Match(result);
-
-            var youtube = matched.Groups[0].Value;
-            var finalResult = Regex.Replace(result, youtubeTemplate, "");
-
-            string shortResult = Truncate(finalResult, WebConstants.DescriptinMaxLength);
-            return shortResult;
-        }
-
-        public string Truncate(string value, int maxChars)
-        {
-            return value.Length <= maxChars ? value : value.Substring(0, maxChars) + "...";
-        }
+        }                
 
         private string GetAutorById(string authorId)
         {

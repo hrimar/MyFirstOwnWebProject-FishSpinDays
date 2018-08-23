@@ -5,9 +5,12 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using FishSpinDays.Common.Admin.BindingModels;
     using FishSpinDays.Common.Admin.ViewModels;
     using FishSpinDays.Data;
     using FishSpinDays.Models;
+    using FishSpinDays.Web.Helpers;
+    using FishSpinDays.Web.Helpers.Messages;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
@@ -18,14 +21,15 @@
         private readonly IMapper mapper;
         private readonly UserManager<User> userManager;
 
-        public UsersController(FishSpinDaysDbContext conte, IMapper mapper,
+        public UsersController(FishSpinDaysDbContext contex, IMapper mapper,
             UserManager<User> userManager)
         {
-            this.contex = conte;
+            this.contex = contex;
             this.mapper = mapper;
             this.userManager = userManager;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             User currentUser = GetCurrentUser();
@@ -39,7 +43,7 @@
             return View(model);
         }
 
-
+        [HttpGet]
         public IActionResult Details(string id)
         {
             var currentUser = GetCurrentUser();
@@ -62,10 +66,10 @@
             return View(model);
         }
 
+        [HttpGet]
         public IActionResult Ban(string id)
         {
             var currentUser = GetCurrentUser();
-
             if (id == currentUser.Id)
             {
                 return Unauthorized();
@@ -77,10 +81,41 @@
                 return NotFound();
             }
 
-           // user.LockoutEnd= 
-           // TODO: make page for set the date for ban!
+             ViewData["Message"] = user.UserName;
 
-            return View();
+            var model = new BanBindingModel()
+            {
+                Id = id,
+                LockoutEnd = DateTime.Now.Date
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Ban(BanBindingModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var user = this.contex.Users.Find(model.Id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.LockoutEnd = model.LockoutEnd;
+            this.contex.SaveChanges();
+
+            this.TempData.Put("__Message", new MessageModel()
+            {
+                Type = MessageType.Success,
+                Message = "You have succesfully put a BAN to this user."
+            });
+                          
+            return RedirectToAction("/");
         }
 
 

@@ -21,5 +21,6 @@
         MainSectionDetailsViewModel MainSectionDetails(int id);
 
         CreateSectionBindingModel PrepareSectionForCreation(int mainSectioId);
+      
     }
 }

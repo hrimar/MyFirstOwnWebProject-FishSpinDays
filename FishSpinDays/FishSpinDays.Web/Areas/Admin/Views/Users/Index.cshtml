@@ -3,20 +3,13 @@
     ViewData["Title"] = "All Users";
 }
 
-<h2>All Users</h2>
-
-@*@Html.DisplayForModel()*@
-
-@*@foreach (var user in Model)
-    {
-        @user.Id @user.Email @user.UserName <br/>
-    }*@
+<h2 class="text-center">All Users</h2>
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(m => m.First().UserName)</th> @*Username*@
-            <th>@Html.DisplayNameFor(m => m.First().Email)</th>   @*Email*@
+            <th>@Html.DisplayNameFor(m => m.First().UserName)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Email)</th>  
             <th>Actions</th>
         </tr>
     </thead>

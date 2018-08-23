@@ -39,8 +39,7 @@ namespace FishSpinDays.Web.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            return View(model);
-            //return View();
+            return View(model);           
         }
 
         [HttpPost]
@@ -59,8 +58,7 @@ namespace FishSpinDays.Web.Areas.Admin.Controllers
                 Type = MessageType.Success,
                 Message = "The section was created succesfully."
             });
-
-            //return RedirectToAction("Details", new { id = section.Id });           
+                             
             return RedirectToAction("/");
         }
 

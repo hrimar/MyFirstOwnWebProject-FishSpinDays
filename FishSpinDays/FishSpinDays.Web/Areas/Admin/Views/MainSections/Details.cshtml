@@ -9,21 +9,13 @@
 
     @if (!Model.Sections.Any())
     {
-    <p>No sections yet. </p>
+        <p>No sections yet. </p>
     }
-
-    @foreach (var sect in @Model.Sections)
-    {
-    <p>
-        <a asp-area="Admin" asp-controller="Sections" asp-action="Details"
-           asp-route-id="@sect.Id" class="col-lg-12 col-lg-offset-1">
-            <i class="glyphicon glyphicon-arrow-right"></i> @sect.Name
-        </a>      
-    </p>
-    }
+       
+    @Html.DisplayFor(m => m.Sections)
 
     <div class="text-center">
-        <a asp-area="Admin" asp-controller="Sections" asp-action="Create"  asp-route-id="@Model.Id"
+        <a asp-area="Admin" asp-controller="Sections" asp-action="Create" asp-route-id="@Model.Id"
            class="btn btn-primary ">
             <i class="glyphicon glyphicon-plus"></i> Create new section
         </a>

@@ -62,7 +62,7 @@ namespace FishSpinDays.Services.Admin
             return model;
         }
 
-        public MainSectionDetailsViewModel MainSectionDetails(int id) //
+        public MainSectionDetailsViewModel MainSectionDetails(int id) 
         {
             var mainSection = this.DbContext.MainSections
                  .Include(s => s.Sections)               
@@ -87,5 +87,6 @@ namespace FishSpinDays.Services.Admin
 
             return model;
         }
+               
     }
 }

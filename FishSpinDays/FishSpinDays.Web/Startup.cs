@@ -106,7 +106,7 @@ namespace FishSpinDays.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
+         
             app.UseAuthentication();
 
             if (env.IsDevelopment())
