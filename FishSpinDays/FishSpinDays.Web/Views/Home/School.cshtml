@@ -1,0 +1,16 @@
+﻿@model IEnumerable<PublicationShortViewModel>
+@{
+    ViewData["Title"] = "Fishing trips";
+}
+
+<div class="row">
+    <div class="col-xs-10">
+
+        <h2 class="text-center">The latest publications about fishing schools</h2>
+        @Html.DisplayForModel()
+
+        <partial name="_Pagination" />
+
+    </div>
+    <partial name="_RightPartialIndex" />
+</div>

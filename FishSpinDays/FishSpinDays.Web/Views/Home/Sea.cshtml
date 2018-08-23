@@ -1,4 +1,5 @@
-﻿@model IEnumerable<PublicationShortViewModel>
+﻿@model PartPublicationsViewModel
+@*@model IEnumerable<PublicationShortViewModel>*@
 @{
     ViewData["Title"] = "Sea fishing";
 }
@@ -7,26 +8,38 @@
     <div class="col-xs-10">
 
         <h2 class="text-center">The latest sea fishing publications</h2>
-        @Html.DisplayForModel()
 
-        @*Pagination*@
+        @{
+            if (!Model.Publications.Any())
+            {
+                <br /><p class="text-center">"No publivations in this section"</p>
+            }
+            else
+            {
+                @*@Html.DisplayForModel()*@
+                @Html.DisplayFor(m => m.Publications)
+            }
+        }
+
+
         <nav aria-label="Page navigation" class="text-center">
             <ul class="pagination">
-                <li>
-                    <span aria-hidden="true">&laquo;</span>
-                </li>
-                <li><a asp-area="" asp-controller="Home" asp-action="Index">1</a></li>
-                <li><a asp-area="" asp-controller="Home" asp-action="Page2">2</a></li>
-                <li><a asp-area="" asp-controller="Home" asp-action="Page3">3</a></li>
-                <li>
-                    <span aria-hidden="true">&raquo;</span>
-                </li>
+                <li> <span aria-hidden="true">&laquo;</span> </li>
+                @{
+                    for (int i = 1; i <= Model.Count; i++)
+                    {
+                        <li>
+                            <a class="activ" asp-area="" asp-controller="Home" asp-action="Sea"
+                               asp-route-id="@i">@i</a>
+                        </li>
+                    }
+                }
+                <li> <span aria-hidden="true">&raquo;</span> </li>
             </ul>
         </nav>
-
-
 
     </div>
     <partial name="_RightPartialIndex" />
 </div>
+
 

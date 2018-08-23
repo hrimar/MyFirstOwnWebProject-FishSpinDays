@@ -1,0 +1,15 @@
+﻿<nav aria-label="Page navigation" class="text-center">
+    <ul class="pagination">
+        <li> <span aria-hidden="true">&laquo;</span> </li>
+        @{
+            for (int i = 1; i <= Model.Count; i++)
+            {
+                <li>
+                    <a class="activ" asp-area="" asp-controller="Home" asp-action="Index"
+                       asp-route-id="@i">@i</a>
+                </li>
+            }
+        }
+        <li> <span aria-hidden="true">&raquo;</span> </li>
+    </ul>
+</nav>      

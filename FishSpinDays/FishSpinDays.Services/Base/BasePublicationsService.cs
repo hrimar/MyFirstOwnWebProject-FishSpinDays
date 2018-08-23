@@ -20,20 +20,22 @@ namespace FishSpinDays.Services.Base
             : base(dbContex, mapper)
         { }
 
-        public IEnumerable<PublicationShortViewModel> GetAllPublications(int page, int results)
+        public IEnumerable<PublicationShortViewModel> GetAllPublications(int page, int count)
         {
-            var publications = this.DbContext.Publications.ToList();
+            var publications = this.DbContext.Publications
+                .OrderByDescending(p => p.CreationDate)
+                .Skip((page - 1) * count)
+                .Take(count)
+                .ToList();
 
             var model = publications.Select(p => new PublicationShortViewModel
             {
                 Id = p.Id,
                 Title = p.Title,
                 Author = GetAutorById(p.AuthorId),
-                Description = p.Description.GetOnlyTextFromDescription(), 
+                Description = p.Description.GetOnlyTextFromDescription(),
                 CoverImage = GetMainImage(p.Description)
             })
-            .Skip(page)
-            .Take(results)
             .ToList();
 
             return model;
@@ -55,7 +57,7 @@ namespace FishSpinDays.Services.Base
         public PublicationViewModel MostReaded()
         {
             var publication = this.DbContext.Publications
-                .OrderByDescending(p=>p.Likes)
+                .OrderByDescending(p => p.Likes)
                 .Include(s => s.Comments)
                  .Include(s => s.Author)
                  .Include(s => s.Section)
@@ -67,28 +69,39 @@ namespace FishSpinDays.Services.Base
         }
 
 
-       public  IEnumerable<PublicationShortViewModel> GetAllSeaPublications()
+        public IEnumerable<PublicationShortViewModel> GetAllSeaPublications(int page, int count)
         {
-            List<Publication> publications = GetTargetSection(WebConstants.SeaSection);
+            List<Publication> publications = GetTargetSection(WebConstants.SeaSection, page, count);
             List<PublicationShortViewModel> model = GetAllTargetPublications(publications);
 
             return model;
         }
 
-       
-        public IEnumerable<PublicationShortViewModel> GetAllFreshwaterPublications()
+
+        public IEnumerable<PublicationShortViewModel> GetAllFreshwaterPublications(int page, int count)
         {
-            List<Publication> publications = GetTargetSection(WebConstants.FreshwaterSection);
+            List<Publication> publications = GetTargetSection(WebConstants.FreshwaterSection, page, count);
             List<PublicationShortViewModel> model = GetAllTargetPublications(publications);
 
             return model;
         }
 
-        public IEnumerable<PublicationShortViewModel> GetAllTripsPublications()
+        public IEnumerable<PublicationShortViewModel> GetAllPublicationsInThisSection(string sectionType)
         {
             List<Publication> publications = this.DbContext.Publications
-                            .Where(p => p.Section.Name == WebConstants.SeaSection &&
-                           p.Section.Name == WebConstants.FreshwaterSection)
+                            .Where(p => p.Section.Name == sectionType)
+                            .Take(10)
+                            .ToList();
+            List<PublicationShortViewModel> model = GetAllTargetPublications(publications);
+
+            return model;
+        }
+
+        public IEnumerable<PublicationShortViewModel> GetAllPublicationsInThisYear(int year)
+        {
+            List<Publication> publications = this.DbContext.Publications
+                            .Where(p => p.CreationDate.Year == year)
+                            .Take(10)
                             .ToList();
             List<PublicationShortViewModel> model = GetAllTargetPublications(publications);
 
@@ -108,14 +121,17 @@ namespace FishSpinDays.Services.Base
             })
             .ToList();
         }
-        
 
-        private List<Publication> GetTargetSection(string targetSection)
+
+        private List<Publication> GetTargetSection(string targetSection, int page, int count)
         {
             return this.DbContext.Publications
                             .Where(p => p.Section.Name == targetSection)
+                            .OrderByDescending(p => p.CreationDate)
+                            .Skip((page - 1) * count)
+                            .Take(count)
                             .ToList();
-        }                
+        }
 
         private string GetAutorById(string authorId)
         {
@@ -138,6 +154,17 @@ namespace FishSpinDays.Services.Base
             return image;
         }
 
-        
+        public int TotalPublicationsCount()
+        {
+            return this.DbContext.Publications.Count();
+        }
+
+        public int TotalPublicationsCount(string type)
+        {
+            return this.DbContext.Publications
+                .Include(p=>p.Section)
+                .Where(p=>p.Section.Name == type)
+                .Count();
+        }
     }
 }

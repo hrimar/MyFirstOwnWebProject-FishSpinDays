@@ -15,5 +15,13 @@
 
         public const string FreshwaterSection = "Freshwater fishing";
         public const string SeaSection = "Sea fishing";
+        public const string Lures = "Lures";
+        public const string Rods = "Rods and reels";
+        public const string HandLures = "Handmade lures";
+        public const string Eco = "Eco actions";
+        public const string School = "Fishing school";
+        public const string Anti = "Anti-poaching";
+        public const string Breeding = "Fish breeding";
+        public const int Year2018 = 2018;
     }
 }

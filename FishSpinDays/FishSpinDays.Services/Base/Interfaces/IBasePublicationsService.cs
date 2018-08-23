@@ -13,10 +13,16 @@ namespace FishSpinDays.Services.Base.Interfaces
 
         PublicationViewModel MostReaded();
 
-        IEnumerable<PublicationShortViewModel> GetAllSeaPublications();
+        IEnumerable<PublicationShortViewModel> GetAllSeaPublications(int page, int count);
 
-        IEnumerable<PublicationShortViewModel> GetAllFreshwaterPublications();
+        IEnumerable<PublicationShortViewModel> GetAllFreshwaterPublications(int page, int count);
 
-        IEnumerable<PublicationShortViewModel> GetAllTripsPublications();
+        IEnumerable<PublicationShortViewModel> GetAllPublicationsInThisSection(string sectionType);
+               
+        int TotalPublicationsCount();
+
+        int TotalPublicationsCount(string type);
+
+        IEnumerable<PublicationShortViewModel> GetAllPublicationsInThisYear(int year);
     }
 }
