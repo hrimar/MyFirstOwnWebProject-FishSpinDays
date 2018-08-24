@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using FishSpinDays.Common.Extensions;
+using FishSpinDays.Common.Base.ViewModels;
 
 namespace FishSpinDays.Services.Base
 {

@@ -1,5 +1,6 @@
 ﻿namespace FishSpinDays.Common.Admin.ViewModels
 {
+    using FishSpinDays.Common.Base.ViewModels;
     using FishSpinDays.Common.Identity.ViewModels;
     using System.Collections.Generic;
 
@@ -9,6 +10,6 @@
 
         public string Name { get; set; }
 
-        public ICollection<PublicationViewModel> Publications { get; set; }
+        public ICollection<PublicationConciseViewModel> Publications { get; set; }
     }
 }

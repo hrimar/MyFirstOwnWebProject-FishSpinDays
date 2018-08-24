@@ -26,14 +26,21 @@
             @if (this.Context.User.Identity.IsAuthenticated)
             {
                 <a asp-area="Identity" asp-controller="Publications" asp-action="Like" asp-route-id="@Model.Id">
-                    <span class="glyphicon glyphicon-thumbs-up"></span> Like this publikation
+                    <span class="glyphicon glyphicon-thumbs-up"></span> Like this publication
                 </a>
             }
-            <br />   <hr />
+                <br /><hr/>
+            @if (this.User.IsInRole("Administrator"))
+            {
+                <a  class="btn btn-primary"  asp-area="Admin" asp-controller="Publications" asp-action="Edit" asp-route-id="@Model.Id">
+                    Edit this publication
+                </a>
+            }
+                <br />   <hr />
             <h4 class="text-center"><strong>Comments:</strong></h4>
 
             @Html.DisplayFor(m => m.Comments)
-           
+
 
             @if (this.Context.User.Identity.IsAuthenticated)
             {

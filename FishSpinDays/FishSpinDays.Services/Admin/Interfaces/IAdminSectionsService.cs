@@ -2,6 +2,7 @@
 {
     using FishSpinDays.Common.Admin.BindingModels;
     using FishSpinDays.Common.Admin.ViewModels;
+    using FishSpinDays.Common.Base.ViewModels;
     using FishSpinDays.Common.Identity.ViewModels;
     using FishSpinDays.Models;
     using System.Collections.Generic;
@@ -20,7 +21,7 @@
 
         MainSectionDetailsViewModel MainSectionDetails(int id);
 
-        CreateSectionBindingModel PrepareSectionForCreation(int mainSectioId);
-      
+        CreateSectionBindingModel PrepareSectionForCreation(int mainSectioId);                    
+
     }
 }

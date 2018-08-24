@@ -1,0 +1,13 @@
+﻿@model PublicationConciseViewModel
+
+<p>
+    <a asp-area="" asp-controller="Publications" asp-action="Details"
+       asp-route-id="@Model.Id" class="col-lg-12 col-lg-offset-1">
+        <i class="glyphicon glyphicon-arrow-right"></i> @Model.Title
+    </a>
+    <div class="text-center">
+        by @Model.Author,
+        date: @Model.CreationDate.ToString("dd.MM.yyyy"), @Model.Likes <small> likes</small>
+    </div>
+</p>
+

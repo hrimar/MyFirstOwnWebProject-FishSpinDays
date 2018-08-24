@@ -1,5 +1,6 @@
 ﻿namespace FishSpinDays.Common.Identity.ViewModels
 {
+    using FishSpinDays.Common.Base.ViewModels;
     using FishSpinDays.Common.Identity.ViewModels;
     using System.Collections.Generic;
 

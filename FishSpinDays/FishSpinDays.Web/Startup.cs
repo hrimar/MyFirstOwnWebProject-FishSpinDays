@@ -150,7 +150,8 @@ namespace FishSpinDays.Web
         {
           //  services.AddScoped<IIdentitySectionsService, IdentitySectionsService>(); 
             services.AddScoped<IAdminSectionsService, AdminSectionsService>();
-            services.AddScoped<IBasePublicationsService, BasePublicationsService>();                      
+            services.AddScoped<IBasePublicationsService, BasePublicationsService>();
+            services.AddScoped<IAdminPublicationsService, AdminPublicationsService>();      
         }
     }
 }

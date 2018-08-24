@@ -23,6 +23,14 @@
             @Model.Likes <small> likes </small>
             @Model.UnLikes <small> unlikes </small>
         }
+                           <br />
+        @if (this.User.IsInRole("Administrator"))
+        {
+            <a class="btn btn-primary- btn-sm text-warning"
+               asp-area="Admin" asp-controller="Comments" asp-action="Delete" asp-route-id="@Model.Id">
+                Delete this comment
+            </a>
+        }
 
     </h5>
 </div><br />
