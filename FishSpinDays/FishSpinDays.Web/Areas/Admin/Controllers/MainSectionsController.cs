@@ -1,12 +1,7 @@
 ﻿namespace FishSpinDays.Web.Areas.Admin.Controllers
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+{  
     using FishSpinDays.Common.Admin.BindingModels;
-    using FishSpinDays.Services.Admin.Interfaces;
-    using FishSpinDays.Services.Identity.Interfaces;
+    using FishSpinDays.Services.Admin.Interfaces;   
     using FishSpinDays.Web.Helpers;
     using FishSpinDays.Web.Helpers.Messages;
     using Microsoft.AspNetCore.Mvc;

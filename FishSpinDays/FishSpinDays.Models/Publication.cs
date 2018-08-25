@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using FishSpinDays.Common.Constants;
+    using FishSpinDays.Common.Validation;
 
     public class Publication
     {
@@ -18,8 +19,9 @@
         [StringLength(WebConstants.NameMaxLength, MinimumLength = WebConstants.NameMinLength)]
         public string Title { get; set; }
 
-        [Required]
-        [MinLength(WebConstants.ContentMinLength)]
+
+        [MinLength(WebConstants.ContentMinLength, ErrorMessage = ValidationConstants.DescriptionNameMessage)]
+        [Required(ErrorMessage = ValidationConstants.DescriptionNullMessage)] 
         public string Description { get; set; }
 
         [DataType(DataType.Date)]

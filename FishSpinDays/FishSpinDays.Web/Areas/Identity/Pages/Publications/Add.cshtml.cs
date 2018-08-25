@@ -6,8 +6,8 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
-    using FishSpinDays.Common.Constants;
-    using FishSpinDays.Common.Identity.BindingModels;
+    using FishSpinDays.Common.Constants;    
+    using FishSpinDays.Common.Validation;
     using FishSpinDays.Data;
     using FishSpinDays.Models;
     using FishSpinDays.Web.Helpers;
@@ -27,14 +27,10 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
       : base(dbContext)
         {           
             this.userManager = userManager;
-
-            //this.PublicationForm = new PublicationBindingModel();
+                        
             this.Sections = new List<SelectListItem>();
         }
-
-        //[BindProperty]
-        //public PublicationBindingModel PublicationForm { get; set; }
-
+                
         [BindProperty]
         [Required(ErrorMessage = "You have to specify a section.")]
         [Display(Name = "Section")]
@@ -48,8 +44,8 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
         public string Title { get; set; }
 
         [BindProperty]
-        [Required]
-        [MinLength(WebConstants.ContentMinLength)]
+        [MinLength(WebConstants.ContentMinLength, ErrorMessage = ValidationConstants.DescriptionNameMessage)]
+        [Required(ErrorMessage = ValidationConstants.DescriptionNullMessage)]
         public string Description { get; set; }
 
         [DataType(DataType.Date)]
@@ -69,7 +65,6 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
         }
         
 
-       // [ValidateAntiForgeryToken]
         public IActionResult OnPostCreatePublication()
         {
             if (!ModelState.IsValid)

@@ -17,6 +17,7 @@ namespace FishSpinDays.Models
 
         public ICollection<Section> Sections { get; set; }
 
+        [Required]
         [StringLength(WebConstants.NameMaxLength, MinimumLength = WebConstants.NameMinLength)]
         public string Name { get; set; }
 

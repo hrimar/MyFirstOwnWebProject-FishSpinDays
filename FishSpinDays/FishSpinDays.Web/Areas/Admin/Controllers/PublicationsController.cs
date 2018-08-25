@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FishSpinDays.Common.Admin.BindingModels;
-using FishSpinDays.Common.Base.ViewModels;
-using FishSpinDays.Services.Admin.Interfaces;
-using FishSpinDays.Web.Helpers;
-using FishSpinDays.Web.Helpers.Messages;
-using Microsoft.AspNetCore.Mvc;
-
-namespace FishSpinDays.Web.Areas.Admin.Controllers
+﻿namespace FishSpinDays.Web.Areas.Admin.Controllers
 {
+    using FishSpinDays.Common.Admin.BindingModels;
+    using FishSpinDays.Services.Admin.Interfaces;
+    using FishSpinDays.Web.Helpers;
+    using FishSpinDays.Web.Helpers.Messages;
+    using Microsoft.AspNetCore.Mvc;
+
     public class PublicationsController : AdminController
     {
         private readonly IAdminPublicationsService adminPublicationsService;

@@ -13,4 +13,8 @@
     <ProjectReference Include="..\FishSpinDays.Data\FishSpinDays.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Identity\Interfaces\" />
+  </ItemGroup>
+
 </Project>

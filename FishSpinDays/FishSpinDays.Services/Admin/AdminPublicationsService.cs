@@ -2,10 +2,12 @@
 {
     using AutoMapper;
     using FishSpinDays.Common.Admin.BindingModels;
+    using FishSpinDays.Common.Validation;
     using FishSpinDays.Data;
     using FishSpinDays.Models;
     using FishSpinDays.Services.Admin.Interfaces;
     using Microsoft.EntityFrameworkCore;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
 
     public class AdminPublicationsService : BaseService, IAdminPublicationsService
@@ -39,7 +41,7 @@
         }
 
         public Publication EditPublication(PublicationBindingModel model)
-        {
+        {           
             var publication = this.DbContext.Publications
                 .Include(p => p.Section)
                 .FirstOrDefault(p => p.Id == model.Id);

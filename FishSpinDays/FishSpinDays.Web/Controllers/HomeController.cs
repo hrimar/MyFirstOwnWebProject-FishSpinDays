@@ -13,25 +13,27 @@ using FishSpinDays.Common.Constants;
 namespace FishSpinDays.Web.Controllers
 {
     public class HomeController : BaseController
-    {
-        private const int DefaultPage = 1;
-        private const double DefaultResultPerPage = 3.0;
-
-        public HomeController(IBasePublicationsService baseService) 
+    {      
+        public HomeController(IBasePublicationsService baseService)
             : base(baseService)
-        {  }
+        { }
 
-      [HttpGet]
+        [HttpGet]
         public IActionResult Index(int? id)
         {
             if (!id.HasValue)
             {
-                id = DefaultPage;
+                id = WebConstants.DefaultPage;
             }
 
             int requiredPagesForThisPublications = ArrangePagesCount();
 
-            var publications = this.BaseService.GetAllPublications(id.Value, 3).ToList();
+            var publications = this.BaseService.GetAllPublications(id.Value, 3);
+
+            if (publications == null)
+            {
+                return NotFound();
+            }
 
             // return View(publications);
             return View(new PartPublicationsViewModel()
@@ -50,12 +52,16 @@ namespace FishSpinDays.Web.Controllers
 
             if (!id.HasValue)
             {
-                id = DefaultPage;
+                id = WebConstants.DefaultPage;
             }
 
             int requiredPagesForThisPublications = ArrangePagesCount(WebConstants.SeaSection);
 
-            var publications = this.BaseService.GetAllSeaPublications(id.Value, 3).ToList();
+            var publications = this.BaseService.GetAllSeaPublications(id.Value, 3);
+            if (publications == null)
+            {
+                return NotFound();
+            }
 
             // return View(publications);
             return View(new PartPublicationsViewModel()
@@ -73,7 +79,7 @@ namespace FishSpinDays.Web.Controllers
 
             if (!id.HasValue)
             {
-                id = DefaultPage;
+                id = WebConstants.DefaultPage;
             }
 
             int requiredPagesForThisPublications = ArrangePagesCount(WebConstants.FreshwaterSection);
@@ -115,7 +121,7 @@ namespace FishSpinDays.Web.Controllers
 
         public IActionResult School()
         {
-            var publications = this.BaseService.GetAllPublicationsInThisSection(WebConstants.School );
+            var publications = this.BaseService.GetAllPublicationsInThisSection(WebConstants.School);
             return View(publications);
         }
 
@@ -134,11 +140,12 @@ namespace FishSpinDays.Web.Controllers
         public IActionResult Year()
         {
             var publications = this.BaseService.GetAllPublicationsInThisYear(WebConstants.Year2018);
+
             return View(publications);
         }
 
         public IActionResult Contact()
-        {       
+        {
             return View();
         }
 
@@ -156,7 +163,7 @@ namespace FishSpinDays.Web.Controllers
         private int ArrangePagesCount()
         {
             var totalPublicationsCount = this.BaseService.TotalPublicationsCount();
-            double pages = (totalPublicationsCount / DefaultResultPerPage);
+            double pages = (totalPublicationsCount / WebConstants.DefaultResultPerTripsPage);
             int requiredPagesForThisPublications = (int)pages;
             if (pages % 1 != 0)
             {
@@ -169,7 +176,7 @@ namespace FishSpinDays.Web.Controllers
         private int ArrangePagesCount(string type)
         {
             var totalPublicationsCount = this.BaseService.TotalPublicationsCount(type);
-            double pages = (totalPublicationsCount / DefaultResultPerPage);
+            double pages = (totalPublicationsCount / WebConstants.DefaultResultPerTripsPage);
             int requiredPagesForThisPublications = (int)pages;
             if (pages % 1 != 0)
             {

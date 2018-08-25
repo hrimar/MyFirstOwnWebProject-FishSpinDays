@@ -7,11 +7,12 @@
         public const string DefaultAdminPassowrd = "admin123";
 
         public const int NameMinLength = 4;
-        public const int NameMaxLength = 30;
+        public const int NameMaxLength = 40;
         public const int ContentMinLength = 40;
         public const int DescriptinMaxLength = 600;
-
-        //TODO: add constants for pagination
+        public const double DefaultResultPerTripsPage = 3.0;
+        public const int DefaultResultPerPage = 10;
+        public const int DefaultPage = 1;
 
         public const string FreshwaterSection = "Freshwater fishing";
         public const string SeaSection = "Sea fishing";

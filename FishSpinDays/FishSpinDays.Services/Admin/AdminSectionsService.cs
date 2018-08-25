@@ -3,6 +3,7 @@ using FishSpinDays.Common.Admin.BindingModels;
 using FishSpinDays.Common.Admin.ViewModels;
 using FishSpinDays.Common.Base.ViewModels;
 using FishSpinDays.Common.Identity.ViewModels;
+using FishSpinDays.Common.Validation;
 using FishSpinDays.Data;
 using FishSpinDays.Models;
 using FishSpinDays.Services.Admin.Interfaces;
@@ -21,7 +22,7 @@ namespace FishSpinDays.Services.Admin
         {  }
 
         public MainSection AddMainSection(CreateMainSectionBindingModel model)
-        {
+        {           
             var mainSection = this.Mapper.Map<MainSection>(model);
             this.DbContext.MainSections.Add(mainSection);
             this.DbContext.SaveChanges();

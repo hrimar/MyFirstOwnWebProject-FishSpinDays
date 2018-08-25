@@ -23,6 +23,11 @@ namespace FishSpinDays.Services.Base
 
         public IEnumerable<PublicationShortViewModel> GetAllPublications(int page, int count)
         {
+            if (page <= 0)
+            {
+                return null;
+            }
+
             var publications = this.DbContext.Publications
                 .OrderByDescending(p => p.CreationDate)
                 .Skip((page - 1) * count)
@@ -73,6 +78,10 @@ namespace FishSpinDays.Services.Base
         public IEnumerable<PublicationShortViewModel> GetAllSeaPublications(int page, int count)
         {
             List<Publication> publications = GetTargetSection(WebConstants.SeaSection, page, count);
+            if (publications == null)
+            {
+                return null;
+            }
             List<PublicationShortViewModel> model = GetAllTargetPublications(publications);
 
             return model;
@@ -82,6 +91,10 @@ namespace FishSpinDays.Services.Base
         public IEnumerable<PublicationShortViewModel> GetAllFreshwaterPublications(int page, int count)
         {
             List<Publication> publications = GetTargetSection(WebConstants.FreshwaterSection, page, count);
+            if (publications == null)
+            {
+                return null;
+            }
             List<PublicationShortViewModel> model = GetAllTargetPublications(publications);
 
             return model;
@@ -91,7 +104,7 @@ namespace FishSpinDays.Services.Base
         {
             List<Publication> publications = this.DbContext.Publications
                             .Where(p => p.Section.Name == sectionType)
-                            .Take(10)
+                            .Take(WebConstants.DefaultResultPerPage)
                             .ToList();
             List<PublicationShortViewModel> model = GetAllTargetPublications(publications);
 
@@ -102,7 +115,7 @@ namespace FishSpinDays.Services.Base
         {
             List<Publication> publications = this.DbContext.Publications
                             .Where(p => p.CreationDate.Year == year)
-                            .Take(10)
+                            .Take(WebConstants.DefaultResultPerPage)
                             .ToList();
             List<PublicationShortViewModel> model = GetAllTargetPublications(publications);
 
@@ -126,6 +139,11 @@ namespace FishSpinDays.Services.Base
 
         private List<Publication> GetTargetSection(string targetSection, int page, int count)
         {
+            if (page <= 0)
+            {
+                return null;
+            }
+
             return this.DbContext.Publications
                             .Where(p => p.Section.Name == targetSection)
                             .OrderByDescending(p => p.CreationDate)
@@ -163,8 +181,8 @@ namespace FishSpinDays.Services.Base
         public int TotalPublicationsCount(string type)
         {
             return this.DbContext.Publications
-                .Include(p=>p.Section)
-                .Where(p=>p.Section.Name == type)
+                .Include(p => p.Section)
+                .Where(p => p.Section.Name == type)
                 .Count();
         }
     }
