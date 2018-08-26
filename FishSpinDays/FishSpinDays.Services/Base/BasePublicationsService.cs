@@ -122,6 +122,17 @@ namespace FishSpinDays.Services.Base
             return model;
         }
 
+        public IEnumerable<PublicationShortViewModel> GetAllPublicationsInThisMonth(int month)
+        {
+            List<Publication> publications = this.DbContext.Publications
+                           .Where(p => p.CreationDate.Month == month)
+                           .Take(WebConstants.DefaultResultPerPage)
+                           .ToList();
+            List<PublicationShortViewModel> model = GetAllTargetPublications(publications);
+
+            return model;
+        }
+
 
         private List<PublicationShortViewModel> GetAllTargetPublications(List<Publication> publications)
         {
@@ -185,5 +196,6 @@ namespace FishSpinDays.Services.Base
                 .Where(p => p.Section.Name == type)
                 .Count();
         }
+              
     }
 }

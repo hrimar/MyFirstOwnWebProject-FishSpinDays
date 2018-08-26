@@ -23,9 +23,7 @@ namespace FishSpinDays.Tests.Controllers.Admin.UsersControllerTests
         public void Index_ShoudBeAccesseibleByAdmin()
         {
             var controller = new UsersController(null, null, null);
-            //controller.ControllerContext.HttpContext.User = new System.Security.Claims.ClaimsPrincipal();
-
-
+            
             // подаване на потребител:
             controller.ControllerContext = new ControllerContext()
             {
@@ -42,7 +40,37 @@ namespace FishSpinDays.Tests.Controllers.Admin.UsersControllerTests
         }
 
         [TestMethod]
-        public void Index_ShoudReturnAllUsersExceptCurrent() // !!!
+        public void Index_ShoudReturnNotNull()
+        {
+            var users = new[]
+            {
+                new User() { Id = "111" },
+                new User() { Id = "222" },              
+            };
+
+            var mockDbContext = MockDbContext.GetContext();
+            mockDbContext.Users.AddRange(users);
+            mockDbContext.SaveChanges();
+
+            var mockUserStore = new Mock<IUserStore<User>>();
+
+            var mockUserManager = new Mock<UserManager<User>>(
+                new Mock<IUserStore<User>>().Object, null, null, null, null, null, null, null, null);
+            mockUserManager.Setup(um => um.GetUserAsync(null))
+                .ReturnsAsync(users[1]);
+
+            var controller = new UsersController(mockDbContext,
+                 MockAutomapper.GetMapper(), mockUserManager.Object);
+
+            //2. act:
+            var result = controller.Index() as ViewResult;
+
+            //. assert:
+            Assert.IsNotNull(result);            
+        }
+
+        [TestMethod]
+        public void Index_ShoudReturnAllUsersExceptCurrent() 
         {
             var users = new[]
             {
@@ -57,9 +85,7 @@ namespace FishSpinDays.Tests.Controllers.Admin.UsersControllerTests
             mockDbContext.SaveChanges();
 
             var mockUserStore = new Mock<IUserStore<User>>();
-
-            //var mockUserManager = new Mock<UserManager<User>>();
-
+                    
             var mockUserManager = new Mock<UserManager<User>>(
                 new Mock<IUserStore<User>>().Object, null, null, null, null, null, null, null, null);
             mockUserManager.Setup(um => um.GetUserAsync(null))

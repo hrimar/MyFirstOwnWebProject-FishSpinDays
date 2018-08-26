@@ -6,7 +6,8 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
-    using FishSpinDays.Common.Constants;    
+    using FishSpinDays.Common.Constants;
+    using FishSpinDays.Common.Identity.BindingModels;
     using FishSpinDays.Common.Validation;
     using FishSpinDays.Data;
     using FishSpinDays.Models;
@@ -26,11 +27,16 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
         public AddModel(FishSpinDaysDbContext dbContext, UserManager<User> userManager)
       : base(dbContext)
         {           
-            this.userManager = userManager;
-                        
+            this.userManager = userManager;                        
             this.Sections = new List<SelectListItem>();
+
+      //      this.PublicationForm = new PublicationBindingModel();
         }
-                
+
+        //[BindProperty]
+        //public PublicationBindingModel PublicationForm { get; set; }
+
+
         [BindProperty]
         [Required(ErrorMessage = "You have to specify a section.")]
         [Display(Name = "Section")]

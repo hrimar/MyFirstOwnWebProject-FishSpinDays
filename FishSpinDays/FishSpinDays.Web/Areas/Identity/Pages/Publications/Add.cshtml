@@ -1,5 +1,4 @@
 ﻿@page
-
 @model AddModel
 @{
     ViewData["Title"] = "Add publication";
@@ -31,11 +30,17 @@
             </div>
         </div>
 
+        @*@Html.EditorFor(model => model.PublicationForm)*@
+
         <div class="form-group row  text-center">
             <input asp-page-handler="CreatePublication" type="submit" value="Add publication" class="btn btn-primary" />
             <a href="/" class="btn btn-outline-dark ">Cancel</a>
         </div>
     </form>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
 
 

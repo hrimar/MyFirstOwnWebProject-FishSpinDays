@@ -13,6 +13,7 @@
 
         public int Id { get; set; }
 
+        [Required]
         [MinLength(WebConstants.NameMinLength)]
         public string Text { get; set; }
 

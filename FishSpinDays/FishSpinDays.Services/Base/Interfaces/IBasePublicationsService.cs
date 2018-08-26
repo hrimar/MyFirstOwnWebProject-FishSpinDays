@@ -25,5 +25,7 @@ namespace FishSpinDays.Services.Base.Interfaces
         int TotalPublicationsCount(string type);
 
         IEnumerable<PublicationShortViewModel> GetAllPublicationsInThisYear(int year);
+
+        IEnumerable<PublicationShortViewModel> GetAllPublicationsInThisMonth(int month);
     }
 }

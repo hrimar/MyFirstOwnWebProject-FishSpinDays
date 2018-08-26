@@ -12,6 +12,7 @@ using FishSpinDays.Web.Helpers.Messages;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using FishSpinDays.Common.Identity.BindingModels;
 
 namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
 {
@@ -24,11 +25,15 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
       : base(dbContext)
         {            
             this.userManager = userManager;
+             this.CreationDate = DateTime.Now;    
 
-            this.CreationDate = DateTime.Now;                
+           // this.CommentForm = new CommentBindingModel();
         }
 
-       
+        //// [BindProperty]
+        // public CommentBindingModel CommentForm { get; set; }
+
+
         [BindProperty]
         [MinLength(WebConstants.NameMinLength)]
         public string Text { get; set; }
@@ -55,6 +60,10 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
 
             User author = this.userManager.GetUserAsync(this.User).Result;
             var publcation = this.DbContext.Publications.Find(id);
+            if (publcation== null)
+            {
+                return NotFound();
+            }
 
             this.Author = author.UserName;
 

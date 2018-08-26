@@ -29,14 +29,8 @@
             <br />
             <hr />
             <h4 class="text-center"><strong>Comments:</strong></h4>
-            @{
-                foreach (var comment in Model.Comments)
-                {
-                    <div class="container">
-                        <i class="glyphicon glyphicon-arrow-right"></i> @comment.Text - @comment.CreationDate <small>by</small> @comment.Author
-                    </div>
-                }
-            }
+            
+            @Html.DisplayFor(m => m.Comments)
 
             <br />
             @if (this.Context.User.Identity.IsAuthenticated)

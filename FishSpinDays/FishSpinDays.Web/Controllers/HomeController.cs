@@ -144,6 +144,13 @@ namespace FishSpinDays.Web.Controllers
             return View(publications);
         }
 
+        public IActionResult Month(int id)
+        {
+            var publications = this.BaseService.GetAllPublicationsInThisMonth(id);
+
+            return View(publications);
+        }
+
         public IActionResult Contact()
         {
             return View();
