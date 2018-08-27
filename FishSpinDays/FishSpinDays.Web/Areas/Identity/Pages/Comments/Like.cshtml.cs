@@ -23,7 +23,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
             this.TempData.Put("__Message", new MessageModel()
             {
                 Type = MessageType.Info,
-                Message = "Thank you for your vote about this comment."
+                Message = "Thank you for your voting this comment."
             });
 
             return Redirect("/");

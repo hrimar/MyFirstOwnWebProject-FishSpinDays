@@ -23,8 +23,7 @@ namespace FishSpinDays.Tests.Controllers.Admin.UsersControllerTests
         public void Index_ShoudBeAccesseibleByAdmin()
         {
             var controller = new UsersController(null, null, null);
-            
-            // подаване на потребител:
+                        
             controller.ControllerContext = new ControllerContext()
             {
                 HttpContext = new DefaultHttpContext()

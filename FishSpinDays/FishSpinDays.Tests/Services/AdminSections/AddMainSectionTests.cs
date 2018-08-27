@@ -47,7 +47,7 @@ namespace FishSpinDays.Tests.Services.AdminSections
         }
 
         [TestMethod]
-        public void AddMainSection_WithPropeMainSection_ShouldAddCorrectly()
+        public void AddMainSection_WithPropeрMainSection_ShouldAddCorrectly()
         {
             // 1. Arrange            
             var mainSectionModel = new CreateMainSectionBindingModel()

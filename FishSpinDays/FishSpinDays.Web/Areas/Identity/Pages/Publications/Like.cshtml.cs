@@ -35,7 +35,13 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
             var currentUser = this.userManager.GetUserAsync(this.User).Result;
             if (publicationAuthorId == currentUser.Id)
             {
-                return Unauthorized();
+                this.TempData.Put("__Message", new MessageModel()
+                {
+                    Type = MessageType.Warning,
+                    Message = "You can not like yours publications."
+                });
+               
+                return Redirect($"/Publications/Details/{id}");
             }
 
             publication.Likes++;

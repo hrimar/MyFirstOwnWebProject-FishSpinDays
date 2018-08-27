@@ -21,6 +21,24 @@ namespace FishSpinDays.Tests.Services.AdminSections
             this.dbContext = MockDbContext.GetContext();
             this.mapper = MockAutomapper.GetMapper();
         }
+
+        [TestMethod]
+        public void GetMainSections_WithAFewMainSections_ShouldReturnNotNull()
+        {
+            // 1. Arrange
+            this.dbContext.MainSections.Add(new MainSection() { Id = 1, Name = "First Main Section" });
+            this.dbContext.MainSections.Add(new MainSection() { Id = 2, Name = "Second Main Section" });
+            this.dbContext.MainSections.Add(new MainSection() { Id = 3, Name = "Third MainS ection" });
+            this.dbContext.SaveChanges();
+
+            var service = new AdminSectionsService(dbContext, this.mapper);
+
+            // 2. Act
+            var mainSection = service.GetMainSections();
+
+            // 3. Assert
+            Assert.IsNotNull(mainSection);          
+        }
         
         [TestMethod]
         public void GetMainSections_WithAFewMainSections_ShouldReturnAll()
@@ -37,10 +55,10 @@ namespace FishSpinDays.Tests.Services.AdminSections
             var mainSection = service.GetMainSections();
 
             // 3. Assert
-            Assert.IsNotNull(mainSection);
             Assert.AreEqual(3, mainSection.Count());
             CollectionAssert.AreEqual(new[] { 1, 2, 3 }, mainSection.Select(c => c.Id).ToArray());
         }
+
 
         [TestMethod]
         public void GetMainSections_WithNoMainSections_ShouldReturnNone()

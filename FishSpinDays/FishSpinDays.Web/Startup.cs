@@ -68,11 +68,10 @@ namespace FishSpinDays.Web
                     RequireUppercase = false,
                     RequireNonAlphanumeric = false
                 };
-
-                // options.SignIn.RequireConfirmedEmail = true; //  removed for easy testing 
+                                
             });
 
-            services.AddAutoMapper(); // this is Singleton
+            services.AddAutoMapper(); 
 
 
             RegisterServiceLayer(services);
