@@ -1,20 +1,15 @@
-﻿using AutoMapper;
-using FishSpinDays.Common.Admin.BindingModels;
-using FishSpinDays.Common.Admin.ViewModels;
-using FishSpinDays.Common.Base.ViewModels;
-using FishSpinDays.Common.Identity.ViewModels;
-using FishSpinDays.Common.Validation;
-using FishSpinDays.Data;
-using FishSpinDays.Models;
-using FishSpinDays.Services.Admin.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FishSpinDays.Services.Admin
+﻿namespace FishSpinDays.Services.Admin
 {
+    using AutoMapper;
+    using FishSpinDays.Common.Admin.BindingModels;
+    using FishSpinDays.Common.Admin.ViewModels;
+    using FishSpinDays.Data;
+    using FishSpinDays.Models;
+    using FishSpinDays.Services.Admin.Interfaces;
+    using Microsoft.EntityFrameworkCore;
+    using System.Collections.Generic;
+    using System.Linq;
+
    public class AdminSectionsService : BaseService, IAdminSectionsService
     {
         public AdminSectionsService(FishSpinDaysDbContext dbContex, IMapper mapper) 
@@ -154,8 +149,6 @@ namespace FishSpinDays.Services.Admin
             {
                 return false;
             }
-        }
-
-        
+        }        
     }
 }

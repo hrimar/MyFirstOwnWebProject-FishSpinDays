@@ -1,22 +1,25 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using FishSpinDays.Data;
-using FishSpinDays.Models;
-using FishSpinDays.Web.Common;
-using AutoMapper;
-using FishSpinDays.Services.Admin.Interfaces;
-using FishSpinDays.Services.Admin;
-using FishSpinDays.Services.Base.Interfaces;
-using FishSpinDays.Services.Base;
-
-namespace FishSpinDays.Web
+﻿namespace FishSpinDays.Web
 {
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using FishSpinDays.Data;
+    using FishSpinDays.Models;
+    using FishSpinDays.Web.Common;
+    using AutoMapper;
+    using FishSpinDays.Services.Admin.Interfaces;
+    using FishSpinDays.Services.Admin;
+    using FishSpinDays.Services.Base.Interfaces;
+    using FishSpinDays.Services.Base;
+    using System;
+    using FishSpinDays.Services.Identity.Interfaces;
+    using FishSpinDays.Services.Identity;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -63,7 +66,11 @@ namespace FishSpinDays.Web
                     RequireLowercase = true,
                     RequireUppercase = false,
                     RequireNonAlphanumeric = false
-                };                                
+                };
+
+                options.Lockout.MaxFailedAccessAttempts = 4;
+
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
             });
 
             services.AddAutoMapper(); 
@@ -141,7 +148,9 @@ namespace FishSpinDays.Web
         {
             services.AddScoped<IAdminSectionsService, AdminSectionsService>();
             services.AddScoped<IBasePublicationsService, BasePublicationsService>();
-            services.AddScoped<IAdminPublicationsService, AdminPublicationsService>();      
+            services.AddScoped<IAdminPublicationsService, AdminPublicationsService>();
+            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IAdminUsersService, AdminUsersService>(); 
         }
     }
 }

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-
-namespace FishSpinDays.Common.Admin.BindingModels
+﻿namespace FishSpinDays.Common.Admin.BindingModels
 {
-   public class BanBindingModel
+    using FishSpinDays.Common.Validation;
+    using System;
+    using System.ComponentModel.DataAnnotations;
+
+    public class BanBindingModel
     {
         public string Id { get; set; }
 
-        [Display(Name = "Block until")]      
+        [Display(Name = ValidationConstants.BlockEnd)]      
         public DateTime LockoutEnd { get; set; }
     }
 }

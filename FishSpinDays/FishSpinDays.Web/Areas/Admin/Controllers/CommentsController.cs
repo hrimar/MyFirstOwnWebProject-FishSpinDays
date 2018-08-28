@@ -1,5 +1,6 @@
 ﻿namespace FishSpinDays.Web.Areas.Admin.Controllers
 {
+    using FishSpinDays.Common.Constants;
     using FishSpinDays.Services.Admin.Interfaces;
     using FishSpinDays.Web.Helpers;
     using FishSpinDays.Web.Helpers.Messages;
@@ -8,8 +9,7 @@
     public class CommentsController : AdminController
     {
         private readonly IAdminPublicationsService adminPublicationsService;
-
-
+        
         public CommentsController(IAdminPublicationsService adminSectionService)
         {
             this.adminPublicationsService = adminSectionService;
@@ -27,7 +27,7 @@
             this.TempData.Put("__Message", new MessageModel()
             {
                 Type = MessageType.Success,
-                Message = "The comment was deleted succesfully."
+                Message = WebConstants.DeletedComment
             });
 
             return Redirect("/");

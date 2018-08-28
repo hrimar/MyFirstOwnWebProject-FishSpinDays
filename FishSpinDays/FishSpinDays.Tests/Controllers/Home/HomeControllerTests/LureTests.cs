@@ -25,8 +25,8 @@ namespace FishSpinDays.Tests.Controllers.Home.HomeControllerTests
                 .Setup(service => service.GetAllPublicationsInThisSection(WebConstants.HandLures))
                 .Returns(new[] {new PublicationShortViewModel()
                 {
-                    Id = 1,
-                    Title = "On the river with Tisho",
+                    Id = 4,
+                    Title = "The greates lures",
                     Description = "I was on the river with my friend Pesho and catched so many fishes with only one metal lure",
                 } });
             var controller = new HomeController(mockService.Object);
@@ -38,7 +38,6 @@ namespace FishSpinDays.Tests.Controllers.Home.HomeControllerTests
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             Assert.IsNotNull((result as ViewResult).Model);
         }
-
-       
+               
     }
 }

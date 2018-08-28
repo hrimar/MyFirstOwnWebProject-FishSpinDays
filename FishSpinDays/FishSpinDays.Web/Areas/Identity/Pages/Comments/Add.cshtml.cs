@@ -1,26 +1,27 @@
-using System;
-using System.ComponentModel.DataAnnotations;
-using FishSpinDays.Common.Constants;
-using FishSpinDays.Data;
-using FishSpinDays.Models;
-using FishSpinDays.Web.Helpers;
-using FishSpinDays.Web.Helpers.Messages;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-
 namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
 {
+    using System;
+    using System.ComponentModel.DataAnnotations;
+    using FishSpinDays.Common.Constants;
+    using FishSpinDays.Models;
+    using FishSpinDays.Web.Helpers;
+    using FishSpinDays.Web.Helpers.Messages;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Authorization;
+    using FishSpinDays.Services.Identity.Interfaces;
+
     [Authorize]
     public class AddModel : BaseModel
     {
         private readonly UserManager<User> userManager;
-
-        public AddModel(FishSpinDaysDbContext dbContext, UserManager<User> userManager)
-      : base(dbContext)
-        {            
+       
+        public AddModel(UserManager<User> userManager, IIdentityService identityService)
+      : base(identityService)
+        {
             this.userManager = userManager;
-             this.CreationDate = DateTime.Now;    
+           
+            this.CreationDate = DateTime.Now;
         }
 
         [BindProperty]
@@ -36,8 +37,8 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
         public int UnLikes { get; set; }
 
         public void OnGet()
-        {  }
-              
+        { }
+
         public IActionResult OnPostCreateComment(int id)
         {
             if (!ModelState.IsValid)
@@ -46,44 +47,34 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
             }
 
             User author = this.userManager.GetUserAsync(this.User).Result;
-            var publcation = this.DbContext.Publications.Find(id);
-            if (publcation== null)
+            this.Author = author.UserName;
+                 
+            var publication = this.IdentityService.GetPublicationById(id);
+            if (publication == null)
             {
                 return NotFound();
             }
+            
+            var comment = this.IdentityService.AddComment(author, publication, this.Text);
 
-            this.Author = author.UserName;
-
-            Comment comment = new Comment() 
-            {
-                Publication = publcation,
-                Text = this.Text,
-                Author = author
-            };
-
-            try
-            {
-                this.DbContext.Comments.Add(comment);
-                this.DbContext.SaveChanges();
-
-                this.TempData.Put("__Message", new MessageModel()
-                {
-                    Type = MessageType.Success,
-                    Message = "Thank you for your comment."
-                });
-
-                return Redirect($"/Publications/Details/{id}");
-            }
-            catch (Exception)
+            if (comment == null)
             {
                 this.TempData.Put("__Message", new MessageModel()
                 {
                     Type = MessageType.Danger,
-                    Message = "Unsuccessfull operation!"
+                    Message = WebConstants.UnsuccessfullOperation
                 });
 
                 return Page();
             }
+
+            this.TempData.Put("__Message", new MessageModel()
+            {
+                Type = MessageType.Success,
+                Message = WebConstants.ThankForComment
+            });
+
+            return Redirect($"/Publications/Details/{id}");
         }
     }
 }

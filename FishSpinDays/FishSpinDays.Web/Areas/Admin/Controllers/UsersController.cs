@@ -1,45 +1,40 @@
 ﻿namespace FishSpinDays.Web.Areas.Admin.Controllers
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using AutoMapper;
     using FishSpinDays.Common.Admin.BindingModels;
-    using FishSpinDays.Common.Admin.ViewModels;
+    using FishSpinDays.Common.Constants;
     using FishSpinDays.Data;
     using FishSpinDays.Models;
+    using FishSpinDays.Services.Admin.Interfaces;
     using FishSpinDays.Web.Helpers;
     using FishSpinDays.Web.Helpers.Messages;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
 
     public class UsersController : AdminController
     {
-        private readonly FishSpinDaysDbContext contex;
-        private readonly IMapper mapper;
         private readonly UserManager<User> userManager;
+        private readonly IAdminUsersService userService;
 
-        public UsersController(FishSpinDaysDbContext contex, IMapper mapper,
-            UserManager<User> userManager)
-        {
-            this.contex = contex;
-            this.mapper = mapper;
+        public UsersController(UserManager<User> userManager, IAdminUsersService userService)
+        {    
             this.userManager = userManager;
+            this.userService = userService;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
             User currentUser = GetCurrentUser();
+            
+            var usersModel = this.userService.GetUsersWithourCurrentUser(currentUser.Id);
+            if (usersModel == null)
+            {
+                return NotFound();
+            }
 
-            var users = this.contex.Users
-                .Where(u => u.Id != currentUser.Id) 
-                .ToList();
-
-            var model = this.mapper.Map<IEnumerable<UserShortViewModel>>(users);
-
-            return View(model);
+            return View(usersModel);
         }
 
         [HttpGet]
@@ -52,17 +47,13 @@
                 return Unauthorized();
             }
 
-            var user = this.contex.Users
-                .Include(u=>u.Publications)
-                .FirstOrDefault(u=>u.Id == id);
-            if (user == null)
+            var userModel = this.userService.GetUserModelById(id);
+            if (userModel == null)
             {
                 return NotFound();
             }
-                        
-            var model = this.mapper.Map<UserDetailsViewModel>(user);
 
-            return View(model);
+            return View(userModel);
         }
 
         [HttpGet]
@@ -74,7 +65,7 @@
                 return Unauthorized();
             }
 
-            var user = this.contex.Users.Find(id);
+            var user = this.userService.GetUserById(id);
             if (user == null)
             {
                 return NotFound();
@@ -99,21 +90,29 @@
                 return View();
             }
 
-            var user = this.contex.Users.Find(model.Id);
+            var user = this.userService.GetUserById(model.Id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            user.LockoutEnd = model.LockoutEnd;
-            this.contex.SaveChanges();
+            bool isBaned = this.userService.IsUserBanned(user, model.LockoutEnd);
+
+            if (!isBaned)
+            {
+                this.TempData.Put("__Message", new MessageModel()
+                {
+                    Type = MessageType.Warning,
+                    Message = WebConstants.UnsuccesfullBan
+                }); 
+            }
 
             this.TempData.Put("__Message", new MessageModel()
             {
                 Type = MessageType.Success,
-                Message = "You have succesfully put a BAN to this user."
+                Message = WebConstants.SuccessfulBan
             });
-                          
+
             return RedirectToAction("/");
         }
 

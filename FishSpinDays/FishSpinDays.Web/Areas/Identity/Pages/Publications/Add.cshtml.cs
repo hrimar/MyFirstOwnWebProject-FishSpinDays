@@ -3,17 +3,15 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
     using FishSpinDays.Common.Constants;
     using FishSpinDays.Common.Validation;
-    using FishSpinDays.Data;
     using FishSpinDays.Models;
+    using FishSpinDays.Services.Identity.Interfaces;
     using FishSpinDays.Web.Helpers;
     using FishSpinDays.Web.Helpers.Messages;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.RazorPages;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     [Authorize]
@@ -21,17 +19,17 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
     {
         private readonly UserManager<User> userManager;
 
-        public AddModel(FishSpinDaysDbContext dbContext, UserManager<User> userManager)
-      : base(dbContext)
-        {           
-            this.userManager = userManager;                        
+        public AddModel(UserManager<User> userManager, IIdentityService identityService)
+      : base(identityService)
+        {
+            this.userManager = userManager;
+
             this.Sections = new List<SelectListItem>();
         }
 
-       
         [BindProperty]
-        [Required(ErrorMessage = "You have to specify a section.")]
-        [Display(Name = "Section")]
+        [Required(ErrorMessage = ValidationConstants.RequireSectionSpecified)]
+        [Display(Name = ValidationConstants.SectionDisplayName)]
         public int SectionId { get; set; }
 
         public IEnumerable<SelectListItem> Sections { get; set; }
@@ -53,15 +51,9 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
 
         public void OnGet()
         {
-            this.Sections = this.DbContext.Sections
-                .Select(b => new SelectListItem()
-                {
-                    Text = b.Name,
-                    Value = b.Id.ToString()
-                })
-                .ToList();
+            this.Sections = this.IdentityService.GettAllSections();
         }
-        
+
         public IActionResult OnPostCreatePublication()
         {
             if (!ModelState.IsValid)
@@ -70,39 +62,33 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
             }
 
             User author = this.userManager.GetUserAsync(this.User).Result;
-            var sectionId = this.DbContext.Sections.Find(this.SectionId).Id;
+            var section = this.IdentityService.GetSection(this.SectionId);
 
-            Publication publication = new Publication() 
+            if (author == null || section == null)
             {
-                SectionId = sectionId,
-                Title = this.Title,
-                Description = this.Description,
-                Author = author
-            };
-
-            try
-            {
-                this.DbContext.Publications.Add(publication);
-                this.DbContext.SaveChanges();
-
-                this.TempData.Put("__Message", new MessageModel()
-                {
-                    Type = MessageType.Success,
-                    Message = "You have created succesfully a new publication."
-                });
-
-                return Redirect($"/Publications/Details/{publication.Id}");
+                return NotFound();
             }
-            catch (Exception)
+
+            var publication = this.IdentityService.CreatePublication(author, section, this.Title, this.Description);
+
+            if (publication == null)
             {
                 this.TempData.Put("__Message", new MessageModel()
                 {
                     Type = MessageType.Danger,
-                    Message = "Unsuccessfull operation!"
+                    Message = WebConstants.UnsuccessfullOperation
                 });
 
                 return Page();
             }
+
+            this.TempData.Put("__Message", new MessageModel()
+            {
+                Type = MessageType.Success,
+                Message = WebConstants.SuccessfullPublication
+            });
+
+            return Redirect($"/Publications/Details/{publication.Id}");
         }
     }
 }

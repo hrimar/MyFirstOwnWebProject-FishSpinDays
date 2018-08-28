@@ -1,29 +1,38 @@
 namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
-{
-    using System.Linq;
-    using FishSpinDays.Data;
+{    
     using FishSpinDays.Web.Helpers;
     using FishSpinDays.Web.Helpers.Messages;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Authorization;
+    using FishSpinDays.Services.Identity.Interfaces;
+    using FishSpinDays.Common.Constants;
 
     [Authorize]
     public class UnLikeModel : BaseModel
     {
-        public UnLikeModel(FishSpinDaysDbContext dbContex)
-            : base(dbContex)
+        public UnLikeModel(IIdentityService identityService)
+            : base(identityService)
         { }
 
         public IActionResult OnGet(int id)
         {
-            var comment = this.DbContext.Comments.FirstOrDefault(p => p.Id == id);
-            comment.UnLikes++;
-            this.DbContext.SaveChanges();
+            var comment = this.IdentityService.GetCommentById(id);
+
+            bool isCommentUnLiked = this.IdentityService.IsUnLikedComment(comment);
+
+            if (!isCommentUnLiked)
+            {
+                this.TempData.Put("__Message", new MessageModel()
+                {
+                    Type = MessageType.Warning,
+                    Message = WebConstants.UnsuccesfullVoting
+                }); 
+            }
 
             this.TempData.Put("__Message", new MessageModel()
             {
                 Type = MessageType.Info,
-                Message = "Thank you for your vote about this comment."
+                Message = WebConstants.ThankYouForYourVoute
             });
 
             return Redirect("/");

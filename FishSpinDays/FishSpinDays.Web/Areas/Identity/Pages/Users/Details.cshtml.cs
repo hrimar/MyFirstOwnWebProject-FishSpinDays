@@ -1,15 +1,12 @@
 namespace FishSpinDays.Web.Areas.Identity.Pages.Users
 {
-    using System.Linq;
     using AutoMapper;
-    using FishSpinDays.Data;
     using FishSpinDays.Models;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.RazorPages;
-    using Microsoft.EntityFrameworkCore;
     using FishSpinDays.Common.Identity.ViewModels;
     using Microsoft.AspNetCore.Authorization;
+    using FishSpinDays.Services.Identity.Interfaces;
 
     [Authorize]
     public class DetailsModel : BaseModel
@@ -17,8 +14,8 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Users
         private readonly UserManager<User> userManager;
         private readonly IMapper mapper;
 
-        public DetailsModel(FishSpinDaysDbContext dbContex, UserManager<User> userManager, IMapper mapper)
-            : base(dbContex)
+        public DetailsModel(UserManager<User> userManager, IMapper mapper, IIdentityService identityService)
+            : base(identityService)
         {
             this.userManager = userManager;
             this.mapper = mapper;
@@ -26,14 +23,11 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Users
 
         public UserDetailsViewModel UserModel { get; set; }
 
-        public IActionResult OnGet(string id) // Details
+        public IActionResult OnGet(string id) 
         {
             var currentUser = GetCurrentUser();
 
-            var user = this.DbContext.Users
-                .Include(u => u.Publications)
-                .ThenInclude(u=>u.Comments)
-                .FirstOrDefault(u => u.Id == id);
+            var user = this.IdentityService.GetUserById(id);
 
             if (user == null)
             {
@@ -50,6 +44,5 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Users
         {
             return this.userManager.GetUserAsync(this.User).Result;
         }
-
     }
 }

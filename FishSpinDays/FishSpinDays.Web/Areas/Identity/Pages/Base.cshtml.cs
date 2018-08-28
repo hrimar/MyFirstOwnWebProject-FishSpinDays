@@ -1,20 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FishSpinDays.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-
 namespace FishSpinDays.Web.Areas.Identity.Pages
 {
+    using FishSpinDays.Services.Identity.Interfaces;
+    using Microsoft.AspNetCore.Mvc.RazorPages;
+
     public class BaseModel : PageModel
     {
-        public BaseModel(FishSpinDaysDbContext dbContex)
+        public BaseModel(IIdentityService identityService)
         {
-            this.DbContext = dbContex;
+            this.IdentityService = identityService;
         }
-
-        public FishSpinDaysDbContext DbContext { get; private set; }
+               
+        public IIdentityService IdentityService { get; private set; }
     }
 }

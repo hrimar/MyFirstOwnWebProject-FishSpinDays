@@ -24,5 +24,15 @@
         public const string Anti = "Anti-poaching";
         public const string Breeding = "Fish breeding";
         public const int Year2018 = 2018;
+
+        public const string UnsuccessfullOperation = "Unsuccessfull operation!";
+        public const string SuccessfullPublication = "You have created succesfully a new publication.";
+        public const string UnsuccesfullVoting = "Unsuccesfull voting.";
+        public const string ThankYouForYourVoute = "Thank you for your vote about this comment.";
+        public const string ThankForComment = "Thank you for your comment.";
+        public const string UnsuccesfullBan = "Unsuccessful BAN!";
+        public const string SuccessfulBan = "You have succesfully put a BAN to this user.";
+        public const string DeletedComment = "The comment was deleted succesfully.";
+
     }
 }

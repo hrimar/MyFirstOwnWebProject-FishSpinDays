@@ -1,23 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using FishSpinDays.Common.Base.ViewModels;
-using FishSpinDays.Common.Constants;
-using FishSpinDays.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using FishSpinDays.Common.Extensions;
-
 namespace FishSpinDays.Web.Areas.Identity.Pages
 {
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
+    using FishSpinDays.Common.Base.ViewModels;
+    using Microsoft.AspNetCore.Mvc;
+    using FishSpinDays.Services.Identity.Interfaces;
+
     public class SearchModel : BaseModel
     {
-        public SearchModel(FishSpinDaysDbContext dbContex) 
-            : base(dbContex)
+        public SearchModel(IIdentityService identityService)
+            : base(identityService)
         {
-            this.SearchResults = new List<SearchPublicationViewModel>();
+            this.SearchResults = new List<SearchPublicationViewModel>();           
         }
 
         public List<SearchPublicationViewModel> SearchResults { get; set; }
@@ -31,18 +25,9 @@ namespace FishSpinDays.Web.Areas.Identity.Pages
             {
                 return;
             }
+            
+            var foundPublications = this.IdentityService.FoundPublications(this.SearchTerm);
 
-            var foundPublications = this.DbContext.Publications
-                .Where(a => a.Description.ToLower().Contains(this.SearchTerm.ToLower()))
-                .OrderBy(a => a.CreationDate)
-                .Select(a => new SearchPublicationViewModel()
-                {
-                    Id = a.Id,                    
-                    SearchResult = a.Description.GetOnlyTextFromDescription(),
-                    Title = a.Title
-                })
-                .ToList();
-           
             this.SearchResults.AddRange(foundPublications);
         
             foreach (var result in this.SearchResults)

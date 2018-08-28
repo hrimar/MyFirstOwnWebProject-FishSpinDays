@@ -14,6 +14,6 @@ namespace FishSpinDays.Web.Controllers
             this.BaseService = baseService;
         }
 
-        public IBasePublicationsService BaseService { get; set; }
+        public IBasePublicationsService BaseService { get; private set; }
     }
 }

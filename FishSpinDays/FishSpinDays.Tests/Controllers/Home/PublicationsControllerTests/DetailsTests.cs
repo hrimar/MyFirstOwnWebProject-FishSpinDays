@@ -65,7 +65,7 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
             //2.Act:
             var result = controller.Details(value);
 
-            //3.Assert:           
+            //3. Assert:           
             Assert.IsNotNull((result as ViewResult).Model);
         }
 
@@ -99,6 +99,44 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
             Assert.IsTrue(serviceCalled);
         }
 
-       
+        [TestMethod]
+        public void Details_RetursCorrectModelInformation()
+        {
+            // 1.
+            var service = new Mock<IBasePublicationsService>();
+            var controller = new PublicationsController(service.Object);
+
+            var publicationModel = new PublicationViewModel()
+            {
+                Id = 1,
+                AuthorId = "111",
+                Title = "On the river with Tisho",
+                Description = "I was on the river with my friend Pesho and catched so many fishes with only one metal lure",
+            };
+
+            service.Setup(serv => serv.GetPublication(publicationModel.Id))
+                .Returns(new PublicationViewModel()
+                {
+                    Id = publicationModel.Id,
+                    AuthorId = publicationModel.AuthorId,
+                    Title = publicationModel.Title,
+                    Description = publicationModel.Description
+                });
+
+            // 2. Act:
+            var result = controller.Details(publicationModel.Id);
+
+            //3. Assert:    
+            var resultModel = result as ViewResult;
+            Assert.IsNotNull(resultModel.Model);
+            Assert.IsInstanceOfType(resultModel.Model, typeof(PublicationViewModel));
+
+            var productType = (resultModel.Model as PublicationViewModel);
+            Assert.AreEqual(publicationModel.Id, productType.Id);
+            Assert.AreEqual(publicationModel.AuthorId, productType.AuthorId);
+            Assert.AreEqual(publicationModel.Title, productType.Title);
+            Assert.AreEqual(publicationModel.Description, productType.Description);
+        }
+
     }
 }
