@@ -35,7 +35,7 @@
             </div>
             <div class="navbar-collapse collapse">
 
-                
+
                 <div class="dropdown nav navbar-nav">
                     <div class="dropdown nav navbar-nav ">
                         <button class=" dropdown-toggle " type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style=" margin-top: 10px;">
@@ -72,9 +72,7 @@
                             <li><a asp-area="" asp-controller="Home" asp-action="Breeding">Fish breeding</a></li>
                         </ul>
                     </div>
-
-                    @*<ul class="nav navbar-nav">*@
-                    @*<li><a asp-area="" asp-controller="Home" asp-action="Index">All publications</a></li>*@
+                                      
                     @if (this.User.IsInRole("Administrator"))
                     {
                         <div class="dropdown nav navbar-nav">
@@ -113,7 +111,7 @@
     </nav>
 
     <div class="text-center">
-        <img id="headPicture" src="~/images/fsdHead.jpg" />
+        <a asp-area="" asp-controller="Home" asp-action="Index" >   <img id="headPicture" src="~/images/fsdHead.jpg" /></a>
     </div>
 
     <partial name="_CookieConsentPartial" />
@@ -124,8 +122,6 @@
 
         @RenderBody()
         <hr />
-
-        @*<partial name="_SelectLeanguage" />*@
 
         <a href="#topofpage">Go to top</a>
         <footer class="text-center">
@@ -138,7 +134,7 @@
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/lib/bootstrap/dist/js/summernote.min.js"></script>
-        @*<script src="~/lib/bootstrap/dist/js/script.js"></script>*@
+    
         <script>
             $('document').ready(function () {
                 $('#description').summernote();

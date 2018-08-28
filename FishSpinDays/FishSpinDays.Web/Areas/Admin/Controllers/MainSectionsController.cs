@@ -45,16 +45,19 @@
                 Type = MessageType.Success,
                 Message = "The main section was created succesfully."
             });
-
-            ////return RedirectToAction("Details", new { id = section.Id });           
+      
             return RedirectToAction("/");
         }
 
         [HttpGet]
         public IActionResult Details(int id)
         {
-            var courseModel = this.adminSectionService.MainSectionDetails(id); 
-            return View(courseModel);
+            var sectionModel = this.adminSectionService.MainSectionDetails(id);
+            if (sectionModel == null)
+            {
+                return NotFound();
+            }
+            return View(sectionModel);
         }
     }
 }

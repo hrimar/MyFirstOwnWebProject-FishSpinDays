@@ -5,7 +5,6 @@
 }
 <h2 class="text-center">Add comment</h2>
 
-
 <div class="jumbotron jumbotron-fluid">
     <form method="post">
         <div class="form-group row">
@@ -15,9 +14,7 @@
                 <span class="text-danger" asp-validation-for="Text"></span>
             </div>
         </div>
-
-        @*@Html.EditorFor(model => model.CommentForm)*@
-
+        
         <div class="form-group row  text-center">
             <input asp-page-handler="CreateComment" type="submit" value="Add comment" class="btn btn-primary" />
             <a href="/" class="btn btn-outline-dark ">Cancel</a>

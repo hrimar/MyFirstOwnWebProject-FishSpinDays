@@ -19,15 +19,19 @@
         [HttpGet]
         public IActionResult Index()
         {
-            var modelSection = this.adminSectionService.GetSections();
+            var modelSections = this.adminSectionService.GetSections();
+            if (modelSections == null)
+            {
+                return NotFound();
+            }
 
-            return View(modelSection);
+            return View(modelSections);
         }
 
         [HttpGet]
         public IActionResult Create(int id)
         {
-            var model = this.adminSectionService.PrepareSectionForCreation(id); //mainSectionId
+            var model = this.adminSectionService.PrepareSectionForCreation(id); 
             if (model == null)
             {
                 return NotFound();
@@ -36,8 +40,7 @@
             return View(model);           
         }
 
-        [HttpPost]
-       // [ValidateAntiForgeryToken]       
+        [HttpPost]    
         public  IActionResult Create(CreateSectionBindingModel model)
         {
             if (!ModelState.IsValid)
@@ -46,6 +49,10 @@
             }
                        
             var section = this.adminSectionService.AddSection(model);
+            if (section == null)
+            {
+                return NotFound();
+            }
 
             this.TempData.Put("__Message", new MessageModel()
             {
@@ -59,8 +66,13 @@
         [HttpGet]
         public IActionResult Details(int id)
         {           
-            var courseModel =  this.adminSectionService.SectionDetails(id);
-            return View(courseModel);
+            var sectionModel =  this.adminSectionService.SectionDetails(id);
+            if (sectionModel == null)
+            {
+                return NotFound();
+            }
+
+            return View(sectionModel);
         }
     }
 }

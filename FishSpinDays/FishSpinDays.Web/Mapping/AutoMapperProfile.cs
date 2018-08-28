@@ -28,8 +28,7 @@ using AutoMapper;
             this.CreateMap<Publication, PublicationViewModel>()
                 .ForMember(lvm => lvm.Section, option => option.MapFrom(src => src.Section.Name));
 
-            this.CreateMap<Comment, CommentViewModel>();
-           
+            this.CreateMap<Comment, CommentViewModel>();           
         }
 
     }

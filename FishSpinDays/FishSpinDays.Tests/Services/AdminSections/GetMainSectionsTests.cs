@@ -67,11 +67,11 @@ namespace FishSpinDays.Tests.Services.AdminSections
             var service = new AdminSectionsService(dbContext, this.mapper);
 
             // 2. Act
-            var courses =  service.GetMainSections();
+            var mainSection =  service.GetMainSections();
 
             // 3. Assert
-            Assert.IsNotNull(courses);
-            Assert.AreEqual(0, courses.Count());
+            Assert.IsNotNull(mainSection);
+            Assert.AreEqual(0, mainSection.Count());
         }
 
     }

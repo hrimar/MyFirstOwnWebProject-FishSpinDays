@@ -12,21 +12,7 @@
     {
         <p>No publications yet. </p>
     }
-
-    @*@foreach (var publication in Model.Publications)
-        {
-            <p>
-                <a asp-area="" asp-controller="Publications" asp-action="Details"
-                   asp-route-id="@publication.Id" class="col-lg-12 col-lg-offset-1">
-                    <i class="glyphicon glyphicon-arrow-right"></i> @publication.Title
-                </a>
-                <div class="text-center">
-                    by @publication.Author,
-                    date: @publication.CreationDate.ToString("dd.MM.yyyy"), @publication.Likes <small> likes</small>
-                </div>
-            </p>
-        }*@
-
+        
     @Html.DisplayFor(m => m.Publications)
 
 </div>

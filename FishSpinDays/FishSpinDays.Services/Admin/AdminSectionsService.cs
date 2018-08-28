@@ -48,8 +48,8 @@ namespace FishSpinDays.Services.Admin
 
         public IEnumerable<SectionShortViewModel> GetSections()
         {
-            var courses = this.DbContext.Sections.ToList();
-            var model = this.Mapper.Map<IEnumerable<SectionShortViewModel>>(courses);
+            var section = this.DbContext.Sections.ToList();
+            var model = this.Mapper.Map<IEnumerable<SectionShortViewModel>>(section);
             return model;
         }
 
@@ -60,6 +60,11 @@ namespace FishSpinDays.Services.Admin
                  .ThenInclude(s => s.Author)
                  .FirstOrDefault(s => s.Id == id);
 
+            if (section == null)
+            {
+                return null;
+            }
+
             SectionDetailsViewModel model = this.Mapper.Map<SectionDetailsViewModel>(section);
             return model;
         }
@@ -69,6 +74,11 @@ namespace FishSpinDays.Services.Admin
             var mainSection = this.DbContext.MainSections
                  .Include(s => s.Sections)               
                  .FirstOrDefault(s => s.Id == id);
+
+            if (mainSection == null)
+            {
+                return null;
+            }
 
             MainSectionDetailsViewModel model = this.Mapper.Map<MainSectionDetailsViewModel>(mainSection);
             return model;

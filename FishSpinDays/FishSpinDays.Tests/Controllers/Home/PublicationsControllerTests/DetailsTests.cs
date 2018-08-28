@@ -71,7 +71,7 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
 
         [TestMethod]
         [DataRow(1)]
-        public void Details_WithValidCourse_ShoudCallService(int value)
+        public void Details_WithValidPublication_ShoudCallService(int value)
         {
             //1. Arrange:           
             bool serviceCalled = false;

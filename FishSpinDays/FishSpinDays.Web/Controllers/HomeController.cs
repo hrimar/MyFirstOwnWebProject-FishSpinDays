@@ -35,7 +35,7 @@ namespace FishSpinDays.Web.Controllers
                 return NotFound();
             }
 
-            // return View(publications);
+           
             return View(new PartPublicationsViewModel()
             {
                 Id = id.Value,
@@ -166,6 +166,7 @@ namespace FishSpinDays.Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
 
         private int ArrangePagesCount()
         {

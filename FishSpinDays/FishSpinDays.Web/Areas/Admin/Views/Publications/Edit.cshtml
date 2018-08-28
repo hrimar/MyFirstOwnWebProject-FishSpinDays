@@ -10,32 +10,9 @@
     <form method="post">
 
         <input type="hidden" asp-for="@Model.Author" />
-
-        @*<div class="form-group row">
-            <label asp-for="Section" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <input asp-for="Section" class="form-control" />
-                <span class="text-danger" asp-validation-for="Section"></span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label asp-for="Title" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <input asp-for="Title" class="form-control" />
-                <span class="text-danger" asp-validation-for="Title"></span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label asp-for="Description" class="col-sm-2  col-form-label"></label>
-            <div class="col-sm-10">
-                <textarea asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-        </div>*@
-
+              
         @Html.DisplayForModel()
-        @*@Html.EditorForModel()*@
-
+     
         <div class="form-group row  text-center">
             <input asp-page-handler="CreatePublication" type="submit" value="Edit publication" class="btn btn-primary" />
             <a href="/" class="btn btn-outline-dark ">Cancel</a>

@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
 using FishSpinDays.Common.Constants;
 using FishSpinDays.Data;
 using FishSpinDays.Models;
@@ -12,7 +8,6 @@ using FishSpinDays.Web.Helpers.Messages;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using FishSpinDays.Common.Identity.BindingModels;
 
 namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
 {
@@ -26,13 +21,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
         {            
             this.userManager = userManager;
              this.CreationDate = DateTime.Now;    
-
-           // this.CommentForm = new CommentBindingModel();
         }
-
-        //// [BindProperty]
-        // public CommentBindingModel CommentForm { get; set; }
-
 
         [BindProperty]
         [MinLength(WebConstants.NameMinLength)]
@@ -47,10 +36,8 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Comments
         public int UnLikes { get; set; }
 
         public void OnGet()
-        {
-        }
-
-        // [ValidateAntiForgeryToken]
+        {  }
+              
         public IActionResult OnPostCreateComment(int id)
         {
             if (!ModelState.IsValid)
