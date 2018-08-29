@@ -1,6 +1,7 @@
 ﻿namespace FishSpinDays.Web.Areas.Admin.Controllers
 {
     using FishSpinDays.Common.Admin.BindingModels;
+    using FishSpinDays.Common.Constants;
     using FishSpinDays.Services.Admin.Interfaces;
     using FishSpinDays.Web.Helpers;
     using FishSpinDays.Web.Helpers.Messages;
@@ -45,7 +46,7 @@
             this.TempData.Put("__Message", new MessageModel()
             {
                 Type = MessageType.Success,
-                Message = "The publication was edited succesfully."
+                Message = WebConstants.PublicationEditSuccess
             });
 
             return Redirect($"/Publications/Details/{model.Id}");           

@@ -1,20 +1,20 @@
-﻿using AutoMapper;
-using FishSpinDays.Common.Constants;
-using FishSpinDays.Common.Identity.ViewModels;
-using FishSpinDays.Data;
-using FishSpinDays.Models;
-using FishSpinDays.Services.Base.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using FishSpinDays.Common.Extensions;
-using FishSpinDays.Common.Base.ViewModels;
-
-namespace FishSpinDays.Services.Base
+﻿namespace FishSpinDays.Services.Base
 {
+    using AutoMapper;
+    using FishSpinDays.Common.Constants;
+    using FishSpinDays.Common.Identity.ViewModels;
+    using FishSpinDays.Data;
+    using FishSpinDays.Models;
+    using FishSpinDays.Services.Base.Interfaces;
+    using Microsoft.EntityFrameworkCore;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using FishSpinDays.Common.Extensions;
+    using FishSpinDays.Common.Base.ViewModels;
+
     public class BasePublicationsService : BaseService, IBasePublicationsService
     {
         public BasePublicationsService(FishSpinDaysDbContext dbContex, IMapper mapper)

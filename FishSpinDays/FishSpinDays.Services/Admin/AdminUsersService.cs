@@ -1,16 +1,16 @@
-﻿using AutoMapper;
-using FishSpinDays.Common.Admin.ViewModels;
-using FishSpinDays.Data;
-using FishSpinDays.Models;
-using FishSpinDays.Services.Admin.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FishSpinDays.Services.Admin
+﻿namespace FishSpinDays.Services.Admin
 {
+    using AutoMapper;
+    using FishSpinDays.Common.Admin.ViewModels;
+    using FishSpinDays.Data;
+    using FishSpinDays.Models;
+    using FishSpinDays.Services.Admin.Interfaces;
+    using Microsoft.EntityFrameworkCore;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+
     public class AdminUsersService : BaseService, IAdminUsersService
     {
         public AdminUsersService(FishSpinDaysDbContext dbContex, IMapper mapper) 

@@ -10,8 +10,7 @@
             this.Publications = new List<Publication>();
             this.Comments = new List<Comment>();
         }
-
-        
+                
         public ICollection<Publication> Publications { get; set; }
 
         public ICollection<Comment> Comments { get; set; }

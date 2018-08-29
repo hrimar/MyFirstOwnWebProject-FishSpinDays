@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using FishSpinDays.Web.Models;
-using FishSpinDays.Data;
-using FishSpinDays.Services.Base.Interfaces;
-using FishSpinDays.Common.Base.ViewModels;
-using FishSpinDays.Common.Constants;
-
-namespace FishSpinDays.Web.Controllers
+﻿namespace FishSpinDays.Web.Controllers
 {
+    using System.Diagnostics;
+    using System.Linq;
+    using Microsoft.AspNetCore.Mvc;
+    using FishSpinDays.Web.Models;
+    using FishSpinDays.Services.Base.Interfaces;
+    using FishSpinDays.Common.Base.ViewModels;
+    using FishSpinDays.Common.Constants;
+
     public class HomeController : BaseController
     {      
         public HomeController(IBasePublicationsService baseService)
@@ -43,13 +39,9 @@ namespace FishSpinDays.Web.Controllers
                 Publications = publications
             });
         }
-
-
+        
         public IActionResult Sea(int? id)
         {
-            //var publications = this.BaseService.GetAllSeaPublications();
-            //return View(publications);
-
             if (!id.HasValue)
             {
                 id = WebConstants.DefaultPage;
@@ -63,7 +55,6 @@ namespace FishSpinDays.Web.Controllers
                 return NotFound();
             }
 
-            // return View(publications);
             return View(new PartPublicationsViewModel()
             {
                 Id = id.Value,
@@ -73,10 +64,7 @@ namespace FishSpinDays.Web.Controllers
         }
 
         public IActionResult Freshwater(int? id)
-        {
-            //var publications = this.BaseService.GetAllFreshwaterPublications();
-            //return View(publications);
-
+        {            
             if (!id.HasValue)
             {
                 id = WebConstants.DefaultPage;
@@ -85,8 +73,7 @@ namespace FishSpinDays.Web.Controllers
             int requiredPagesForThisPublications = ArrangePagesCount(WebConstants.FreshwaterSection);
 
             var publications = this.BaseService.GetAllFreshwaterPublications(id.Value, 3).ToList();
-
-            // return View(publications);
+                      
             return View(new PartPublicationsViewModel()
             {
                 Id = id.Value,

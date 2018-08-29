@@ -1,6 +1,7 @@
 ﻿namespace FishSpinDays.Web.Areas.Admin.Controllers
 {  
     using FishSpinDays.Common.Admin.BindingModels;
+    using FishSpinDays.Common.Constants;
     using FishSpinDays.Services.Admin.Interfaces;   
     using FishSpinDays.Web.Helpers;
     using FishSpinDays.Web.Helpers.Messages;
@@ -43,7 +44,7 @@
             this.TempData.Put("__Message", new MessageModel()
             {
                 Type = MessageType.Success,
-                Message = "The main section was created succesfully."
+                Message = WebConstants.MainSectionCreation
             });
       
             return RedirectToAction("/");

@@ -1,10 +1,9 @@
-﻿using FishSpinDays.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using System;
-
-namespace FishSpinDays.Data
+﻿namespace FishSpinDays.Data
 {
+    using FishSpinDays.Models;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore;
+
     public class FishSpinDaysDbContext : IdentityDbContext<User>
     {
         public FishSpinDaysDbContext(DbContextOptions<FishSpinDaysDbContext> options)

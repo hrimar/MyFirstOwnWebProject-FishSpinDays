@@ -1,8 +1,8 @@
-﻿using FishSpinDays.Common.Constants;
-using System.Text.RegularExpressions;
-
-namespace FishSpinDays.Common.Extensions
+﻿namespace FishSpinDays.Common.Extensions
 {
+    using FishSpinDays.Common.Constants;
+    using System.Text.RegularExpressions;
+
     public static class StringExtensions
     {
         public static string Truncate( this string value, int maxChars)

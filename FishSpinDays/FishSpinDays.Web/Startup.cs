@@ -29,12 +29,10 @@
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
@@ -52,7 +50,7 @@
             LoginFromOtherApps(services);
 
             services.AddIdentity<User, IdentityRole>()
-                .AddDefaultUI()            
+                .AddDefaultUI()
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<FishSpinDaysDbContext>();
 
@@ -73,7 +71,7 @@
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
             });
 
-            services.AddAutoMapper(); 
+            services.AddAutoMapper();
 
             RegisterServiceLayer(services);
 
@@ -81,13 +79,11 @@
                 .AddMvc(options =>
                 {
                     options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
-                })               
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);          
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
-       
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -104,7 +100,7 @@
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-         
+
             app.UseAuthentication();
 
             if (env.IsDevelopment())
@@ -123,10 +119,10 @@
             });
         }
 
-        
+
         private void LoginFromOtherApps(IServiceCollection services)
         {
-            services.AddAuthentication()          
+            services.AddAuthentication()
            .AddFacebook(options =>
            {
                options.AppId = this.Configuration.GetSection("ExternalAuthentication:Facebook:AppId").Value;
@@ -150,7 +146,7 @@
             services.AddScoped<IBasePublicationsService, BasePublicationsService>();
             services.AddScoped<IAdminPublicationsService, AdminPublicationsService>();
             services.AddScoped<IIdentityService, IdentityService>();
-            services.AddScoped<IAdminUsersService, AdminUsersService>(); 
+            services.AddScoped<IAdminUsersService, AdminUsersService>();
         }
     }
 }

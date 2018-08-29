@@ -1,9 +1,7 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Globalization;
-
-namespace FishSpinDays.Common.Identity.ViewModels
+﻿namespace FishSpinDays.Common.Identity.ViewModels
 {
+    using System;
+
     public class CommentViewModel
     {
         

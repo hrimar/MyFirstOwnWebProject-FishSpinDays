@@ -33,6 +33,9 @@
         public const string UnsuccesfullBan = "Unsuccessful BAN!";
         public const string SuccessfulBan = "You have succesfully put a BAN to this user.";
         public const string DeletedComment = "The comment was deleted succesfully.";
+        public const string MainSectionCreation = "The main section was created succesfully.";
+        public const string PublicationEditSuccess = "The publication was edited succesfully.";
+        public const string SectionCreation = "The section was created succesfully.";
 
     }
 }
