@@ -1,5 +1,7 @@
 # MyFirstOwnWebProject-FishSpinDays
 FishSpinDays is my first own web project with roles - a blog for fishing stories and events.
+The project is created with ASP.NET MVC Core and Entity Framework Core. AutoMapper is used for automatic mapping of objects and xUnit and Moq are used for unit testing. 
+The project is published on Azure (https://fishspindays.azurewebsites.net).
 
 The application is separated into areas with multiple layouts and accessible by users with different access level:
 - All users could read all the available information, but they haven't permission to write anything.
