@@ -1,4 +1,6 @@
-﻿
+﻿<link href="~/css/forecast.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
 <br />
 <form asp-area="Identity" asp-page="/Search" method="get" class="navbar-form">
     <div class="form-group" style="display:inline;">
@@ -12,9 +14,28 @@
         </div>
     </div>
 </form>
-
 <br />
 <nav class="navbar navbar-default col-xs-2" role="navigation">
+
+    <br />
+    <p class="text-center"><b>Current weather</b></p>
+    <div id="content" class="form-group" style="display:inline;">
+        <div id="request">
+            <input id="location" class='bl' type="text" placeholder="town name">
+            <br />
+            <input id="submit" class="bl" type="button" value="Check">
+        </div>
+        <div id="forecast" style="display:none">
+            <div id="current">
+                <div class="label">Current conditions</div>
+            </div>
+            <div id="upcoming">
+                <div class="label">Three-day forecast</div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
     <br />
     <p class="text-center"><a asp-area="" asp-controller="Publications" asp-action="MostRated">MOST LIKED</a></p>
     <p><b>Trips</b></p>
@@ -28,7 +49,7 @@
     <p><a asp-area="" asp-controller="Home" asp-action="Eco">Eco actions</a></p>
     <p><a asp-area="" asp-controller="Home" asp-action="School">Fishing shcool</a></p>
     <p><a asp-area="" asp-controller="Home" asp-action="Anti">Anti-poatching</a></p>
-    <p><a asp-area="" asp-controller="Home" asp-action="Breeding">Fish breeding</a></p>    
+    <p><a asp-area="" asp-controller="Home" asp-action="Breeding">Fish breeding</a></p>
     <br />
     <p class="text-center">HISTORY</p>
     <p><a asp-area="" asp-controller="Home" asp-action="Year"><b>2018</b></a></p>
@@ -45,8 +66,8 @@
     <p><a asp-area="" asp-controller="Home" asp-action="Month" asp-route-id=11>November</a></p>
     <p><a asp-area="" asp-controller="Home" asp-action="Month" asp-route-id=2>December</a></p>
 </nav>
-
-
-
-
+<script src="~/js/forecaster.js"></script>
+<script>
+    attachEvents();
+</script>
 
