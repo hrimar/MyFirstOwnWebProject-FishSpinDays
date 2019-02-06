@@ -24,6 +24,11 @@
             return this.DbContext.Sections.Find(id);
         }
 
+        public Section GetSectionByName(string sectionName)
+        {
+            return this.DbContext.Sections.FirstOrDefault(s => s.Name == sectionName);
+        }
+
         public Publication CreatePublication(User author, Section section, string title, string description)
         {
             Publication publication = new Publication()

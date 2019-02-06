@@ -13,6 +13,7 @@
         public const double DefaultResultPerTripsPage = 3.0;
         public const int DefaultResultPerPage = 10;
         public const int DefaultPage = 1;
+        public const int DefaultResultCount = 3;
 
         public const string FreshwaterSection = "Freshwater fishing";
         public const string SeaSection = "Sea fishing";
@@ -36,6 +37,6 @@
         public const string MainSectionCreation = "The main section was created succesfully.";
         public const string PublicationEditSuccess = "The publication was edited succesfully.";
         public const string SectionCreation = "The section was created succesfully.";
-
+        public const string BanMessage = "You have a BAN";
     }
 }

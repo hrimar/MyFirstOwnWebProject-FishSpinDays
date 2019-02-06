@@ -69,19 +69,22 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
                 return NotFound();
             }
 
-            var publication = this.IdentityService.CreatePublication(author, section, this.Title, this.Description);
-
-            if (publication == null)
+            Publication publication = null;
+            if (author.LockoutEnd < DateTime.Now || author.LockoutEnd == null)
             {
-                this.TempData.Put("__Message", new MessageModel()
+                 publication = this.IdentityService.CreatePublication(author, section, this.Title, this.Description);
+
+                if (publication == null)
                 {
-                    Type = MessageType.Danger,
-                    Message = WebConstants.UnsuccessfullOperation
-                });
+                    this.TempData.Put("__Message", new MessageModel()
+                    {
+                        Type = MessageType.Danger,
+                        Message = WebConstants.UnsuccessfullOperation
+                    });
 
-                return Page();
+                    return Page();
+                }
             }
-
             this.TempData.Put("__Message", new MessageModel()
             {
                 Type = MessageType.Success,

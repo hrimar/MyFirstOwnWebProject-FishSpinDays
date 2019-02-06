@@ -29,7 +29,7 @@
         public string AuthorId { get; set; }
         public User Author { get; set; }
 
-        public string PublicationId { get; set; }
+        public string PublicationId { get; set; } // int !
         public Publication Publication { get; set; }
     }
 }

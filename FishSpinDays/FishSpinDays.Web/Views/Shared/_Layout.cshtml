@@ -18,7 +18,13 @@
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/site.css" />
 
+        <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <link href="~/lib/bootstrap/dist/css/font-awesome.min.css" rel="stylesheet" />
+        <link href="~/lib/bootstrap/dist/css/summernote.css" rel="stylesheet" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     </environment>
 </head>
 <body>
@@ -38,7 +44,7 @@
 
                 <div class="dropdown nav navbar-nav">
                     <div class="dropdown nav navbar-nav ">
-                        <button class=" dropdown-toggle " type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style=" margin-top: 10px;">
+                        <button class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="margin-top: 10px;">
                             Trips
                             <span class="caret"></span>
                         </button>
@@ -49,11 +55,11 @@
                     </div>
 
                     <div class="dropdown nav navbar-nav">
-                        <button class=" dropdown-toggle " type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style=" margin-top: 10px;">
+                        <button class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="margin-top: 10px;">
                             Tackle&Lures
                             <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu " aria-labelledby="dropdownMenu1">
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                             <li><a asp-area="" asp-controller="Home" asp-action="Rods">Rods&Reels</a></li>
                             <li><a asp-area="" asp-controller="Home" asp-action="Lures">Lures</a></li>
                             <li><a asp-area="" asp-controller="Home" asp-action="Handmade">Handmade</a></li>
@@ -61,11 +67,11 @@
                     </div>
 
                     <div class="dropdown nav navbar-nav">
-                        <button class=" dropdown-toggle " type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style=" margin-top: 10px;">
+                        <button class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="margin-top: 10px;">
                             Actions
                             <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu " aria-labelledby="dropdownMenu1">
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                             <li><a asp-area="" asp-controller="Home" asp-action="Eco">Eco actions</a></li>
                             <li><a asp-area="" asp-controller="Home" asp-action="School">Fishing school</a></li>
                             <li><a asp-area="" asp-controller="Home" asp-action="Anti">Anti-poaching</a></li>
@@ -76,11 +82,11 @@
                     @if (this.User.IsInRole("Administrator"))
                     {
                         <div class="dropdown nav navbar-nav">
-                            <button class=" dropdown-toggle " type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style=" margin-top: 10px;">
+                            <button class="dropdown-toggle " type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="margin-top: 10px;">
                                 Sections
                                 <span class="caret"></span>
                             </button>
-                            <ul class="dropdown-menu " aria-labelledby="dropdownMenu1">
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                                 <li><a asp-area="Admin" asp-controller="MainSections" asp-action="Index">Main sections</a></li>
                                 <li><a asp-area="Admin" asp-controller="Sections" asp-action="Index">Sections</a></li>
                             </ul>
@@ -88,7 +94,7 @@
 
                         <div class="dropdown nav navbar-nav">
                             <button onclick="location.href='/Admin/Users/Index'"
-                                    asp-area="Admin" asp-controller="Users" asp-action="Index" type="submit" style=" margin-top: 10px;">
+                                    asp-area="Admin" asp-controller="Users" asp-action="Index" type="submit" style="margin-top: 10px;">
                                 All users
                             </button>
                         </div>
@@ -97,7 +103,7 @@
                     {
                         <div class="dropdown nav navbar-nav">
                             <button onclick="location.href='/Identity/Publications/Add'"
-                                    asp-area="Identity" asp-controller="Publications" asp-action="Add" type="submit" style=" margin-top: 10px;">
+                                    asp-area="Identity" asp-controller="Publications" asp-action="Add" type="submit" style="margin-top: 10px;">
                                 New publication
                             </button>
                         </div>
@@ -144,7 +150,7 @@
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
     <environment exclude="Development">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
+        @*<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
                 asp-fallback-test="window.jQuery"
                 crossorigin="anonymous"
@@ -155,8 +161,19 @@
                 asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
                 crossorigin="anonymous"
                 integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+        </script>*@
+
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/bootstrap/dist/js/summernote.min.js"></script>
+        <script>
+            $('document').ready(function () {
+                $('#description').summernote();
+            });
         </script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
+
+        <script src="~/js/site.js" asp-append-version="true"></script>
+
     </environment>
 
     @RenderSection("Scripts", required: false)

@@ -12,6 +12,8 @@
 
         Section GetSection(int id);
 
+        Section GetSectionByName(string sectionName);
+
         Publication CreatePublication(User author, Section section, string title, string description);
 
         Publication GetPublicationById(int id);

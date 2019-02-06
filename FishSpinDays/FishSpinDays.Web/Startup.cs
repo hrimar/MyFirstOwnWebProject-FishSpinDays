@@ -19,6 +19,8 @@
     using System;
     using FishSpinDays.Services.Identity.Interfaces;
     using FishSpinDays.Services.Identity;
+    using Microsoft.IdentityModel.Tokens;
+    using System.Text;
 
     public class Startup
     {
@@ -31,6 +33,8 @@
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => true;
@@ -48,6 +52,21 @@
                     Configuration.GetConnectionString("DefaultConnection")));
 
             LoginFromOtherApps(services);
+
+            // only loged in to be able to create posts with API but not using cookies:
+            services.AddAuthentication().AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidIssuer = "localhost",
+                    ValidAudience = "localhost",
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes("supersecretsupersecretsupersecretsupersecret"))
+                };
+            });
 
             services.AddIdentity<User, IdentityRole>()
                 .AddDefaultUI()
@@ -86,6 +105,12 @@
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            // to make Access-Control-Allow-Origin: '*':
+            app.UseCors(optins => optins 
+               .AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

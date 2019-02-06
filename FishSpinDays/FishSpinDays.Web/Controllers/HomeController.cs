@@ -24,7 +24,7 @@
 
             int requiredPagesForThisPublications = ArrangePagesCount();
 
-            var publications = this.BaseService.GetAllPublications(id.Value, 3);
+            var publications = this.BaseService.GetAllPublications(id.Value, WebConstants.DefaultResultCount);
 
             if (publications == null)
             {
@@ -49,7 +49,7 @@
 
             int requiredPagesForThisPublications = ArrangePagesCount(WebConstants.SeaSection);
 
-            var publications = this.BaseService.GetAllSeaPublications(id.Value, 3);
+            var publications = this.BaseService.GetAllSeaPublications(id.Value, WebConstants.DefaultResultCount);
             if (publications == null)
             {
                 return NotFound();
@@ -72,7 +72,7 @@
 
             int requiredPagesForThisPublications = ArrangePagesCount(WebConstants.FreshwaterSection);
 
-            var publications = this.BaseService.GetAllFreshwaterPublications(id.Value, 3).ToList();
+            var publications = this.BaseService.GetAllFreshwaterPublications(id.Value, WebConstants.DefaultResultCount).ToList();
                       
             return View(new PartPublicationsViewModel()
             {
