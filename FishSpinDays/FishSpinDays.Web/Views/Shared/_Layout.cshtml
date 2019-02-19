@@ -78,7 +78,7 @@
                             <li><a asp-area="" asp-controller="Home" asp-action="Breeding">Fish breeding</a></li>
                         </ul>
                     </div>
-                                      
+
                     @if (this.User.IsInRole("Administrator"))
                     {
                         <div class="dropdown nav navbar-nav">
@@ -105,6 +105,15 @@
                             <button onclick="location.href='/Identity/Publications/Add'"
                                     asp-area="Identity" asp-controller="Publications" asp-action="Add" type="submit" style="margin-top: 10px;">
                                 New publication
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="dropdown nav navbar-nav">
+                            <button onclick="location.href='/Home/Info'"
+                                    asp-area="" asp-controller="Home" asp-action="Info" type="submit" style=" margin-top: 10px;">
+                                <i class="glyphicon glyphicon-user"></i> Info
                             </button>
                         </div>
                     }
