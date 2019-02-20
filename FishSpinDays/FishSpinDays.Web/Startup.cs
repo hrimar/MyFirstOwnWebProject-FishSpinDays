@@ -21,6 +21,7 @@
     using FishSpinDays.Services.Identity;
     using Microsoft.IdentityModel.Tokens;
     using System.Text;
+    using FishSpinDays.Web.Hubs;
 
     public class Startup
     {
@@ -94,6 +95,8 @@
 
             RegisterServiceLayer(services);
 
+            services.AddSignalR();
+
             services
                 .AddMvc(options =>
                 {
@@ -132,6 +135,12 @@
             {
                 app.SeedDatabase();
             }
+
+            app.UseSignalR(
+              routes =>
+              {
+                  routes.MapHub<ChatHub>("/chat");
+              });
 
             app.UseMvc(routes =>
             {
