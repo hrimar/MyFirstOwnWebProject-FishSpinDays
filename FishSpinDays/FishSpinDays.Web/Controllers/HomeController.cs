@@ -133,6 +133,8 @@
 
         public IActionResult Month(int id)
         {
+			this.ViewData["Month"] = id;
+			
             var publications = this.BaseService.GetAllPublicationsInThisMonth(id);
 
             return View(publications);
