@@ -3,9 +3,9 @@
     using AutoMapper;
     using FishSpinDays.Data;
 
-    public class BaseService
+    public abstract class BaseService
     {
-        public BaseService(FishSpinDaysDbContext dbContex, IMapper mapper)
+        protected BaseService(FishSpinDaysDbContext dbContex, IMapper mapper)
         {
             this.DbContext = dbContex;
             this.Mapper = mapper;

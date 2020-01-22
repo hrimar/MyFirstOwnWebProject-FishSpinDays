@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FishSpinDays.Web.Controllers
 {
-    public class BaseController : Controller
+    public abstract class BaseController : Controller
     {       
-        public BaseController(IBasePublicationsService baseService)
+        protected BaseController(IBasePublicationsService baseService)
         {
             this.BaseService = baseService;
         }

@@ -9,6 +9,7 @@
         public FishSpinDaysDbContext(DbContextOptions<FishSpinDaysDbContext> options)
             : base(options)
         {
+            Database.Migrate(); // or do the initial Migration in StartUp.cs
         }
         public DbSet<MainSection> MainSections { get; set; }
 
