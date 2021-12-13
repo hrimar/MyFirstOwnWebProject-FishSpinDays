@@ -93,6 +93,17 @@
 
             services.AddAutoMapper();
 
+            // Register the Swagger services
+            services.AddSwaggerDocument(config =>
+            {
+                config.PostProcess = document =>
+                {
+                    document.Info.Version = "v1";
+                    document.Info.Title = "Fish Spin Days API";
+                    document.Info.Description = "ASP.NET Core web API";
+                };
+            });
+
             RegisterServiceLayer(services);
 
             services.AddSignalR();
@@ -135,6 +146,10 @@
             {
                 app.SeedDatabase();
             }
+
+            // Register the Swagger generator and the Swagger UI middlewares
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
 
             app.UseSignalR(
               routes =>

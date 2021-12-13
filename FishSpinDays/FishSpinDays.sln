@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2035
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FishSpinDays.Web", "FishSpinDays.Web\FishSpinDays.Web.csproj", "{292A8CDD-E72B-45F7-8A4A-54D676C292A9}"
 EndProject
@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FishSpinDays.Common", "Fish
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FishSpinDays.Services", "FishSpinDays.Services\FishSpinDays.Services.csproj", "{22D9A883-B6B0-47FB-ABB4-C937E17F8F63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishSpinDays.Tests", "FishSpinDays.Tests\FishSpinDays.Tests.csproj", "{3F376F3A-5AFB-4138-A128-6D26E709BB9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FishSpinDays.Tests", "FishSpinDays.Tests\FishSpinDays.Tests.csproj", "{3F376F3A-5AFB-4138-A128-6D26E709BB9E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
