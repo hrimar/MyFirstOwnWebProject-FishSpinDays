@@ -97,20 +97,29 @@
         {
             var author = context.Users.FirstOrDefault(u => u.UserName == "admin");
 
-            var seaPublication = new Publication()
-            {
-                SectionId = 1,
-                Author = author,
-                Title = "Sardinia: Holy Land",
-                 Description = @"How many times have we heard call our island HOLY LAND … how many times have we smug smile at the name aware of some nice catches … but how many times have we cursed his marine sterility … Often the holy land has asked “our blood”, night sleep of a few hours, cold water, burning sun, wind and launches with an average of missed catch really embarrassing. That’s why the holy land has defined as such, needs sacrifice …The days of easy catches are gone, indeed ever known. This report will be a tribute of images and colors to my land surrounded by some “fish” few words but many pictures. Unfortunately I go fishing only with my phone (in addition to rod and lures), otherwise the spectacle of nature, with a camera, would have come out in all its glory .." +
-            "<img src=\"http://www.seaspin.com/eng/wp-content/uploads/2015/11/TS32-.jpg\" style=\"width: 40%; float: left;\">" +
-            "The beauty of sunrises and sunsets … that is the holy land!!!!Nature gives us details of which I didn’t even know the existence.Moving on cliffs or through vegetation often happens to come across creatures that seem to come from the Amazon rainforest.Let’s say that the variety of fish is not lacking," +
-                "from small amberjack to greenhouse, from sea bass to dorado, from bonitos to the barracudas …" +
-               "This year every corner of the coast for a few days was registered in green gold, even dolphinfish lost its charm for the ease with which you could catch it.Last year or two years ago however very few managed so… I still remember well the bad feeling I had seeing them follow any kind of lure without attacking: I could have smashed the rod on the rocks.Then the choice of fishing with smaller baits sometimes saved me from a washout, making me go home with a pretty stupid smile on my face.",
+            var seaPublications = new List<Publication> {
+                new ()
+                {
+                    SectionId = 1,
+                    Author = author,
+                    Title = "Sardinia: Holy Land",
+                     Description = @"How many times have we heard call our island HOLY LAND … how many times have we smug smile at the name aware of some nice catches … but how many times have we cursed his marine sterility … Often the holy land has asked “our blood”, night sleep of a few hours, cold water, burning sun, wind and launches with an average of missed catch really embarrassing. That’s why the holy land has defined as such, needs sacrifice …The days of easy catches are gone, indeed ever known. This report will be a tribute of images and colors to my land surrounded by some “fish” few words but many pictures. Unfortunately I go fishing only with my phone (in addition to rod and lures), otherwise the spectacle of nature, with a camera, would have come out in all its glory .." +
+                "<img src=\"https://gt-fishing.com/wp-content/uploads/2019/11/Sardinen.jpg\" style=\"width: 40%; float: left;\">" +
+                "The beauty of sunrises and sunsets … that is the holy land!!!!Nature gives us details of which I didn’t even know the existence.Moving on cliffs or through vegetation often happens to come across creatures that seem to come from the Amazon rainforest.Let’s say that the variety of fish is not lacking," +
+                    "from small amberjack to greenhouse, from sea bass to dorado, from bonitos to the barracudas …" +
+                   "This year every corner of the coast for a few days was registered in green gold, even dolphinfish lost its charm for the ease with which you could catch it.Last year or two years ago however very few managed so… I still remember well the bad feeling I had seeing them follow any kind of lure without attacking: I could have smashed the rod on the rocks.Then the choice of fishing with smaller baits sometimes saved me from a washout, making me go home with a pretty stupid smile on my face.",
+                },
+                new ()
+                {
+                    SectionId = 4,
+                    Author = author,
+                    Title = "Great VMC Single Hooks for spooks",
+                    Description= "I would like to reccomend you the following single hooks for small spoons <img src=\"https://filstar.com/media/cache/product_preview_default_original/images/originals/products/956580_956581-20230418162617-575.jpg\" style=\"width: 40%; float: left;\">"
+                }
             };
 
-            context.Publications.Add(seaPublication);
-            context.SaveChanges();           
+            context.Publications.AddRange(seaPublications);
+            context.SaveChanges();
         }
     }
 }

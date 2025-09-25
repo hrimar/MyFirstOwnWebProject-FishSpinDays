@@ -8,6 +8,7 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using FishSpinDays.Data;
     using FishSpinDays.Models;
     using FishSpinDays.Web.Common;
@@ -42,15 +43,10 @@
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
             services.AddDbContext<FishSpinDaysDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("FishSpinDays"),
-                          dbOptions => dbOptions.MigrationsAssembly("FishSpinDays.Data")));
-
-            services.AddDbContext<FishSpinDaysDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                        dbOptions => dbOptions.MigrationsAssembly("FishSpinDays.Data")));
 
             LoginFromOtherApps(services);
 
@@ -108,19 +104,18 @@
 
             services.AddSignalR();
 
-            services
-                .AddMvc(options =>
-                {
-                    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+            });
+            services.AddRazorPages();
         }
 
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             // to make Access-Control-Allow-Origin: '*':
-            app.UseCors(optins => optins 
+            app.UseCors(optins => optins
                .AllowAnyOrigin()
                .AllowAnyMethod()
                .AllowAnyHeader());
@@ -128,7 +123,7 @@
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                //app.UseDatabaseErrorPage();
             }
             else
             {
@@ -149,25 +144,29 @@
 
             // Register the Swagger generator and the Swagger UI middlewares
             app.UseOpenApi();
-            app.UseSwaggerUi3();
+            app.UseSwaggerUi();
 
-            app.UseSignalR(
-              routes =>
-              {
-                  routes.MapHub<ChatHub>("/chat");
-              });
+            app.UseRouting();
 
-            app.UseMvc(routes =>
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                // Area route (matches /{area}/{controller}/{action}/{id?})
+                endpoints.MapControllerRoute(
                     name: "area",
-                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-                routes.MapRoute(
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                // Default route (matches /{controller}/{action}/{id?})
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapRazorPages();
+
+                endpoints.MapHub<ChatHub>("/chat");
             });
         }
-
 
         private void LoginFromOtherApps(IServiceCollection services)
         {

@@ -51,9 +51,9 @@
         {
             var publication = this.DbContext.Publications
                 .Include(s => s.Comments)
-                 .Include(s => s.Author)
-                 .Include(s => s.Section)
-                 .FirstOrDefault(s => s.Id == id);
+                .Include(s => s.Author)
+                .Include(s => s.Section)
+                .FirstOrDefault(s => s.Id == id);
 
             var model = this.Mapper.Map<PublicationViewModel>(publication);
 
@@ -196,6 +196,6 @@
                 .Where(p => p.Section.Name == type)
                 .Count();
         }
-              
+
     }
 }
