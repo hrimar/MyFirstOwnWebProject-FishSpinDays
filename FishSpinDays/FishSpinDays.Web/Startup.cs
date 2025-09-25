@@ -43,15 +43,10 @@
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
             services.AddDbContext<FishSpinDaysDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("FishSpinDays"),
-                          dbOptions => dbOptions.MigrationsAssembly("FishSpinDays.Data")));
-
-            //services.AddDbContext<FishSpinDaysDbContext>(options =>
-            //    options.UseSqlServer(
-            //        Configuration.GetConnectionString("DefaultConnection")));
+                        dbOptions => dbOptions.MigrationsAssembly("FishSpinDays.Data")));
 
             LoginFromOtherApps(services);
 
