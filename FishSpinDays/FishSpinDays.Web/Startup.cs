@@ -49,9 +49,9 @@
                     Configuration.GetConnectionString("FishSpinDays"),
                           dbOptions => dbOptions.MigrationsAssembly("FishSpinDays.Data")));
 
-            services.AddDbContext<FishSpinDaysDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<FishSpinDaysDbContext>(options =>
+            //    options.UseSqlServer(
+            //        Configuration.GetConnectionString("DefaultConnection")));
 
             LoginFromOtherApps(services);
 
@@ -120,7 +120,7 @@
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             // to make Access-Control-Allow-Origin: '*':
-            app.UseCors(optins => optins 
+            app.UseCors(optins => optins
                .AllowAnyOrigin()
                .AllowAnyMethod()
                .AllowAnyHeader());
@@ -157,18 +157,21 @@
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapAreaControllerRoute(
+                // Area route (matches /{area}/{controller}/{action}/{id?})
+                endpoints.MapControllerRoute(
                     name: "area",
-                    areaName: "Admin",
                     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                // Default route (matches /{controller}/{action}/{id?})
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
                 endpoints.MapRazorPages();
+
                 endpoints.MapHub<ChatHub>("/chat");
             });
         }
-
 
         private void LoginFromOtherApps(IServiceCollection services)
         {

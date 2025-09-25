@@ -9,7 +9,11 @@
         public FishSpinDaysDbContext(DbContextOptions<FishSpinDaysDbContext> options)
             : base(options)
         {
-            Database.Migrate(); // or do the initial Migration in StartUp.cs
+            // Only call Migrate if using a relational provider
+            if (this.Database.IsRelational())
+            {
+                this.Database.Migrate(); // or do the initial Migration in StartUp.cs
+            }
         }
         public DbSet<MainSection> MainSections { get; set; }
 
