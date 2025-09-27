@@ -32,7 +32,7 @@ jobs:
 
       # 5. Run Unit Tests
       - name: Run Unit Tests
-        run: dotnet test FishSpinDays.Tests/FishSpinDays.Tests.csproj --no-build --verbosity normal
+        run: dotnet test FishSpinDays.Tests/FishSpinDays.Tests.csproj --configuration Release --verbosity normal
         working-directory: ./FishSpinDays
 
       # 6. Publish Web Project
