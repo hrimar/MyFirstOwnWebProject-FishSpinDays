@@ -124,11 +124,20 @@
             {
                 app.UseDeveloperExceptionPage();
                 //app.UseDatabaseErrorPage();
+                app.SeedDatabase();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
+
+                var runMigrations = Configuration.GetValue<bool>("RunMigrationsOnStartup");
+                if (runMigrations)
+                {
+                    using var scope = app.ApplicationServices.CreateScope();
+                    var db = scope.ServiceProvider.GetRequiredService<FishSpinDaysDbContext>();
+                    db.Database.Migrate();
+                }
             }
 
             app.UseHttpsRedirection();
@@ -136,11 +145,6 @@
             app.UseCookiePolicy();
 
             app.UseAuthentication();
-
-            if (env.IsDevelopment())
-            {
-                app.SeedDatabase();
-            }
 
             // Register the Swagger generator and the Swagger UI middlewares
             app.UseOpenApi();
