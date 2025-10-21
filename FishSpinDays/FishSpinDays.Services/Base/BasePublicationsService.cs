@@ -70,7 +70,7 @@
         public PublicationViewModel GetPublication(int id)
         {
             var publication = this.DbContext.Publications
-                .Include(s => s.Comments)
+                .Include(s => s.Comments).ThenInclude(c => c.Author)
                 .Include(s => s.Author)
                 .Include(s => s.Section)
                 .FirstOrDefault(s => s.Id == id);
@@ -83,7 +83,7 @@
         public async Task<PublicationViewModel> GetPublicationAsync(int id)
         {
             var publication = await this.DbContext.Publications
-                .Include(s => s.Comments)
+                .Include(s => s.Comments).ThenInclude(c => c.Author)
                 .Include(s => s.Author)
                 .Include(s => s.Section)
                 .FirstOrDefaultAsync(s => s.Id == id);

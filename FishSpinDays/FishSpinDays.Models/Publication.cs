@@ -25,7 +25,7 @@
         public string Description { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; set; } // TODO: use DateTimeOffset insted
 
         [Range(0, int.MaxValue)]
         public int Likes { get; set; }
