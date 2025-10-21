@@ -12,6 +12,7 @@
     using System.Linq;
     using FishSpinDays.Common.Extensions;
     using System.Threading.Tasks;
+    using System.Threading;
 
     public class IdentityService : BaseService, IIdentityService
     {
@@ -25,9 +26,9 @@
             return this.DbContext.Sections.Find(id);
         }
 
-        public async Task<Section> GetSectionAsync(int id)
+        public async Task<Section> GetSectionAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await this.DbContext.Sections.FindAsync(id);
+            return await this.DbContext.Sections.FindAsync(new object[] { id }, cancellationToken);
         }
 
         public Section GetSectionByName(string sectionName)
@@ -35,9 +36,9 @@
             return this.DbContext.Sections.FirstOrDefault(s => s.Name == sectionName);
         }
 
-        public async Task<Section> GetSectionByNameAsync(string sectionName)
+        public async Task<Section> GetSectionByNameAsync(string sectionName, CancellationToken cancellationToken = default)
         {
-            return await this.DbContext.Sections.FirstOrDefaultAsync(s => s.Name == sectionName);
+            return await this.DbContext.Sections.FirstOrDefaultAsync(s => s.Name == sectionName, cancellationToken);
         }
 
         public Publication CreatePublication(User author, Section section, string title, string description)
@@ -63,7 +64,7 @@
             }
         }
 
-        public async Task<Publication> CreatePublicationAsync(User author, Section section, string title, string description)
+        public async Task<Publication> CreatePublicationAsync(User author, Section section, string title, string description, CancellationToken cancellationToken = default)
         {
             Publication publication = new Publication()
             {
@@ -76,7 +77,7 @@
             try
             {
                 this.DbContext.Publications.Add(publication);
-                await this.DbContext.SaveChangesAsync();
+                await this.DbContext.SaveChangesAsync(cancellationToken);
 
                 return publication;
             }
@@ -91,9 +92,9 @@
            return this.DbContext.Publications.FirstOrDefault(p => p.Id == id);
         }
 
-        public async Task<Publication> GetPublicationByIdAsync(int id)
+        public async Task<Publication> GetPublicationByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-           return await this.DbContext.Publications.FirstOrDefaultAsync(p => p.Id == id);
+           return await this.DbContext.Publications.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
         }
 
         public bool IsLikedPublication(Publication publication)
@@ -110,12 +111,12 @@
             }
         }
 
-        public async Task<bool> IsLikedPublicationAsync(Publication publication)
+        public async Task<bool> IsLikedPublicationAsync(Publication publication, CancellationToken cancellationToken = default)
         {
             publication.Likes++;
             try
             {
-                await this.DbContext.SaveChangesAsync();
+                await this.DbContext.SaveChangesAsync(cancellationToken);
                 return true;
             }
             catch
@@ -146,7 +147,7 @@
             }
         }
 
-        public async Task<Comment> AddCommentAsync(User author, Publication publication, string text)
+        public async Task<Comment> AddCommentAsync(User author, Publication publication, string text, CancellationToken cancellationToken = default)
         {
             Comment comment = new Comment()
             {
@@ -158,7 +159,7 @@
             try
             {
                 this.DbContext.Comments.Add(comment);
-                await this.DbContext.SaveChangesAsync();
+                await this.DbContext.SaveChangesAsync(cancellationToken);
 
                 return comment;
             }
@@ -173,9 +174,9 @@
             return this.DbContext.Comments.FirstOrDefault(p => p.Id == id);
         }
 
-        public async Task<Comment> GetCommentByIdAsync(int id)
+        public async Task<Comment> GetCommentByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await this.DbContext.Comments.FirstOrDefaultAsync(p => p.Id == id);
+            return await this.DbContext.Comments.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
         }
 
         public bool IsLikedComment(Comment comment)
@@ -192,12 +193,12 @@
             }
         }
 
-        public async Task<bool> IsLikedCommentAsync(Comment comment)
+        public async Task<bool> IsLikedCommentAsync(Comment comment, CancellationToken cancellationToken = default)
         {
             comment.Likes++;
             try
             {
-                await this.DbContext.SaveChangesAsync();
+                await this.DbContext.SaveChangesAsync(cancellationToken);
                 return true;
             }
             catch 
@@ -220,12 +221,12 @@
             }
         }
 
-        public async Task<bool> IsUnLikedCommentAsync(Comment comment)
+        public async Task<bool> IsUnLikedCommentAsync(Comment comment, CancellationToken cancellationToken = default)
         {
             comment.UnLikes++;
             try
             {
-                await this.DbContext.SaveChangesAsync();
+                await this.DbContext.SaveChangesAsync(cancellationToken);
                 return true;
             }
             catch
@@ -247,7 +248,7 @@
             return sections;
         }
 
-        public async Task<IEnumerable<SelectListItem>> GetAllSectionsAsync()
+        public async Task<IEnumerable<SelectListItem>> GetAllSectionsAsync(CancellationToken cancellationToken = default)
         {
             var sections = await this.DbContext.Sections
                 .Select(b => new SelectListItem()
@@ -255,7 +256,7 @@
                     Text = b.Name,
                     Value = b.Id.ToString()
                 })
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             return sections;
         }
@@ -270,12 +271,12 @@
             return user;
         }
 
-        public async Task<User> GetUserByIdAsync(string id)
+        public async Task<User> GetUserByIdAsync(string id, CancellationToken cancellationToken = default)
         {
             var user = await this.DbContext.Users
                 .Include(u => u.Publications)
                 .ThenInclude(u => u.Comments)
-                .FirstOrDefaultAsync(u => u.Id == id);
+                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
             return user;
         }
@@ -296,7 +297,7 @@
             return foundPublications;
         }
 
-        public async Task<List<SearchPublicationViewModel>> FoundPublicationsAsync(string searchTerm)
+        public async Task<List<SearchPublicationViewModel>> FoundPublicationsAsync(string searchTerm, CancellationToken cancellationToken = default)
         {
             var foundPublications = await this.DbContext.Publications
                .Where(a => a.Description.ToLower().Contains(searchTerm.ToLower()))
@@ -307,7 +308,7 @@
                    SearchResult = a.Description.GetOnlyTextFromDescription(),
                    Title = a.Title
                })
-               .ToListAsync();
+               .ToListAsync(cancellationToken);
 
             return foundPublications;
         }
