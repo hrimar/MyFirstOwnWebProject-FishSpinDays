@@ -2,6 +2,7 @@
 {    
     using FishSpinDays.Services.Base.Interfaces;
     using Microsoft.AspNetCore.Mvc;
+    using System.Threading.Tasks;
 
     public class PublicationsController : BaseController
     {
@@ -9,9 +10,9 @@
             : base(baseService)
         {  }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var publicationModel = this.BaseService.GetPublication(id);
+            var publicationModel = await this.BaseService.GetPublicationAsync(id);
             if (publicationModel == null)
             {
                 return NotFound();
@@ -20,9 +21,9 @@
             return View(publicationModel);
         }
 
-        public IActionResult MostRated()
+        public async Task<IActionResult> MostRated()
         {
-            var publicationModel = this.BaseService.MostReaded();
+            var publicationModel = await this.BaseService.MostReadedAsync();
             if (publicationModel == null)
             {
                 return NotFound();

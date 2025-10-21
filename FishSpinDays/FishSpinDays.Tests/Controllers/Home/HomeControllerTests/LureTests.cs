@@ -10,6 +10,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FishSpinDays.Tests.Controllers.Home.HomeControllerTests
 {
@@ -17,13 +18,13 @@ namespace FishSpinDays.Tests.Controllers.Home.HomeControllerTests
     public class LureTests
     {
         [TestMethod]
-        public void Lures_ReturnsTheProperViews()
+        public async Task Lures_ReturnsTheProperViews()
         {
             //1. Arrange:           
             var mockService = new Mock<IBasePublicationsService>();
             mockService
-                .Setup(service => service.GetAllPublicationsInThisSection(WebConstants.HandLures))
-                .Returns(new[] {new PublicationShortViewModel()
+                .Setup(service => service.GetAllPublicationsInThisSectionAsync(WebConstants.HandLures))
+                .ReturnsAsync(new[] {new PublicationShortViewModel()
                 {
                     Id = 4,
                     Title = "The greates lures",
@@ -32,7 +33,7 @@ namespace FishSpinDays.Tests.Controllers.Home.HomeControllerTests
             var controller = new HomeController(mockService.Object);
 
             //2.Act:
-            var result = controller.Lures();
+            var result = await controller.Lures();
 
             //3.Assert:
             Assert.IsInstanceOfType(result, typeof(ViewResult));

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FishSpinDays.Common.Identity.BindingModels;
 using FishSpinDays.Common.Base.ViewModels;
 using FishSpinDays.Common.Constants;
@@ -34,16 +31,16 @@ namespace FishSpinDays.Web.Controllers
 
         [HttpGet("")]
         [AllowAnonymous]
-        public ActionResult<PartPublicationsViewModel> GetAllPublications(int? id)
+        public async Task<ActionResult<PartPublicationsViewModel>> GetAllPublications(int? id)
         {
             if (!id.HasValue)
             {
                 id = WebConstants.DefaultPage;
             }
 
-            int requiredPagesForThisPublications = ArrangePagesCount();
+            int requiredPagesForThisPublications = await ArrangePagesCountAsync();
 
-            var publications = this.BaseService.GetAllPublications(id.Value, 3);
+            var publications = await this.BaseService.GetAllPublicationsAsync(id.Value, 3);
 
             if (publications == null)
             {
@@ -60,9 +57,9 @@ namespace FishSpinDays.Web.Controllers
 
         [HttpGet("{id}", Name = "Details")] // Details will be the name of this method and with this name will be used on row.99!
         [AllowAnonymous]
-        public IActionResult GetPublication(int id) 
+        public async Task<IActionResult> GetPublication(int id) 
         {
-            var publicationModel = this.BaseService.GetPublication(id);
+            var publicationModel = await this.BaseService.GetPublicationAsync(id);
             if (publicationModel == null)
             {
                 return NotFound(new { Message = "The publication does not exist." }); // TODO:  Put in constants!
@@ -73,45 +70,30 @@ namespace FishSpinDays.Web.Controllers
                 
         [HttpPost("")]
         [Authorize]  // To use this for API makes AuthControler
-        public IActionResult CreatePublication([FromBody]PublicationBindingModel model)
+        public async Task<IActionResult> CreatePublication([FromBody]PublicationBindingModel model)
         {
             if (!this.ModelState.IsValid)
             {
                 return BadRequest(this.ModelState);
             }
 
-            User author = this.userManager.GetUserAsync(this.User).Result;
-            var section = this.identityService.GetSectionByName(model.Section);
+            User author = await this.userManager.GetUserAsync(this.User);
+            var section = await this.identityService.GetSectionByNameAsync(model.Section);
 
             if (author == null || section == null)
             {
                 return NotFound();
             }
 
-            var publication = this.identityService.CreatePublication(author, section, model.Title, model.Description);
+            var publication = await this.identityService.CreatePublicationAsync(author, section, model.Title, model.Description);
 
 
             return CreatedAtAction("Details", new { id = publication.Id });
         }
 
-
-
-        private int ArrangePagesCount()
+        private async Task<int> ArrangePagesCountAsync()
         {
-            var totalPublicationsCount = this.BaseService.TotalPublicationsCount();
-            double pages = (totalPublicationsCount / WebConstants.DefaultResultPerTripsPage);
-            int requiredPagesForThisPublications = (int)pages;
-            if (pages % 1 != 0)
-            {
-                requiredPagesForThisPublications = requiredPagesForThisPublications + 1;
-            }
-
-            return requiredPagesForThisPublications;
-        }
-
-        private int ArrangePagesCount(string type)
-        {
-            var totalPublicationsCount = this.BaseService.TotalPublicationsCount(type);
+            var totalPublicationsCount = await this.BaseService.TotalPublicationsCountAsync();
             double pages = (totalPublicationsCount / WebConstants.DefaultResultPerTripsPage);
             int requiredPagesForThisPublications = (int)pages;
             if (pages % 1 != 0)

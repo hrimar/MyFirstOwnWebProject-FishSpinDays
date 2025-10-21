@@ -10,6 +10,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
 {
@@ -18,7 +19,7 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
     {
         [TestMethod]
         [DataRow(1)]
-        public void Details_FoundedModel_ReturnsTheProperView(int value)
+        public async Task Details_FoundedModel_ReturnsTheProperView(int value)
         {
             //1. Arrange:        
             var publicationModel = new PublicationViewModel()
@@ -31,12 +32,12 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
 
             var mockService = new Mock<IBasePublicationsService>();
             mockService
-                .Setup(service => service.GetPublication(value))
-                .Returns(publicationModel);
+                .Setup(service => service.GetPublicationAsync(value))
+                .ReturnsAsync(publicationModel);
             var controller = new PublicationsController(mockService.Object);
 
             //2.Act:
-            var result = controller.Details(value);
+            var result = await controller.Details(value);
 
             //3.Assert:
             Assert.IsInstanceOfType(result, typeof(ViewResult));
@@ -45,7 +46,7 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
 
         [TestMethod]
         [DataRow(1)]
-        public void Details_FoundedModel_ReturnsNotNull(int value)
+        public async Task Details_FoundedModel_ReturnsNotNull(int value)
         {
             //1. Arrange:        
             var publicationModel = new PublicationViewModel()
@@ -58,12 +59,12 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
 
             var mockService = new Mock<IBasePublicationsService>();
             mockService
-                .Setup(service => service.GetPublication(value))
-                .Returns(publicationModel);
+                .Setup(service => service.GetPublicationAsync(value))
+                .ReturnsAsync(publicationModel);
             var controller = new PublicationsController(mockService.Object);
 
             //2.Act:
-            var result = controller.Details(value);
+            var result = await controller.Details(value);
 
             //3. Assert:           
             Assert.IsNotNull((result as ViewResult).Model);
@@ -71,7 +72,7 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
 
         [TestMethod]
         [DataRow(1)]
-        public void Details_WithValidPublication_ShoudCallService(int value)
+        public async Task Details_WithValidPublication_ShoudCallService(int value)
         {
             //1. Arrange:           
             bool serviceCalled = false;
@@ -86,21 +87,21 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
 
             var mockService = new Mock<IBasePublicationsService>();
             mockService
-                .Setup(service => service.GetPublication(value))
-                .Returns(publicationModel)
+                .Setup(service => service.GetPublicationAsync(value))
+                .ReturnsAsync(publicationModel)
                 .Callback(() => serviceCalled = true);
 
             var controller = new PublicationsController(mockService.Object);
 
             //2.Act:
-            var result = controller.Details(1);
+            var result = await controller.Details(1);
 
             //3.Assert:
             Assert.IsTrue(serviceCalled);
         }
 
         [TestMethod]
-        public void Details_RetursCorrectModelInformation()
+        public async Task Details_RetursCorrectModelInformation()
         {
             // 1.
             var service = new Mock<IBasePublicationsService>();
@@ -114,8 +115,8 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
                 Description = "I was on the river with my friend Pesho and catched so many fishes with only one metal lure",
             };
 
-            service.Setup(serv => serv.GetPublication(publicationModel.Id))
-                .Returns(new PublicationViewModel()
+            service.Setup(serv => serv.GetPublicationAsync(publicationModel.Id))
+                .ReturnsAsync(new PublicationViewModel()
                 {
                     Id = publicationModel.Id,
                     AuthorId = publicationModel.AuthorId,
@@ -124,7 +125,7 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
                 });
 
             // 2. Act:
-            var result = controller.Details(publicationModel.Id);
+            var result = await controller.Details(publicationModel.Id);
 
             //3. Assert:    
             var resultModel = result as ViewResult;

@@ -7,6 +7,7 @@
     using FishSpinDays.Services.Base.Interfaces;
     using FishSpinDays.Common.Base.ViewModels;
     using FishSpinDays.Common.Constants;
+    using System.Threading.Tasks;
 
     public class HomeController : BaseController
     {      
@@ -15,23 +16,22 @@
         { }
 
         [HttpGet]
-        public IActionResult Index(int? id)
+        public async Task<IActionResult> Index(int? id)
         {
             if (!id.HasValue)
             {
                 id = WebConstants.DefaultPage;
             }
 
-            int requiredPagesForThisPublications = ArrangePagesCount();
+            int requiredPagesForThisPublications = await ArrangePagesCountAsync();
 
-            var publications = this.BaseService.GetAllPublications(id.Value, WebConstants.DefaultResultCount);
+            var publications = await this.BaseService.GetAllPublicationsAsync(id.Value, WebConstants.DefaultResultCount);
 
             if (publications == null)
             {
                 return NotFound();
             }
 
-           
             return View(new PartPublicationsViewModel()
             {
                 Id = id.Value,
@@ -40,16 +40,16 @@
             });
         }
         
-        public IActionResult Sea(int? id)
+        public async Task<IActionResult> Sea(int? id)
         {
             if (!id.HasValue)
             {
                 id = WebConstants.DefaultPage;
             }
 
-            int requiredPagesForThisPublications = ArrangePagesCount(WebConstants.SeaSection);
+            int requiredPagesForThisPublications = await ArrangePagesCountAsync(WebConstants.SeaSection);
 
-            var publications = this.BaseService.GetAllSeaPublications(id.Value, WebConstants.DefaultResultCount);
+            var publications = await this.BaseService.GetAllSeaPublicationsAsync(id.Value, WebConstants.DefaultResultCount);
             if (publications == null)
             {
                 return NotFound();
@@ -63,16 +63,16 @@
             });
         }
 
-        public IActionResult Freshwater(int? id)
+        public async Task<IActionResult> Freshwater(int? id)
         {            
             if (!id.HasValue)
             {
                 id = WebConstants.DefaultPage;
             }
 
-            int requiredPagesForThisPublications = ArrangePagesCount(WebConstants.FreshwaterSection);
+            int requiredPagesForThisPublications = await ArrangePagesCountAsync(WebConstants.FreshwaterSection);
 
-            var publications = this.BaseService.GetAllFreshwaterPublications(id.Value, WebConstants.DefaultResultCount).ToList();
+            var publications = (await this.BaseService.GetAllFreshwaterPublicationsAsync(id.Value, WebConstants.DefaultResultCount)).ToList();
                       
             return View(new PartPublicationsViewModel()
             {
@@ -82,60 +82,60 @@
             });
         }
 
-        public IActionResult Rods()
+        public async Task<IActionResult> Rods()
         {
-            var publications = this.BaseService.GetAllPublicationsInThisSection(WebConstants.Rods);
+            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Rods);
             return View(publications);
         }
 
-        public IActionResult Lures()
+        public async Task<IActionResult> Lures()
         {
-            var publications = this.BaseService.GetAllPublicationsInThisSection(WebConstants.Lures);
+            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Lures);
             return View(publications);
         }
 
-        public IActionResult Handmade()
+        public async Task<IActionResult> Handmade()
         {
-            var publications = this.BaseService.GetAllPublicationsInThisSection(WebConstants.HandLures);
+            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.HandLures);
             return View(publications);
         }
 
-        public IActionResult Eco()
+        public async Task<IActionResult> Eco()
         {
-            var publications = this.BaseService.GetAllPublicationsInThisSection(WebConstants.Eco);
+            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Eco);
             return View(publications);
         }
 
-        public IActionResult School()
+        public async Task<IActionResult> School()
         {
-            var publications = this.BaseService.GetAllPublicationsInThisSection(WebConstants.School);
+            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.School);
             return View(publications);
         }
 
-        public IActionResult Anti()
+        public async Task<IActionResult> Anti()
         {
-            var publications = this.BaseService.GetAllPublicationsInThisSection(WebConstants.Anti);
+            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Anti);
             return View(publications);
         }
 
-        public IActionResult Breeding()
+        public async Task<IActionResult> Breeding()
         {
-            var publications = this.BaseService.GetAllPublicationsInThisSection(WebConstants.Breeding);
+            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Breeding);
             return View(publications);
         }
 
-        public IActionResult Year()
+        public async Task<IActionResult> Year()
         {
-            var publications = this.BaseService.GetAllPublicationsInThisYear(WebConstants.Year2018);
+            var publications = await this.BaseService.GetAllPublicationsInThisYearAsync(WebConstants.Year2018);
 
             return View(publications);
         }
 
-        public IActionResult Month(int id)
+        public async Task<IActionResult> Month(int id)
         {
 			this.ViewData["Month"] = id;
 			
-            var publications = this.BaseService.GetAllPublicationsInThisMonth(id);
+            var publications = await this.BaseService.GetAllPublicationsInThisMonthAsync(id);
 
             return View(publications);
         }
@@ -161,10 +161,9 @@
             return View();
         }
 
-
-        private int ArrangePagesCount()
+        private async Task<int> ArrangePagesCountAsync()
         {
-            var totalPublicationsCount = this.BaseService.TotalPublicationsCount();
+            var totalPublicationsCount = await this.BaseService.TotalPublicationsCountAsync();
             double pages = (totalPublicationsCount / WebConstants.DefaultResultPerTripsPage);
             int requiredPagesForThisPublications = (int)pages;
             if (pages % 1 != 0)
@@ -175,9 +174,9 @@
             return requiredPagesForThisPublications;
         }
 
-        private int ArrangePagesCount(string type)
+        private async Task<int> ArrangePagesCountAsync(string type)
         {
-            var totalPublicationsCount = this.BaseService.TotalPublicationsCount(type);
+            var totalPublicationsCount = await this.BaseService.TotalPublicationsCountAsync(type);
             double pages = (totalPublicationsCount / WebConstants.DefaultResultPerTripsPage);
             int requiredPagesForThisPublications = (int)pages;
             if (pages % 1 != 0)
