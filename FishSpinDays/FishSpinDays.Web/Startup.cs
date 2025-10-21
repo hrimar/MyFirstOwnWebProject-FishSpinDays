@@ -61,7 +61,7 @@
                     ValidIssuer = "localhost",
                     ValidAudience = "localhost",
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes("supersecretsupersecretsupersecretsupersecret"))
+                        Encoding.UTF8.GetBytes(this.Configuration.GetSection("TokenValidationParameter").Value))
                 };
             });
 

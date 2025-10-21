@@ -42,9 +42,9 @@ namespace FishSpinDays.Web.Controllers
             }
 
             var roles = await this.userManager.GetRolesAsync(user);
-           
+
             var key = new SymmetricSecurityKey(
-               Encoding.UTF8.GetBytes("supersecretsupersecretsupersecretsupersecret")); //TODO: keep this key NOT HERE!
+               Encoding.UTF8.GetBytes(this.configuration.GetSection("TokenValidationParameter").Value));
             var token = new JwtSecurityToken(
                 claims: new[]
                 {
