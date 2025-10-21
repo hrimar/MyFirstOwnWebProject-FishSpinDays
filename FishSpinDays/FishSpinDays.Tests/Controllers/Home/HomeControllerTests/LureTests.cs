@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace FishSpinDays.Tests.Controllers.Home.HomeControllerTests
 {
@@ -23,7 +24,7 @@ namespace FishSpinDays.Tests.Controllers.Home.HomeControllerTests
             //1. Arrange:           
             var mockService = new Mock<IBasePublicationsService>();
             mockService
-                .Setup(service => service.GetAllPublicationsInThisSectionAsync(WebConstants.HandLures))
+                .Setup(service => service.GetAllPublicationsInThisSectionAsync(WebConstants.HandLures, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new[] {new PublicationShortViewModel()
                 {
                     Id = 4,

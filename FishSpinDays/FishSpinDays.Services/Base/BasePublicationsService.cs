@@ -13,6 +13,7 @@
     using FishSpinDays.Common.Extensions;
     using FishSpinDays.Common.Base.ViewModels;
     using System.Threading.Tasks;
+    using System.Threading;
 
     public class BasePublicationsService : BaseService, IBasePublicationsService
     {
@@ -46,7 +47,7 @@
             return model;
         }
 
-        public async Task<IEnumerable<PublicationShortViewModel>> GetAllPublicationsAsync(int page, int count)
+        public async Task<IEnumerable<PublicationShortViewModel>> GetAllPublicationsAsync(int page, int count, CancellationToken cancellationToken = default)
         {
             if (page <= 0)
             {
@@ -59,7 +60,7 @@
                 .OrderByDescending(p => p.CreationDate)
                 .Skip((page - 1) * count)
                 .Take(count)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             // Process synchronously after loading data to avoid DbContext concurrency issues
             var model = GetAllTargetPublicationsWithLoadedAuthors(publications);
@@ -80,13 +81,13 @@
             return model;
         }
 
-        public async Task<PublicationViewModel> GetPublicationAsync(int id)
+        public async Task<PublicationViewModel> GetPublicationAsync(int id, CancellationToken cancellationToken = default)
         {
             var publication = await this.DbContext.Publications
                 .Include(s => s.Comments).ThenInclude(c => c.Author)
                 .Include(s => s.Author)
                 .Include(s => s.Section)
-                .FirstOrDefaultAsync(s => s.Id == id);
+                .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
 
             var model = this.Mapper.Map<PublicationViewModel>(publication);
 
@@ -107,14 +108,14 @@
             return model;
         }
 
-        public async Task<PublicationViewModel> MostReadedAsync()
+        public async Task<PublicationViewModel> MostReadedAsync(CancellationToken cancellationToken = default)
         {
             var publication = await this.DbContext.Publications
                 .OrderByDescending(p => p.Likes)
                 .Include(s => s.Comments)
                  .Include(s => s.Author)
                  .Include(s => s.Section)
-                 .FirstAsync();
+                 .FirstAsync(cancellationToken);
 
             var model = this.Mapper.Map<PublicationViewModel>(publication);
 
@@ -133,9 +134,9 @@
             return model;
         }
 
-        public async Task<IEnumerable<PublicationShortViewModel>> GetAllSeaPublicationsAsync(int page, int count)
+        public async Task<IEnumerable<PublicationShortViewModel>> GetAllSeaPublicationsAsync(int page, int count, CancellationToken cancellationToken = default)
         {
-            List<Publication> publications = await GetTargetSectionAsync(WebConstants.SeaSection, page, count);
+            List<Publication> publications = await GetTargetSectionAsync(WebConstants.SeaSection, page, count, cancellationToken);
             if (publications == null)
             {
                 return null;
@@ -158,9 +159,9 @@
             return model;
         }
 
-        public async Task<IEnumerable<PublicationShortViewModel>> GetAllFreshwaterPublicationsAsync(int page, int count)
+        public async Task<IEnumerable<PublicationShortViewModel>> GetAllFreshwaterPublicationsAsync(int page, int count, CancellationToken cancellationToken = default)
         {
-            List<Publication> publications = await GetTargetSectionAsync(WebConstants.FreshwaterSection, page, count);
+            List<Publication> publications = await GetTargetSectionAsync(WebConstants.FreshwaterSection, page, count, cancellationToken);
             if (publications == null)
             {
                 return null;
@@ -182,13 +183,13 @@
             return model;
         }
 
-        public async Task<IEnumerable<PublicationShortViewModel>> GetAllPublicationsInThisSectionAsync(string sectionType)
+        public async Task<IEnumerable<PublicationShortViewModel>> GetAllPublicationsInThisSectionAsync(string sectionType, CancellationToken cancellationToken = default)
         {
             List<Publication> publications = await this.DbContext.Publications
                             .Include(p => p.Author)
                             .Where(p => p.Section.Name == sectionType)
                             .Take(WebConstants.DefaultResultPerPage)
-                            .ToListAsync();
+                            .ToListAsync(cancellationToken);
             // Use the method for publications with pre-loaded authors
             List<PublicationShortViewModel> model = GetAllTargetPublicationsWithLoadedAuthors(publications);
 
@@ -206,13 +207,13 @@
             return model;
         }
 
-        public async Task<IEnumerable<PublicationShortViewModel>> GetAllPublicationsInThisYearAsync(int year)
+        public async Task<IEnumerable<PublicationShortViewModel>> GetAllPublicationsInThisYearAsync(int year, CancellationToken cancellationToken = default)
         {
             List<Publication> publications = await this.DbContext.Publications
                             .Include(p => p.Author)
                             .Where(p => p.CreationDate.Year == year)
                             .Take(WebConstants.DefaultResultPerPage)
-                            .ToListAsync();
+                            .ToListAsync(cancellationToken);
             // Use the method for publications with pre-loaded authors
             List<PublicationShortViewModel> model = GetAllTargetPublicationsWithLoadedAuthors(publications);
 
@@ -230,13 +231,13 @@
             return model;
         }
 
-        public async Task<IEnumerable<PublicationShortViewModel>> GetAllPublicationsInThisMonthAsync(int month)
+        public async Task<IEnumerable<PublicationShortViewModel>> GetAllPublicationsInThisMonthAsync(int month, CancellationToken cancellationToken = default)
         {
             List<Publication> publications = await this.DbContext.Publications
                            .Include(p => p.Author)
                            .Where(p => p.CreationDate.Month == month)
                            .Take(WebConstants.DefaultResultPerPage)
-                           .ToListAsync();
+                           .ToListAsync(cancellationToken);
             // Use the method for publications with pre-loaded authors
             List<PublicationShortViewModel> model = GetAllTargetPublicationsWithLoadedAuthors(publications);
 
@@ -248,9 +249,9 @@
             return this.DbContext.Publications.Count();
         }
 
-        public async Task<int> TotalPublicationsCountAsync()
+        public async Task<int> TotalPublicationsCountAsync(CancellationToken cancellationToken = default)
         {
-            return await this.DbContext.Publications.CountAsync();
+            return await this.DbContext.Publications.CountAsync(cancellationToken);
         }
 
         public int TotalPublicationsCount(string type)
@@ -261,12 +262,12 @@
                 .Count();
         }
 
-        public async Task<int> TotalPublicationsCountAsync(string type)
+        public async Task<int> TotalPublicationsCountAsync(string type, CancellationToken cancellationToken = default)
         {
             return await this.DbContext.Publications
                 .Include(p => p.Section)
                 .Where(p => p.Section.Name == type)
-                .CountAsync();
+                .CountAsync(cancellationToken);
         }
 
         private List<PublicationShortViewModel> GetAllTargetPublications(List<Publication> publications)
@@ -312,7 +313,7 @@
                             .ToList();
         }
 
-        private async Task<List<Publication>> GetTargetSectionAsync(string targetSection, int page, int count)
+        private async Task<List<Publication>> GetTargetSectionAsync(string targetSection, int page, int count, CancellationToken cancellationToken = default)
         {
             if (page <= 0)
             {
@@ -325,7 +326,7 @@
                             .OrderByDescending(p => p.CreationDate)
                             .Skip((page - 1) * count)
                             .Take(count)
-                            .ToListAsync();
+                            .ToListAsync(cancellationToken);
         }
 
         private string GetAutorById(string authorId)

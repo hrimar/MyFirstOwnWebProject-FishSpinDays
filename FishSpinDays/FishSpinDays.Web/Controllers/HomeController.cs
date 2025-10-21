@@ -8,6 +8,7 @@
     using FishSpinDays.Common.Base.ViewModels;
     using FishSpinDays.Common.Constants;
     using System.Threading.Tasks;
+    using System.Threading;
 
     public class HomeController : BaseController
     {      
@@ -16,16 +17,16 @@
         { }
 
         [HttpGet]
-        public async Task<IActionResult> Index(int? id)
+        public async Task<IActionResult> Index(int? id, CancellationToken cancellationToken = default)
         {
             if (!id.HasValue)
             {
                 id = WebConstants.DefaultPage;
             }
 
-            int requiredPagesForThisPublications = await ArrangePagesCountAsync();
+            int requiredPagesForThisPublications = await ArrangePagesCountAsync(cancellationToken);
 
-            var publications = await this.BaseService.GetAllPublicationsAsync(id.Value, WebConstants.DefaultResultCount);
+            var publications = await this.BaseService.GetAllPublicationsAsync(id.Value, WebConstants.DefaultResultCount, cancellationToken);
 
             if (publications == null)
             {
@@ -40,16 +41,16 @@
             });
         }
         
-        public async Task<IActionResult> Sea(int? id)
+        public async Task<IActionResult> Sea(int? id, CancellationToken cancellationToken = default)
         {
             if (!id.HasValue)
             {
                 id = WebConstants.DefaultPage;
             }
 
-            int requiredPagesForThisPublications = await ArrangePagesCountAsync(WebConstants.SeaSection);
+            int requiredPagesForThisPublications = await ArrangePagesCountAsync(WebConstants.SeaSection, cancellationToken);
 
-            var publications = await this.BaseService.GetAllSeaPublicationsAsync(id.Value, WebConstants.DefaultResultCount);
+            var publications = await this.BaseService.GetAllSeaPublicationsAsync(id.Value, WebConstants.DefaultResultCount, cancellationToken);
             if (publications == null)
             {
                 return NotFound();
@@ -63,16 +64,16 @@
             });
         }
 
-        public async Task<IActionResult> Freshwater(int? id)
+        public async Task<IActionResult> Freshwater(int? id, CancellationToken cancellationToken = default)
         {            
             if (!id.HasValue)
             {
                 id = WebConstants.DefaultPage;
             }
 
-            int requiredPagesForThisPublications = await ArrangePagesCountAsync(WebConstants.FreshwaterSection);
+            int requiredPagesForThisPublications = await ArrangePagesCountAsync(WebConstants.FreshwaterSection, cancellationToken);
 
-            var publications = (await this.BaseService.GetAllFreshwaterPublicationsAsync(id.Value, WebConstants.DefaultResultCount)).ToList();
+            var publications = (await this.BaseService.GetAllFreshwaterPublicationsAsync(id.Value, WebConstants.DefaultResultCount, cancellationToken)).ToList();
                       
             return View(new PartPublicationsViewModel()
             {
@@ -82,60 +83,60 @@
             });
         }
 
-        public async Task<IActionResult> Rods()
+        public async Task<IActionResult> Rods(CancellationToken cancellationToken = default)
         {
-            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Rods);
+            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Rods, cancellationToken);
             return View(publications);
         }
 
-        public async Task<IActionResult> Lures()
+        public async Task<IActionResult> Lures(CancellationToken cancellationToken = default)
         {
-            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Lures);
+            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Lures, cancellationToken);
             return View(publications);
         }
 
-        public async Task<IActionResult> Handmade()
+        public async Task<IActionResult> Handmade(CancellationToken cancellationToken = default)
         {
-            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.HandLures);
+            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.HandLures, cancellationToken);
             return View(publications);
         }
 
-        public async Task<IActionResult> Eco()
+        public async Task<IActionResult> Eco(CancellationToken cancellationToken = default)
         {
-            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Eco);
+            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Eco, cancellationToken);
             return View(publications);
         }
 
-        public async Task<IActionResult> School()
+        public async Task<IActionResult> School(CancellationToken cancellationToken = default)
         {
-            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.School);
+            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.School, cancellationToken);
             return View(publications);
         }
 
-        public async Task<IActionResult> Anti()
+        public async Task<IActionResult> Anti(CancellationToken cancellationToken = default)
         {
-            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Anti);
+            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Anti, cancellationToken);
             return View(publications);
         }
 
-        public async Task<IActionResult> Breeding()
+        public async Task<IActionResult> Breeding(CancellationToken cancellationToken = default)
         {
-            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Breeding);
+            var publications = await this.BaseService.GetAllPublicationsInThisSectionAsync(WebConstants.Breeding, cancellationToken);
             return View(publications);
         }
 
-        public async Task<IActionResult> Year()
+        public async Task<IActionResult> Year(CancellationToken cancellationToken = default)
         {
-            var publications = await this.BaseService.GetAllPublicationsInThisYearAsync(WebConstants.Year2018);
+            var publications = await this.BaseService.GetAllPublicationsInThisYearAsync(WebConstants.Year2018, cancellationToken);
 
             return View(publications);
         }
 
-        public async Task<IActionResult> Month(int id)
+        public async Task<IActionResult> Month(int id, CancellationToken cancellationToken = default)
         {
 			this.ViewData["Month"] = id;
 			
-            var publications = await this.BaseService.GetAllPublicationsInThisMonthAsync(id);
+            var publications = await this.BaseService.GetAllPublicationsInThisMonthAsync(id, cancellationToken);
 
             return View(publications);
         }
@@ -161,9 +162,9 @@
             return View();
         }
 
-        private async Task<int> ArrangePagesCountAsync()
+        private async Task<int> ArrangePagesCountAsync(CancellationToken cancellationToken = default)
         {
-            var totalPublicationsCount = await this.BaseService.TotalPublicationsCountAsync();
+            var totalPublicationsCount = await this.BaseService.TotalPublicationsCountAsync(cancellationToken);
             double pages = (totalPublicationsCount / WebConstants.DefaultResultPerTripsPage);
             int requiredPagesForThisPublications = (int)pages;
             if (pages % 1 != 0)
@@ -174,9 +175,9 @@
             return requiredPagesForThisPublications;
         }
 
-        private async Task<int> ArrangePagesCountAsync(string type)
+        private async Task<int> ArrangePagesCountAsync(string type, CancellationToken cancellationToken = default)
         {
-            var totalPublicationsCount = await this.BaseService.TotalPublicationsCountAsync(type);
+            var totalPublicationsCount = await this.BaseService.TotalPublicationsCountAsync(type, cancellationToken);
             double pages = (totalPublicationsCount / WebConstants.DefaultResultPerTripsPage);
             int requiredPagesForThisPublications = (int)pages;
             if (pages % 1 != 0)

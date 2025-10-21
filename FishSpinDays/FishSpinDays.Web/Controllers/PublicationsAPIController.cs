@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading;
 
 namespace FishSpinDays.Web.Controllers
 {
@@ -31,16 +32,16 @@ namespace FishSpinDays.Web.Controllers
 
         [HttpGet("")]
         [AllowAnonymous]
-        public async Task<ActionResult<PartPublicationsViewModel>> GetAllPublications(int? id)
+        public async Task<ActionResult<PartPublicationsViewModel>> GetAllPublications(int? id, CancellationToken cancellationToken = default)
         {
             if (!id.HasValue)
             {
                 id = WebConstants.DefaultPage;
             }
 
-            int requiredPagesForThisPublications = await ArrangePagesCountAsync();
+            int requiredPagesForThisPublications = await ArrangePagesCountAsync(cancellationToken);
 
-            var publications = await this.BaseService.GetAllPublicationsAsync(id.Value, 3);
+            var publications = await this.BaseService.GetAllPublicationsAsync(id.Value, 3, cancellationToken);
 
             if (publications == null)
             {
@@ -57,9 +58,9 @@ namespace FishSpinDays.Web.Controllers
 
         [HttpGet("{id}", Name = "Details")] // Details will be the name of this method and with this name will be used on row.99!
         [AllowAnonymous]
-        public async Task<IActionResult> GetPublication(int id) 
+        public async Task<IActionResult> GetPublication(int id, CancellationToken cancellationToken = default) 
         {
-            var publicationModel = await this.BaseService.GetPublicationAsync(id);
+            var publicationModel = await this.BaseService.GetPublicationAsync(id, cancellationToken);
             if (publicationModel == null)
             {
                 return NotFound(new { Message = "The publication does not exist." }); // TODO:  Put in constants!
@@ -70,7 +71,7 @@ namespace FishSpinDays.Web.Controllers
                 
         [HttpPost("")]
         [Authorize]  // To use this for API makes AuthControler
-        public async Task<IActionResult> CreatePublication([FromBody]PublicationBindingModel model)
+        public async Task<IActionResult> CreatePublication([FromBody]PublicationBindingModel model, CancellationToken cancellationToken = default)
         {
             if (!this.ModelState.IsValid)
             {
@@ -78,22 +79,22 @@ namespace FishSpinDays.Web.Controllers
             }
 
             User author = await this.userManager.GetUserAsync(this.User);
-            var section = await this.identityService.GetSectionByNameAsync(model.Section);
+            var section = await this.identityService.GetSectionByNameAsync(model.Section, cancellationToken);
 
             if (author == null || section == null)
             {
                 return NotFound();
             }
 
-            var publication = await this.identityService.CreatePublicationAsync(author, section, model.Title, model.Description);
+            var publication = await this.identityService.CreatePublicationAsync(author, section, model.Title, model.Description, cancellationToken);
 
 
             return CreatedAtAction("Details", new { id = publication.Id });
         }
 
-        private async Task<int> ArrangePagesCountAsync()
+        private async Task<int> ArrangePagesCountAsync(CancellationToken cancellationToken = default)
         {
-            var totalPublicationsCount = await this.BaseService.TotalPublicationsCountAsync();
+            var totalPublicationsCount = await this.BaseService.TotalPublicationsCountAsync(cancellationToken);
             double pages = (totalPublicationsCount / WebConstants.DefaultResultPerTripsPage);
             int requiredPagesForThisPublications = (int)pages;
             if (pages % 1 != 0)

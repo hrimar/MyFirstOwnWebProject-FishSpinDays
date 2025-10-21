@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FishSpinDays.Common.Base.ViewModels;
+using System.Threading;
 
 namespace FishSpinDays.Tests.Controllers.Home.HomeControllerTests
 {
@@ -21,10 +22,10 @@ namespace FishSpinDays.Tests.Controllers.Home.HomeControllerTests
             //1. Arrange:           
             var mockService = new Mock<IBasePublicationsService>();
             mockService
-                .Setup(service => service.GetAllPublicationsAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(service => service.GetAllPublicationsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new List<PublicationShortViewModel>());
             mockService
-                .Setup(service => service.TotalPublicationsCountAsync())
+                .Setup(service => service.TotalPublicationsCountAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(0);
             var controller = new HomeController(mockService.Object);
 

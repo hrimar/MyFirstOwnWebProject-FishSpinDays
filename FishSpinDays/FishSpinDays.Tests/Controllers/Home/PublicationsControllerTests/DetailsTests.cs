@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
 {
@@ -32,7 +33,7 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
 
             var mockService = new Mock<IBasePublicationsService>();
             mockService
-                .Setup(service => service.GetPublicationAsync(value))
+                .Setup(service => service.GetPublicationAsync(value, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(publicationModel);
             var controller = new PublicationsController(mockService.Object);
 
@@ -59,7 +60,7 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
 
             var mockService = new Mock<IBasePublicationsService>();
             mockService
-                .Setup(service => service.GetPublicationAsync(value))
+                .Setup(service => service.GetPublicationAsync(value, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(publicationModel);
             var controller = new PublicationsController(mockService.Object);
 
@@ -87,7 +88,7 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
 
             var mockService = new Mock<IBasePublicationsService>();
             mockService
-                .Setup(service => service.GetPublicationAsync(value))
+                .Setup(service => service.GetPublicationAsync(value, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(publicationModel)
                 .Callback(() => serviceCalled = true);
 
@@ -115,7 +116,7 @@ namespace FishSpinDays.Tests.Controllers.Home.PublicationsControllerTests
                 Description = "I was on the river with my friend Pesho and catched so many fishes with only one metal lure",
             };
 
-            service.Setup(serv => serv.GetPublicationAsync(publicationModel.Id))
+            service.Setup(serv => serv.GetPublicationAsync(publicationModel.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new PublicationViewModel()
                 {
                     Id = publicationModel.Id,
