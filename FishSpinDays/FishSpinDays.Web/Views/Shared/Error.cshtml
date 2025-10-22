@@ -1,22 +1,67 @@
 ﻿@model ErrorViewModel
+@using Microsoft.AspNetCore.Hosting
+@using Microsoft.Extensions.DependencyInjection
+@using Microsoft.Extensions.Hosting
 @{
     ViewData["Title"] = "Error";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        @if (Model.HasStatusInfo)
+                        {
+                            <span>@Model.StatusCode - Error</span>
+                        }
+                        else
+                        {
+                            <span>An Error Occurred</span>
+                        }
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.HasStatusInfo)
+                    {
+                        <h5 class="card-title">@Model.StatusMessage</h5>
+                    }
+                    else
+                    {
+                        <h5 class="card-title">Sorry, an unexpected error occurred.</h5>
+                    }
+                    
+                    <p class="card-text">
+                        Please try again or contact us if the problem persists.
+                    </p>
 
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
+                    @* Development environment details *@
+                    @{
+                        var env = ViewContext.HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment)) as IWebHostEnvironment;
+                    }
+                    @if (env != null && env.EnvironmentName == "Development")
+                    {
+                        <div class="alert alert-warning mt-3">
+                            <h6>Development Mode Details:</h6>
+                            @if (Model.ShowRequestId)
+                            {
+                                <p><strong>Request ID:</strong> <code>@Model.RequestId</code></p>
+                            }
+                            <small>This information is only shown in Development environment.</small>
+                        </div>
+                    }
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>Development environment should not be enabled in deployed applications</strong>, as it can result in sensitive information from exceptions being displayed to end users. For local debugging, development environment can be enabled by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>, and restarting the application.
-</p>
+                    <div class="mt-3">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+                            <i class="fas fa-home"></i> Home Page
+                        </a>
+                        <button onclick="history.back()" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Go Back
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

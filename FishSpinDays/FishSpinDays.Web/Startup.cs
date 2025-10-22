@@ -122,13 +122,15 @@
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                //app.UseDatabaseErrorPage();
+                app.UseExceptionHandler("/Home/Error");
+                // app.UseDeveloperExceptionPage(); // for debugging
+                app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
                 app.SeedDatabase();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
                 app.UseHsts();
 
                 var runMigrations = Configuration.GetValue<bool>("RunMigrationsOnStartup");

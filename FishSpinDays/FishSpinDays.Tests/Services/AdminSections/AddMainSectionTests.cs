@@ -73,7 +73,7 @@ namespace FishSpinDays.Tests.Services.AdminSections
             Action addMainSection = () => this.service.AddMainSection(mainSectionModel);
 
             // 3. Asserts 
-            Assert.ThrowsException<NullReferenceException>(addMainSection);
+            Assert.ThrowsExactly<NullReferenceException>(addMainSection);
         }
     }
 }

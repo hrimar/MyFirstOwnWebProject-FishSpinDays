@@ -1,17 +1,13 @@
 ﻿using FishSpinDays.Common.Base.ViewModels;
 using FishSpinDays.Common.Constants;
-using FishSpinDays.Services.Base;
 using FishSpinDays.Services.Base.Interfaces;
-using FishSpinDays.Tests.Mocks;
 using FishSpinDays.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace FishSpinDays.Tests.Controllers.Home.HomeControllerTests
 {
@@ -31,7 +27,9 @@ namespace FishSpinDays.Tests.Controllers.Home.HomeControllerTests
                     Title = "The greates lures",
                     Description = "I was on the river with my friend Pesho and catched so many fishes with only one metal lure",
                 } });
-            var controller = new HomeController(mockService.Object);
+
+            var mockLogger = new Mock<ILogger<HomeController>>();
+            var controller = new HomeController(mockService.Object, mockLogger.Object);
 
             //2.Act:
             var result = await controller.Lures();

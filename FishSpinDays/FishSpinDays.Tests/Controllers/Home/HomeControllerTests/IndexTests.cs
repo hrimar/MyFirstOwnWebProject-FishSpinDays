@@ -1,15 +1,13 @@
-﻿using FishSpinDays.Services.Base;
-using FishSpinDays.Services.Base.Interfaces;
-using FishSpinDays.Tests.Mocks;
+﻿using FishSpinDays.Services.Base.Interfaces;
 using FishSpinDays.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FishSpinDays.Common.Base.ViewModels;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace FishSpinDays.Tests.Controllers.Home.HomeControllerTests
 {
@@ -27,7 +25,9 @@ namespace FishSpinDays.Tests.Controllers.Home.HomeControllerTests
             mockService
                 .Setup(service => service.TotalPublicationsCountAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(0);
-            var controller = new HomeController(mockService.Object);
+
+            var mockLogger = new Mock<ILogger<HomeController>>();
+            var controller = new HomeController(mockService.Object, mockLogger.Object);
 
             //2.Act:
             var result = await controller.Index(null);
