@@ -86,8 +86,7 @@
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 stopwatch.Stop();
-                logger.LogInformation("Index request was cancelled after {ElapsedMs}ms - Page: {Page}", 
-                    stopwatch.ElapsedMilliseconds, id);
+                logger.LogInformation("Index request was cancelled after {ElapsedMs}ms - Page: {Page}", stopwatch.ElapsedMilliseconds, id);
                 throw;
             }
             finally
@@ -141,8 +140,7 @@
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 stopwatch.Stop();
-                logger.LogInformation("Sea publications request was cancelled after {ElapsedMs}ms - Page: {Page}", 
-                    stopwatch.ElapsedMilliseconds, id);
+                logger.LogInformation("Sea publications request was cancelled after {ElapsedMs}ms - Page: {Page}", stopwatch.ElapsedMilliseconds, id);
                 throw;
             }
         }
