@@ -21,7 +21,8 @@
 
         private static readonly IdentityRole[] roles =
         {
-            new IdentityRole(WebConstants.AdminRole)
+            new IdentityRole(WebConstants.AdminRole),
+            new IdentityRole(WebConstants.UserRole)
         };
 
         public static async void SeedDatabase(this IApplicationBuilder app)

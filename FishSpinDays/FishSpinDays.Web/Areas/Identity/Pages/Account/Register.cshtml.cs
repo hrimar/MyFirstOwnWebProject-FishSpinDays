@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using FishSpinDays.Common.Constants;
 
 namespace FishSpinDays.Web.Areas.Identity.Pages.Account
 {
@@ -80,6 +81,8 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Account
                 var result = await userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
+                    await userManager.AddToRoleAsync(user, WebConstants.UserRole);
+
                     logger.LogInformation("User created a new account with password.");
 
                     var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
