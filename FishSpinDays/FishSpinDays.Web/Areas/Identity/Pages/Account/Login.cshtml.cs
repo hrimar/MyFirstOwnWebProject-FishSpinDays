@@ -45,7 +45,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Account
             public string Password { get; set; }
 
             [Display(Name = "Remember me?")]
-            public bool RememberMe { get; set; }
+            public bool RememberMe { get; set; } // define Cookie lifetime (until browser is closed or persistent)
         }
 
         public async Task OnGetAsync(string returnUrl = null)

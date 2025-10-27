@@ -1,28 +1,34 @@
 ﻿namespace FishSpinDays.Web
 {
+    using AutoMapper;
+    using FishSpinDays.Data;
+    using FishSpinDays.Models;
+    using FishSpinDays.Services.Admin;
+    using FishSpinDays.Services.Admin.Interfaces;
+    using FishSpinDays.Services.Base;
+    using FishSpinDays.Services.Base.Interfaces;
+    using FishSpinDays.Services.Identity;
+    using FishSpinDays.Services.Identity.Interfaces;
+    using FishSpinDays.Web.Common;
+    using FishSpinDays.Web.Configuration;
+    using FishSpinDays.Web.Hubs;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using FishSpinDays.Data;
-    using FishSpinDays.Models;
-    using FishSpinDays.Web.Common;
-    using AutoMapper;
-    using FishSpinDays.Services.Admin.Interfaces;
-    using FishSpinDays.Services.Admin;
-    using FishSpinDays.Services.Base.Interfaces;
-    using FishSpinDays.Services.Base;
-    using System;
-    using FishSpinDays.Services.Identity.Interfaces;
-    using FishSpinDays.Services.Identity;
+    using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
+    using System;
+    using System.Buffers.Text;
+    using System.Net;
     using System.Text;
-    using FishSpinDays.Web.Hubs;
+    using System.Threading.Tasks;
 
     public class Startup
     {
@@ -48,23 +54,57 @@
                     Configuration.GetConnectionString("FishSpinDays"),
                         dbOptions => dbOptions.MigrationsAssembly("FishSpinDays.Data")));
 
+            // Configure JWT Settings
+            var jwtSettings = new JwtSettings();
+            Configuration.GetSection(JwtSettings.SectionName).Bind(jwtSettings);
+
+            // Get existing TokenValidationParameter (for backward compatibility)
+            var existingTokenKey = Configuration.GetSection("TokenValidationParameter").Value;
+
             LoginFromOtherApps(services);
 
-            // only loged in to be able to create posts with API but not using cookies:
+            // JWT Bearer for APIs - using existing TokenValidationParameter as fallback
             services.AddAuthentication().AddJwtBearer(options =>
             {
-                options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
+                options.RequireHttpsMetadata = jwtSettings.RequireHttpsMetadata;
+                options.SaveToken = jwtSettings.SaveToken;
+
+                // Use JWT Key if configured, otherwise fallback to existing TokenValidationParameter
+                var signingKey = !string.IsNullOrEmpty(jwtSettings.Key) ? jwtSettings.Key : existingTokenKey;
 
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    ValidIssuer = "localhost",
-                    ValidAudience = "localhost",
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(this.Configuration.GetSection("TokenValidationParameter").Value))
+                    ValidateIssuer = jwtSettings.ValidateIssuer,
+                    ValidateAudience = jwtSettings.ValidateAudience,
+                    ValidateLifetime = jwtSettings.ValidateLifetime,
+                    ValidateIssuerSigningKey = jwtSettings.ValidateIssuerSigningKey,
+                    
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey)),
+                    
+                    ClockSkew = TimeSpan.FromMinutes(jwtSettings.ClockSkew)
+                };
+
+                // event handlers for better logging
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                        logger.LogWarning("JWT Authentication failed: {Exception}", context.Exception.Message);
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                        logger.LogDebug("JWT Token validated for user: {UserId}", context.Principal?.Identity?.Name);
+                        return Task.CompletedTask;
+                    }
                 };
             });
 
+            // Default Cookie-based Identity authentication for web pages
             services.AddIdentity<User, IdentityRole>()
                 .AddDefaultUI()
                 .AddDefaultTokenProviders()

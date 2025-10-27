@@ -33,6 +33,7 @@
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Areas\Identity\Services\" />
+    <Folder Include="Configuration\" />
     <Folder Include="Helpers\Messages\" />
     <Folder Include="wwwroot\css\" />
   </ItemGroup>

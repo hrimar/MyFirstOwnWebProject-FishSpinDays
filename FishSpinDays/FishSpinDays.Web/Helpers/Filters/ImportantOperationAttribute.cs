@@ -26,7 +26,7 @@
 
             try
             {
-                var result = await next();
+                var result = await next(); // call the controller's method
                 stopwatch.Stop();
 
                 logger.LogInformation("Important operation completed: {Operation}, Duration: {Duration}ms", operationName, stopwatch.ElapsedMilliseconds);
