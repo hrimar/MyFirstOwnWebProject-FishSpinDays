@@ -8,7 +8,7 @@
 
 <div class="jumbotron jumbotron-fluid">
     <form asp-area="Admin" asp-controller="MainSections" asp-action="Create" method="post" class="form-horizontal">
-
+        @Html.AntiForgeryToken()
         @Html.FormGroupFor(model => model.Name)
 
         <div class="form-group row">

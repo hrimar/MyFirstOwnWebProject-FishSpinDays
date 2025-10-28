@@ -178,7 +178,7 @@
             // Security Headers - Must be early in the pipeline
             app.UseSecurityHeadersForRazorPages();
 
-            // Environment-aware CORS Policy
+            // Environment-specific CORS Policy
             ConfigureCorsPolicy(app, env);
 
             if (env.IsDevelopment())

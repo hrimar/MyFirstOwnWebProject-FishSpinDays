@@ -7,6 +7,7 @@
 
 <div class="jumbotron jumbotron-fluid">
     <form method="post">
+        @Html.AntiForgeryToken()
         <div class="form-group row">
             <label asp-for="Text" class="col-sm-2 col-form-label"></label>
             <div class="col-sm-10">

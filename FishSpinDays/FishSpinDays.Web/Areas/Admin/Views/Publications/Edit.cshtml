@@ -8,9 +8,9 @@
 
 <div class="jumbotron jumbotron-fluid">
     <form method="post">
-
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="@Model.Author" />
-              
+
         @Html.DisplayForModel()
      
         <div class="form-group row  text-center">

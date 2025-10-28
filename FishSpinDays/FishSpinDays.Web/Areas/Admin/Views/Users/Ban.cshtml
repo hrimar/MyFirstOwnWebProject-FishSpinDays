@@ -8,6 +8,7 @@
 
 <div class="jumbotron jumbotron-fluid">
     <form asp-area="Admin" asp-controller="Users" asp-action="Ban" method="post" class="form-horizontal">
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="@Model.Id" />
 
         <div class="form-group row">

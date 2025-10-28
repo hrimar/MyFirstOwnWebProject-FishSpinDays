@@ -41,12 +41,13 @@
             return View(model);           
         }
 
-        [HttpPost]    
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public  IActionResult Create(CreateSectionBindingModel model)
         {
             if (!ModelState.IsValid)
             {
-                return View();
+                return View(model);
             }
                        
             var section = this.adminSectionService.AddSection(model);
@@ -60,8 +61,8 @@
                 Type = MessageType.Success,
                 Message = WebConstants.SectionCreation
             });
-                             
-            return RedirectToAction("/");
+     
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
