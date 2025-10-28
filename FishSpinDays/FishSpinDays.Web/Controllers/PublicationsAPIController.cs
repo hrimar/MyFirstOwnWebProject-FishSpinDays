@@ -22,6 +22,7 @@
     [ApiController]
     [IgnoreAntiforgeryToken]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [ApiSecurityValidation] // security validation
     public class PublicationsAPIController : BaseAPIController
     {
         private readonly UserManager<User> userManager;

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FishSpinDays.Common.Identity.BindingModels;
 using FishSpinDays.Models;
 using FishSpinDays.Web.Configuration;
+using FishSpinDays.Web.Helpers.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -21,6 +22,7 @@ namespace FishSpinDays.Web.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [IgnoreAntiforgeryToken]
+    [ApiSecurityValidation] // security validation
     public class AuthController : ControllerBase
     {
         private readonly UserManager<User> userManager;

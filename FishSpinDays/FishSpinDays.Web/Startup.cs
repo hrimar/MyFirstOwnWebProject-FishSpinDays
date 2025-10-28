@@ -11,6 +11,7 @@
     using FishSpinDays.Services.Identity.Interfaces;
     using FishSpinDays.Web.Common;
     using FishSpinDays.Web.Configuration;
+    using FishSpinDays.Web.Extensions;
     using FishSpinDays.Web.Hubs;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
@@ -41,12 +42,18 @@
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // Enhanced Security Configuration
+            services.AddEnhancedSecurity();
+
             services.AddCors();
 
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
+                // Enhanced cookie security
+                options.Secure = CookieSecurePolicy.Always;
+                options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
             });
 
             services.AddDbContext<FishSpinDaysDbContext>(options =>
@@ -78,11 +85,11 @@
                     ValidateAudience = jwtSettings.ValidateAudience,
                     ValidateLifetime = jwtSettings.ValidateLifetime,
                     ValidateIssuerSigningKey = jwtSettings.ValidateIssuerSigningKey,
-                    
+
                     ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey)),
-                    
+
                     ClockSkew = TimeSpan.FromMinutes(jwtSettings.ClockSkew)
                 };
 
@@ -123,8 +130,21 @@
                 };
 
                 options.Lockout.MaxFailedAccessAttempts = 4;
-
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+            });
+
+            // Configure Identity cookies separately for enhanced security
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.HttpOnly = true;
+                options.Cookie.Name = "FishSpinDays.Identity";
+                options.ExpireTimeSpan = TimeSpan.FromHours(24);
+                options.SlidingExpiration = true;
+                options.LoginPath = "/Identity/Account/Login";
+                options.LogoutPath = "/Identity/Account/Logout";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
 
             services.AddAutoMapper();
@@ -154,6 +174,9 @@
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Security Headers - Must be early in the pipeline
+            app.UseSecurityHeadersForRazorPages();
+
             // to make Access-Control-Allow-Origin: '*':
             app.UseCors(optins => optins
                .AllowAnyOrigin()
@@ -171,6 +194,7 @@
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
+
                 app.UseHsts();
 
                 var runMigrations = Configuration.GetValue<bool>("RunMigrationsOnStartup");
