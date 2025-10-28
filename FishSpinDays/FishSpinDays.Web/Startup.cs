@@ -27,6 +27,7 @@
     using Microsoft.IdentityModel.Tokens;
     using System;
     using System.Buffers.Text;
+    using System.Linq;
     using System.Net;
     using System.Text;
     using System.Threading.Tasks;
@@ -177,11 +178,8 @@
             // Security Headers - Must be early in the pipeline
             app.UseSecurityHeadersForRazorPages();
 
-            // to make Access-Control-Allow-Origin: '*':
-            app.UseCors(optins => optins
-               .AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader());
+            // Environment-aware CORS Policy
+            ConfigureCorsPolicy(app, env);
 
             if (env.IsDevelopment())
             {
@@ -236,6 +234,57 @@
 
                 endpoints.MapHub<ChatHub>("/chat");
             });
+        }
+
+        /// <summary>
+        /// Configures CORS policy based on environment
+        /// Development: Allow any origin for easy testing
+        /// Production: Restrict to allowed hosts for security
+        /// </summary>
+        private void ConfigureCorsPolicy(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseCors(options => options
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            }
+            else
+            {
+                // Restrict CORS to allowed hosts from configuration
+                var allowedHosts = Configuration.GetValue<string>("AllowedHosts");
+
+                if (!string.IsNullOrEmpty(allowedHosts) && allowedHosts != "*")
+                {
+                    // Parse allowed hosts and create origins with https protocol
+                    var allowedOrigins = allowedHosts
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(host => host.Trim())
+                        .SelectMany(host => new[]
+                        {
+                            $"https://{host}",
+                            $"https://www.{host}" // Include www variant if not already present
+                        })
+                        .Distinct()
+                        .ToArray();
+
+                    app.UseCors(options => options
+                        .WithOrigins(allowedOrigins)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()); // Allow credentials for authenticated requests
+                }
+                else
+                {
+                    // Fallback: Very restrictive CORS if no allowed hosts configured
+                    app.UseCors(options => options
+                        .WithOrigins("https://localhost", "https://127.0.0.1")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+                }
+            }
         }
 
         private void LoginFromOtherApps(IServiceCollection services)
