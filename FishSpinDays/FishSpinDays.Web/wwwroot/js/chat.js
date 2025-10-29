@@ -9,8 +9,11 @@
 
     connection.on("NewMessage",
         function (message) {
-            var chatInfo = `<div>[${message.user}]: <b>${message.text}</b></div>`;
-            $("#messagesList").append(chatInfo);
+            // Use text() for HTML escaping to prevent XSS
+            var userSpan = $('<span>').text(message.user);
+            var textSpan = $('<b>').text(message.text);
+            var chatDiv = $('<div>').append('[', userSpan, ']: ', textSpan);
+            $("#messagesList").append(chatDiv);
         });
 
     $("#sendButton").on('click', sendMessage);
@@ -21,12 +24,25 @@
     });
 
     function sendMessage() {
-        var message = $("#messageInput").val();
+        var message = $("#messageInput").val().trim();
+
+        // Basic validation
+        if (!message) {
+            return;
+        }
+
+        // Length limit for chat messages
+        if (message.length > 500) {
+            alert('Message too long! Maximum 500 characters.');
+            return;
+        }
+
         connection.invoke("Send", message);
         $("#messageInput").val("");
     }
 
     connection.start().catch(function (err) {
-        return console.error(err.toString());
+        console.error('SignalR connection error:', err.toString());
+        $('#messagesList').append('<div style="color: red;"><em>Connection error. Please refresh the page.</em></div>');
     });
 });

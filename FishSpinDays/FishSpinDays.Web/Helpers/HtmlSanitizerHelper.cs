@@ -1,8 +1,10 @@
-namespace FishSpinDays.Web.Helpers
+﻿namespace FishSpinDays.Web.Helpers
 {
     using Ganss.Xss;
     using Microsoft.AspNetCore.Html;
     using Microsoft.AspNetCore.Mvc.Rendering;
+    using System;
+    using System.Linq;
 
     /// <summary>
     /// HTML Sanitization helper for safe rich text content
@@ -42,6 +44,12 @@ namespace FishSpinDays.Web.Helpers
             sanitizer.AllowedTags.Add("span");
             sanitizer.AllowedTags.Add("blockquote");
 
+            // Added Video support
+            sanitizer.AllowedTags.Add("iframe");
+            sanitizer.AllowedTags.Add("video");
+            sanitizer.AllowedTags.Add("source");
+            sanitizer.AllowedTags.Add("embed");
+
             // Configure allowed attributes
             sanitizer.AllowedAttributes.Clear();
             sanitizer.AllowedAttributes.Add("src");
@@ -54,11 +62,24 @@ namespace FishSpinDays.Web.Helpers
             sanitizer.AllowedAttributes.Add("width");
             sanitizer.AllowedAttributes.Add("height");
 
+            // Added Video attributes
+            sanitizer.AllowedAttributes.Add("frameborder");
+            sanitizer.AllowedAttributes.Add("allowfullscreen");
+            sanitizer.AllowedAttributes.Add("controls");
+            sanitizer.AllowedAttributes.Add("autoplay");
+            sanitizer.AllowedAttributes.Add("loop");
+            sanitizer.AllowedAttributes.Add("muted");
+            sanitizer.AllowedAttributes.Add("poster");
+            sanitizer.AllowedAttributes.Add("type");
+
             // Configure allowed URL schemes (security)
             sanitizer.AllowedSchemes.Clear();
             sanitizer.AllowedSchemes.Add("http");
             sanitizer.AllowedSchemes.Add("https");
             sanitizer.AllowedSchemes.Add("mailto");
+
+            // Added Video URL schemes
+            sanitizer.AllowedSchemes.Add("data"); // For data URLs
 
             // Configure allowed CSS properties (limited for security)
             sanitizer.AllowedCssProperties.Clear();
@@ -71,12 +92,42 @@ namespace FishSpinDays.Web.Helpers
             sanitizer.AllowedCssProperties.Add("background-color");
             sanitizer.AllowedCssProperties.Add("float");
             sanitizer.AllowedCssProperties.Add("display");
+            sanitizer.AllowedCssProperties.Add("border");
+            sanitizer.AllowedCssProperties.Add("border-radius");
+
+            // Added Video-specific URL validation
+            sanitizer.FilterUrl += (sender, args) =>
+            {
+                // Allow trusted video domains
+                var trustedDomains = new[]
+                {
+                    "youtube.com", "www.youtube.com", "youtu.be",
+                    "vimeo.com", "www.vimeo.com",
+                    "dailymotion.com", "www.dailymotion.com"
+                };
+
+                var uri = args.OriginalUrl;
+                if (uri.StartsWith("//"))
+                {
+                    uri = "https:" + uri;
+                }
+
+                if (Uri.TryCreate(uri, UriKind.Absolute, out var parsed))
+                {
+                    var host = parsed.Host.ToLowerInvariant();
+                    if (!trustedDomains.Any(domain => host == domain || host.EndsWith("." + domain)))
+                    {
+                        // Block untrusted video domains
+                        args.SanitizedUrl = null;
+                    }
+                }
+            };
 
             // Remove dangerous attributes automatically
             sanitizer.RemovingAttribute += (sender, args) =>
             {
-                 // Log removed attributes for security monitoring if needed
-                 // This prevents onerror, onclick, onload, etc.
+                // Log removed attributes for security monitoring if needed
+                // This prevents onerror, onclick, onload, etc.
             };
         }
 

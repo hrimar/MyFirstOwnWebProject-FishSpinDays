@@ -35,6 +35,7 @@
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Areas\Identity\Services\" />
     <Folder Include="Helpers\Messages\" />
+    <Folder Include="Validation\" />
     <Folder Include="wwwroot\css\" />
   </ItemGroup>
 

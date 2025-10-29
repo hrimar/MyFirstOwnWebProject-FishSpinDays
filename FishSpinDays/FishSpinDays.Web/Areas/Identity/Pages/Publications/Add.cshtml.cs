@@ -19,11 +19,9 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
     {
         private readonly UserManager<User> userManager;
 
-        public AddModel(UserManager<User> userManager, IIdentityService identityService)
-      : base(identityService)
+        public AddModel(UserManager<User> userManager, IIdentityService identityService) : base(identityService)
         {
             this.userManager = userManager;
-
             this.Sections = new List<SelectListItem>();
         }
 
@@ -42,6 +40,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
         [BindProperty]
         [MinLength(WebConstants.ContentMinLength, ErrorMessage = ValidationConstants.DescriptionNameMessage)]
         [Required(ErrorMessage = ValidationConstants.DescriptionNullMessage)]
+        [SafeHtml(MaxLength = 50000, ErrorMessage = "Description contains invalid or dangerous content.")]
         public string Description { get; set; }
 
         [DataType(DataType.Date)]
@@ -58,6 +57,8 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
         {
             if (!ModelState.IsValid)
             {
+                // reload sections if validation fails
+                this.Sections = this.IdentityService.GettAllSections();
                 return this.Page();
             }
 
@@ -72,7 +73,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
             Publication publication = null;
             if (author.LockoutEnd < DateTime.Now || author.LockoutEnd == null)
             {
-                 publication = this.IdentityService.CreatePublication(author, section, this.Title, this.Description);
+                publication = this.IdentityService.CreatePublication(author, section, this.Title, this.Description);
 
                 if (publication == null)
                 {
@@ -82,9 +83,12 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
                         Message = WebConstants.UnsuccessfullOperation
                     });
 
+                    // reload sections for retry
+                    this.Sections = this.IdentityService.GettAllSections();
                     return Page();
                 }
             }
+
             this.TempData.Put("__Message", new MessageModel()
             {
                 Type = MessageType.Success,

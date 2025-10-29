@@ -14,6 +14,7 @@
 
         [MinLength(WebConstants.ContentMinLength, ErrorMessage = ValidationConstants.DescriptionNameMessage)]
         [Required(ErrorMessage = ValidationConstants.DescriptionNullMessage)]
+        [SafeHtml(MaxLength = 50000, ErrorMessage = "Description contains invalid or dangerous content.")]
         public string Description { get; set; }
 
         [Required]
