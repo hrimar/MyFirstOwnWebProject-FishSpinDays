@@ -1,4 +1,5 @@
 ﻿@model PublicationViewModel
+@using FishSpinDays.Web.Helpers
 @{
     ViewData["Title"] = "The most readed publication details";
 }
@@ -11,7 +12,7 @@
         <h4 class="text-center">  <small> by </small> @Model.Author</h4>
         <div class="list-group text-center">
             <p class="list-group-item-text ">
-                @Html.Raw(@Model.Description)
+                @Html.SanitizeHtml(Model.Description)
             </p>
             <h4>
                 <small> published in:  </small> @Model.Section <small> on:  </small>

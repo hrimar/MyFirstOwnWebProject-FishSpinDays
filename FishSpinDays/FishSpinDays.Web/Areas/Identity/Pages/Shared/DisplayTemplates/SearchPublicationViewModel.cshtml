@@ -1,9 +1,10 @@
 ﻿@model SearchPublicationViewModel
+@using FishSpinDays.Web.Helpers
 
 <hr />
 <a asp-area="" asp-controller="Publications" asp-action="Details" asp-route-id="@Model.Id">
     <h3>@Model.Title</h3>
 </a>
 
-    @Html.Raw(Model.SearchResult)
+@Html.SanitizeHtml(Model.SearchResult)
 

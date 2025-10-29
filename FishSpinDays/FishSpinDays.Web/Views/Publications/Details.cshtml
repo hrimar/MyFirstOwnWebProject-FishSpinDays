@@ -1,4 +1,5 @@
 ﻿@model PublicationViewModel
+@using FishSpinDays.Web.Helpers
 @{
     ViewData["Title"] = "Publication Details";
 }
@@ -15,7 +16,7 @@
         
         <div class="list-group text-center">
             <p class="list-group-item-text ">
-                @Html.Raw(@Model.Description)
+                @Html.SanitizeHtml(Model.Description)
             </p>
             <h4>
                 <small> published in:  </small> @Model.Section <small> on:  </small>

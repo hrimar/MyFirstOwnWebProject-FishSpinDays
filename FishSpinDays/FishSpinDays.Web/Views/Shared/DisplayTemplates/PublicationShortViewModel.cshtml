@@ -1,4 +1,5 @@
 ﻿@model PublicationShortViewModel
+@using FishSpinDays.Web.Helpers
 
 <div class="media col-md-11">
     <h3 class="text-left">&nbsp; @Model.Title</h3><br />
@@ -8,18 +9,18 @@
                 @{
                     if (@Model.CoverImage == string.Empty)
                     {
-                        <img class="media-object img-rounded img-responsive" src=http://www.svinostugby.com/wp-content/uploads/2016/02/fishing2.jpg alt="placehold.it/400x300">
+                        <img class="media-object img-rounded img-responsive" src="http://www.svinostugby.com/wp-content/uploads/2016/02/fishing2.jpg" alt="placehold.it/400x300">
                     }
                     else
                     {
-                        <img class="media-object img-rounded img-responsive" src=@Model.CoverImage alt="placehold.it/400x300">
+                        <img class="media-object img-rounded img-responsive" src="@Model.CoverImage" alt="placehold.it/400x300">
                     }
                 }
             </figure>
         </div>
         <div class="col-md-6">
             <p class="list-group-item-text">
-                @Html.Raw(@Model.Description)
+                @Html.SanitizeHtml(Model.Description)
             </p>
         </div>
         <div class="col-md-3 text-center">
