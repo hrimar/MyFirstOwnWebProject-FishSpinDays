@@ -1,6 +1,5 @@
 ﻿namespace FishSpinDays.Web.Helpers.Filters
 {
-    using FishSpinDays.Web.Controllers;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
@@ -17,7 +16,7 @@
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<PublicationsAPIController>>();
+            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<CriticalOperationAttribute>>();
             var operationName = OperationName ?? context.ActionDescriptor.DisplayName;
 
             using var scope = logger.BeginScope("Critical Operation: {Operation}", operationName);
