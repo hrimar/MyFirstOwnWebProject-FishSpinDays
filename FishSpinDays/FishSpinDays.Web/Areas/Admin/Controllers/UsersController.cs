@@ -11,6 +11,7 @@
     using FishSpinDays.Web.Helpers.Messages;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using System.Threading.Tasks;
 
     public class UsersController : AdminController
     {
@@ -24,9 +25,9 @@
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            User currentUser = GetCurrentUser();
+            User currentUser = await GetCurrentUserAsync().ConfigureAwait(false);
             
             var usersModel = this.userService.GetUsersWithourCurrentUser(currentUser.Id);
             if (usersModel == null)
@@ -38,9 +39,9 @@
         }
 
         [HttpGet]
-        public IActionResult Details(string id)
+        public async Task<IActionResult> Details(string id)
         {
-            var currentUser = GetCurrentUser();
+            var currentUser = await GetCurrentUserAsync().ConfigureAwait(false);
 
             if (id == currentUser.Id)
             {
@@ -57,9 +58,9 @@
         }
 
         [HttpGet]
-        public IActionResult Ban(string id)
+        public async Task<IActionResult> Ban(string id)
         {
-            var currentUser = GetCurrentUser();
+            var currentUser = await GetCurrentUserAsync().ConfigureAwait(false);
             if (id == currentUser.Id)
             {
                 return Unauthorized();
@@ -116,10 +117,9 @@
             return RedirectToAction("/");
         }
 
-
-        private User GetCurrentUser()
+        private async Task<User> GetCurrentUserAsync()
         {
-            return this.userManager.GetUserAsync(this.User).Result;
+            return await this.userManager.GetUserAsync(this.User).ConfigureAwait(false);
         }
     }
 }

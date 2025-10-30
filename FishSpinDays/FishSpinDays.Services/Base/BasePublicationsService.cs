@@ -60,21 +60,21 @@
                     .OrderByDescending(p => p.CreationDate)
                     .Skip((page - 1) * count)
                     .Take(count)
-                    .ToListAsync(cancellationToken);
+                    .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-                logger.LogDebug("Database query completed - Retrieved {PublicationCount} publications in {ElapsedMs}ms", 
+                logger.LogDebug("Database query completed - Retrieved {PublicationCount} publications in {ElapsedMs}ms",
                     publications.Count, stopwatch.ElapsedMilliseconds);
 
                 var model = GetAllTargetPublicationsWithLoadedAuthors(publications);
 
                 stopwatch.Stop();
-                logger.LogInformation("Successfully completed GetAllPublications - Page: {Page}, Count: {ResultCount}, Duration: {ElapsedMs}ms", 
+                logger.LogInformation("Successfully completed GetAllPublications - Page: {Page}, Count: {ResultCount}, Duration: {ElapsedMs}ms",
                     page, model.Count, stopwatch.ElapsedMilliseconds);
 
                 // Log slow operations
                 if (stopwatch.ElapsedMilliseconds > 1000)
                 {
-                    logger.LogWarning("Slow operation detected - GetAllPublications took {ElapsedMs}ms for page {Page}", 
+                    logger.LogWarning("Slow operation detected - GetAllPublications took {ElapsedMs}ms for page {Page}",
                         stopwatch.ElapsedMilliseconds, page);
                 }
 
@@ -83,16 +83,16 @@
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 stopwatch.Stop();
-                logger.LogInformation("GetAllPublications was cancelled after {ElapsedMs}ms - Page: {Page}", 
+                logger.LogInformation("GetAllPublications was cancelled after {ElapsedMs}ms - Page: {Page}",
                     stopwatch.ElapsedMilliseconds, page);
                 throw;
             }
             catch (Exception ex)
             {
                 stopwatch.Stop();
-                logger.LogError(ex, "Error occurred in GetAllPublications after {ElapsedMs}ms - Page: {Page}, Count: {Count}", 
+                logger.LogError(ex, "Error occurred in GetAllPublications after {ElapsedMs}ms - Page: {Page}, Count: {Count}",
                     stopwatch.ElapsedMilliseconds, page, count);
-                
+
                 return Enumerable.Empty<PublicationShortViewModel>();
             }
             finally
@@ -123,30 +123,30 @@
                     .Include(s => s.Comments).ThenInclude(c => c.Author)
                     .Include(s => s.Author)
                     .Include(s => s.Section)
-                    .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+                    .FirstOrDefaultAsync(s => s.Id == id, cancellationToken).ConfigureAwait(false);
 
                 stopwatch.Stop();
 
                 if (publication == null)
                 {
-                    logger.LogWarning("Publication not found after {ElapsedMs}ms - ID: {PublicationId}", 
+                    logger.LogWarning("Publication not found after {ElapsedMs}ms - ID: {PublicationId}",
                         stopwatch.ElapsedMilliseconds, id);
                 }
                 else
                 {
-                    logger.LogDebug("Publication found after {ElapsedMs}ms - ID: {PublicationId}, Title: {Title}, Comments: {CommentCount}", 
+                    logger.LogDebug("Publication found after {ElapsedMs}ms - ID: {PublicationId}, Title: {Title}, Comments: {CommentCount}",
                         stopwatch.ElapsedMilliseconds, id, publication.Title, publication.Comments?.Count ?? 0);
                 }
 
                 var model = this.Mapper.Map<PublicationViewModel>(publication);
-                
-                logger.LogInformation("Successfully completed GetPublication - ID: {PublicationId}, Found: {Found}, Duration: {ElapsedMs}ms", 
+
+                logger.LogInformation("Successfully completed GetPublication - ID: {PublicationId}, Found: {Found}, Duration: {ElapsedMs}ms",
                     id, model != null, stopwatch.ElapsedMilliseconds);
 
                 // Log slow operations
                 if (stopwatch.ElapsedMilliseconds > 500)
                 {
-                    logger.LogWarning("Slow GetPublication operation - ID: {PublicationId} took {ElapsedMs}ms", 
+                    logger.LogWarning("Slow GetPublication operation - ID: {PublicationId} took {ElapsedMs}ms",
                         id, stopwatch.ElapsedMilliseconds);
                 }
 
@@ -155,16 +155,16 @@
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 stopwatch.Stop();
-                logger.LogInformation("GetPublication was cancelled after {ElapsedMs}ms - ID: {PublicationId}", 
+                logger.LogInformation("GetPublication was cancelled after {ElapsedMs}ms - ID: {PublicationId}",
                     stopwatch.ElapsedMilliseconds, id);
                 throw;
             }
             catch (Exception ex)
             {
                 stopwatch.Stop();
-                logger.LogError(ex, "Error occurred in GetPublication after {ElapsedMs}ms - ID: {PublicationId}", 
+                logger.LogError(ex, "Error occurred in GetPublication after {ElapsedMs}ms - ID: {PublicationId}",
                     stopwatch.ElapsedMilliseconds, id);
-                
+
                 return null;
             }
             finally
@@ -190,10 +190,10 @@
                     cancellationToken.ThrowIfCancellationRequested();
                 }
 
-                var count = await this.DbContext.Publications.CountAsync(cancellationToken);
-                
+                var count = await this.DbContext.Publications.CountAsync(cancellationToken).ConfigureAwait(false);
+
                 stopwatch.Stop();
-                logger.LogInformation("Successfully completed TotalPublicationsCount - Count: {Count}, Duration: {ElapsedMs}ms", 
+                logger.LogInformation("Successfully completed TotalPublicationsCount - Count: {Count}, Duration: {ElapsedMs}ms",
                     count, stopwatch.ElapsedMilliseconds);
 
                 return count;
@@ -239,7 +239,7 @@
                     .CountAsync(cancellationToken);
 
                 stopwatch.Stop();
-                logger.LogInformation("Successfully completed TotalPublicationsCountByType - Type: {Type}, Count: {Count}, Duration: {ElapsedMs}ms", 
+                logger.LogInformation("Successfully completed TotalPublicationsCountByType - Type: {Type}, Count: {Count}, Duration: {ElapsedMs}ms",
                     type, count, stopwatch.ElapsedMilliseconds);
 
                 return count;
@@ -247,14 +247,14 @@
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 stopwatch.Stop();
-                logger.LogInformation("TotalPublicationsCountByType was cancelled after {ElapsedMs}ms - Type: {Type}", 
+                logger.LogInformation("TotalPublicationsCountByType was cancelled after {ElapsedMs}ms - Type: {Type}",
                     stopwatch.ElapsedMilliseconds, type);
                 throw;
             }
             catch (Exception ex)
             {
                 stopwatch.Stop();
-                logger.LogError(ex, "Error in TotalPublicationsCountByType after {ElapsedMs}ms - Type: {Type}", 
+                logger.LogError(ex, "Error in TotalPublicationsCountByType after {ElapsedMs}ms - Type: {Type}",
                     stopwatch.ElapsedMilliseconds, type);
                 throw;
             }
@@ -282,17 +282,17 @@
                     logger.LogWarning("No sea publications found for page {Page} after {ElapsedMs}ms", page, stopwatch.ElapsedMilliseconds);
                     return Enumerable.Empty<PublicationShortViewModel>();
                 }
-                
+
                 var model = GetAllTargetPublicationsWithLoadedAuthors(publications);
-                
+
                 stopwatch.Stop();
-                logger.LogInformation("Successfully completed GetAllSeaPublications - Page: {Page}, Count: {ResultCount}, Duration: {ElapsedMs}ms", 
+                logger.LogInformation("Successfully completed GetAllSeaPublications - Page: {Page}, Count: {ResultCount}, Duration: {ElapsedMs}ms",
                     page, model.Count, stopwatch.ElapsedMilliseconds);
 
                 // Only warn if slow
                 if (stopwatch.ElapsedMilliseconds > 1000)
                 {
-                    logger.LogWarning("Slow GetAllSeaPublications operation - Page: {Page} took {ElapsedMs}ms", 
+                    logger.LogWarning("Slow GetAllSeaPublications operation - Page: {Page} took {ElapsedMs}ms",
                         page, stopwatch.ElapsedMilliseconds);
                 }
 
@@ -301,14 +301,14 @@
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 stopwatch.Stop();
-                logger.LogInformation("GetAllSeaPublications was cancelled after {ElapsedMs}ms - Page: {Page}", 
+                logger.LogInformation("GetAllSeaPublications was cancelled after {ElapsedMs}ms - Page: {Page}",
                     stopwatch.ElapsedMilliseconds, page);
                 throw;
             }
             catch (Exception ex)
             {
                 stopwatch.Stop();
-                logger.LogError(ex, "Error in GetAllSeaPublications after {ElapsedMs}ms - Page: {Page}", 
+                logger.LogError(ex, "Error in GetAllSeaPublications after {ElapsedMs}ms - Page: {Page}",
                     stopwatch.ElapsedMilliseconds, page);
                 return Enumerable.Empty<PublicationShortViewModel>();
             }
@@ -328,11 +328,11 @@
                     logger.LogWarning("No freshwater publications found for page {Page} after {ElapsedMs}ms", page, stopwatch.ElapsedMilliseconds);
                     return Enumerable.Empty<PublicationShortViewModel>();
                 }
-                
+
                 var model = GetAllTargetPublicationsWithLoadedAuthors(publications);
-                
+
                 stopwatch.Stop();
-                logger.LogInformation("Successfully completed GetAllFreshwaterPublications - Page: {Page}, Count: {ResultCount}, Duration: {ElapsedMs}ms", 
+                logger.LogInformation("Successfully completed GetAllFreshwaterPublications - Page: {Page}, Count: {ResultCount}, Duration: {ElapsedMs}ms",
                     page, model.Count, stopwatch.ElapsedMilliseconds);
 
                 return model;
@@ -340,14 +340,13 @@
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 stopwatch.Stop();
-                logger.LogInformation("GetAllFreshwaterPublications was cancelled after {ElapsedMs}ms - Page: {Page}", 
-                    stopwatch.ElapsedMilliseconds, page);
+                logger.LogInformation("GetAllFreshwaterPublications was cancelled after {ElapsedMs}ms - Page: {Page}", stopwatch.ElapsedMilliseconds, page);
                 throw;
             }
             catch (Exception ex)
             {
                 stopwatch.Stop();
-                logger.LogError(ex, "Error in GetAllFreshwaterPublications after {ElapsedMs}ms - Page: {Page}", 
+                logger.LogError(ex, "Error in GetAllFreshwaterPublications after {ElapsedMs}ms - Page: {Page}",
                     stopwatch.ElapsedMilliseconds, page);
                 return Enumerable.Empty<PublicationShortViewModel>();
             }
@@ -372,11 +371,11 @@
                     .Where(p => p.Section.Name == sectionType)
                     .Take(WebConstants.DefaultResultPerPage)
                     .ToListAsync(cancellationToken);
-                    
+
                 var model = GetAllTargetPublicationsWithLoadedAuthors(publications);
-                
+
                 stopwatch.Stop();
-                logger.LogInformation("Successfully completed GetAllPublicationsInSection - Section: {SectionType}, Count: {ResultCount}, Duration: {ElapsedMs}ms", 
+                logger.LogInformation("Successfully completed GetAllPublicationsInSection - Section: {SectionType}, Count: {ResultCount}, Duration: {ElapsedMs}ms",
                     sectionType, model.Count, stopwatch.ElapsedMilliseconds);
 
                 return model;
@@ -384,14 +383,14 @@
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 stopwatch.Stop();
-                logger.LogInformation("GetAllPublicationsInSection was cancelled after {ElapsedMs}ms - Section: {SectionType}", 
+                logger.LogInformation("GetAllPublicationsInSection was cancelled after {ElapsedMs}ms - Section: {SectionType}",
                     stopwatch.ElapsedMilliseconds, sectionType);
                 throw;
             }
             catch (Exception ex)
             {
                 stopwatch.Stop();
-                logger.LogError(ex, "Error in GetAllPublicationsInSection after {ElapsedMs}ms - Section: {SectionType}", 
+                logger.LogError(ex, "Error in GetAllPublicationsInSection after {ElapsedMs}ms - Section: {SectionType}",
                     stopwatch.ElapsedMilliseconds, sectionType);
                 return Enumerable.Empty<PublicationShortViewModel>();
             }
@@ -404,7 +403,7 @@
         public async Task<PublicationViewModel> MostReadedAsync(CancellationToken cancellationToken = default)
         {
             logger.LogDebug("Getting most read publication");
-            
+
             try
             {
                 var publication = await this.DbContext.Publications
@@ -414,7 +413,7 @@
                     .Include(s => s.Section)
                     .FirstAsync(cancellationToken);
 
-                logger.LogInformation("Most read publication found - ID: {PublicationId}, Likes: {Likes}", 
+                logger.LogInformation("Most read publication found - ID: {PublicationId}, Likes: {Likes}",
                     publication.Id, publication.Likes);
 
                 return this.Mapper.Map<PublicationViewModel>(publication);
@@ -434,7 +433,7 @@
         public async Task<IEnumerable<PublicationShortViewModel>> GetAllPublicationsInThisYearAsync(int year, CancellationToken cancellationToken = default)
         {
             logger.LogDebug("Getting publications for year {Year}", year);
-            
+
             try
             {
                 var publications = await this.DbContext.Publications
@@ -442,10 +441,10 @@
                     .Where(p => p.CreationDate.Year == year)
                     .Take(WebConstants.DefaultResultPerPage)
                     .ToListAsync(cancellationToken);
-                    
+
                 var result = GetAllTargetPublicationsWithLoadedAuthors(publications);
                 logger.LogInformation("Found {Count} publications for year {Year}", result.Count, year);
-                
+
                 return result;
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -463,7 +462,7 @@
         public async Task<IEnumerable<PublicationShortViewModel>> GetAllPublicationsInThisMonthAsync(int month, CancellationToken cancellationToken = default)
         {
             logger.LogDebug("Getting publications for month {Month}", month);
-            
+
             try
             {
                 var publications = await this.DbContext.Publications
@@ -471,10 +470,10 @@
                     .Where(p => p.CreationDate.Month == month)
                     .Take(WebConstants.DefaultResultPerPage)
                     .ToListAsync(cancellationToken);
-                    
+
                 var result = GetAllTargetPublicationsWithLoadedAuthors(publications);
                 logger.LogInformation("Found {Count} publications for month {Month}", result.Count, month);
-                
+
                 return result;
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -550,33 +549,33 @@
                 .First();
 
             logger.LogInformation("Most read publication: ID {PublicationId}, Likes: {Likes}", publication.Id, publication.Likes);
-            
+
             return this.Mapper.Map<PublicationViewModel>(publication);
         }
 
         public IEnumerable<PublicationShortViewModel> GetAllSeaPublications(int page, int count)
         {
             logger.LogDebug("Synchronous GetAllSeaPublications - Page: {Page}", page);
-            
+
             var publications = GetTargetSection(WebConstants.SeaSection, page, count);
             if (publications == null) return null;
-            
+
             var result = GetAllTargetPublications(publications);
             logger.LogInformation("Found {Count} sea publications for page {Page}", result.Count, page);
-            
+
             return result;
         }
 
         public IEnumerable<PublicationShortViewModel> GetAllFreshwaterPublications(int page, int count)
         {
             logger.LogDebug("Synchronous GetAllFreshwaterPublications - Page: {Page}", page);
-            
+
             var publications = GetTargetSection(WebConstants.FreshwaterSection, page, count);
             if (publications == null) return null;
-            
+
             var result = GetAllTargetPublications(publications);
             logger.LogInformation("Found {Count} freshwater publications for page {Page}", result.Count, page);
-            
+
             return result;
         }
 
@@ -588,10 +587,10 @@
                 .Where(p => p.Section.Name == sectionType)
                 .Take(WebConstants.DefaultResultPerPage)
                 .ToList();
-                
+
             var result = GetAllTargetPublications(publications);
             logger.LogInformation("Found {Count} publications in section {SectionType}", result.Count, sectionType);
-            
+
             return result;
         }
 
@@ -603,10 +602,10 @@
                 .Where(p => p.CreationDate.Year == year)
                 .Take(WebConstants.DefaultResultPerPage)
                 .ToList();
-                
+
             var result = GetAllTargetPublications(publications);
             logger.LogInformation("Found {Count} publications for year {Year}", result.Count, year);
-            
+
             return result;
         }
 
@@ -618,20 +617,20 @@
                 .Where(p => p.CreationDate.Month == month)
                 .Take(WebConstants.DefaultResultPerPage)
                 .ToList();
-               
+
             var result = GetAllTargetPublications(publications);
             logger.LogInformation("Found {Count} publications for month {Month}", result.Count, month);
-            
+
             return result;
         }
 
         public int TotalPublicationsCount()
         {
             logger.LogDebug("Synchronous TotalPublicationsCount");
-            
+
             var count = this.DbContext.Publications.Count();
             logger.LogInformation("Total publications: {Count}", count);
-            
+
             return count;
         }
 

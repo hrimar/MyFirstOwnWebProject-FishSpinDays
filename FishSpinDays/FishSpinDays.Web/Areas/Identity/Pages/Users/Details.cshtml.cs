@@ -7,6 +7,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Users
     using FishSpinDays.Common.Identity.ViewModels;
     using Microsoft.AspNetCore.Authorization;
     using FishSpinDays.Services.Identity.Interfaces;
+    using System.Threading.Tasks;
 
     [Authorize]
     public class DetailsModel : BaseModel
@@ -23,11 +24,11 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Users
 
         public UserDetailsViewModel UserModel { get; set; }
 
-        public IActionResult OnGet(string id) 
+        public async Task<IActionResult> OnGetAsync(string id) 
         {
-            var currentUser = GetCurrentUser();
+            var currentUser = await GetCurrentUserAsync().ConfigureAwait(false);
 
-            var user = this.IdentityService.GetUserById(id);
+            var user = await this.IdentityService.GetUserByIdAsync(id).ConfigureAwait(false);
 
             if (user == null)
             {
@@ -40,9 +41,9 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Users
             return Page();
         }
 
-        private User GetCurrentUser()
+        private async Task<User> GetCurrentUserAsync()
         {
-            return this.userManager.GetUserAsync(this.User).Result;
+            return await this.userManager.GetUserAsync(this.User).ConfigureAwait(false);
         }
     }
 }

@@ -13,6 +13,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
+    using System.Threading.Tasks;
 
     [Authorize]
     public class AddModel : BaseModel
@@ -48,22 +49,22 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
 
         public User Author { get; set; }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            this.Sections = this.IdentityService.GettAllSections();
+            this.Sections = await this.IdentityService.GetAllSectionsAsync().ConfigureAwait(false);
         }
 
-        public IActionResult OnPostCreatePublication()
+        public async Task<IActionResult> OnPostCreatePublicationAsync()
         {
             if (!ModelState.IsValid)
             {
                 // reload sections if validation fails
-                this.Sections = this.IdentityService.GettAllSections();
+                this.Sections = await this.IdentityService.GetAllSectionsAsync().ConfigureAwait(false);
                 return this.Page();
             }
 
-            User author = this.userManager.GetUserAsync(this.User).Result;
-            var section = this.IdentityService.GetSection(this.SectionId);
+            User author = await this.userManager.GetUserAsync(this.User).ConfigureAwait(false);
+            var section = await this.IdentityService.GetSectionAsync(this.SectionId).ConfigureAwait(false);
 
             if (author == null || section == null)
             {
@@ -73,7 +74,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
             Publication publication = null;
             if (author.LockoutEnd < DateTime.Now || author.LockoutEnd == null)
             {
-                publication = this.IdentityService.CreatePublication(author, section, this.Title, this.Description);
+                publication = await this.IdentityService.CreatePublicationAsync(author, section, this.Title, this.Description).ConfigureAwait(false);
 
                 if (publication == null)
                 {
@@ -84,7 +85,7 @@ namespace FishSpinDays.Web.Areas.Identity.Pages.Publications
                     });
 
                     // reload sections for retry
-                    this.Sections = this.IdentityService.GettAllSections();
+                    this.Sections = await this.IdentityService.GetAllSectionsAsync().ConfigureAwait(false);
                     return Page();
                 }
             }

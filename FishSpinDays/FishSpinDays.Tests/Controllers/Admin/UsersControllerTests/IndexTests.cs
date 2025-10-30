@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FishSpinDays.Tests.Controllers.Admin.UsersControllerTests
 {
@@ -40,7 +41,7 @@ namespace FishSpinDays.Tests.Controllers.Admin.UsersControllerTests
         }
 
         [TestMethod]
-        public void Index_ShoudReturnNotNull()
+        public async Task Index_ShoudReturnNotNull()
         {
             var users = new[]
             {
@@ -54,33 +55,31 @@ namespace FishSpinDays.Tests.Controllers.Admin.UsersControllerTests
 
             var mockUserStore = new Mock<IUserStore<User>>();
 
-            var mockUserManager = new Mock<UserManager<User>>(
-                new Mock<IUserStore<User>>().Object, null, null, null, null, null, null, null, null);
-            mockUserManager.Setup(um => um.GetUserAsync(null))
-                .ReturnsAsync(users[1]);
+            var mockUserManager = new Mock<UserManager<User>>(new Mock<IUserStore<User>>().Object, null, null, null, null, null, null, null, null);
+            mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(users[1]);
 
-          
+
             var mockService = new Mock<IAdminUsersService>();
             mockService
-                .Setup(service => service.GetUsersWithourCurrentUser("111"))
+                .Setup(service => service.GetUsersWithourCurrentUser("222"))
                 .Returns(new[] {new UserShortViewModel()
                 {
                     Id = "111",
-               UserName = "Miisho",
-               Email = "mishi@abv.bg"
-                } });
-         
+                    UserName = "Miisho",
+                    Email = "mishi@abv.bg"
+                }});
+
             var controller = new UsersController(mockUserManager.Object, mockService.Object);
 
             //2. act:
-            var result = controller.Index() as ViewResult;
+            var result = await controller.Index() as ViewResult;
 
-            //. assert:
+            //3. assert:
             Assert.IsNotNull(result);
         }
 
         [TestMethod]
-        public void Index_ShoudReturnAllUsersExceptCurrent() 
+        public async Task Index_ShoudReturnAllUsersExceptCurrent()
         {
             var users = new[]
             {
@@ -95,32 +94,29 @@ namespace FishSpinDays.Tests.Controllers.Admin.UsersControllerTests
             mockDbContext.SaveChanges();
 
             var mockUserStore = new Mock<IUserStore<User>>();
-                    
-            var mockUserManager = new Mock<UserManager<User>>(
-                new Mock<IUserStore<User>>().Object, null, null, null, null, null, null, null, null);
-            mockUserManager.Setup(um => um.GetUserAsync(null))
-                .ReturnsAsync(users[1]);
+
+            var mockUserManager = new Mock<UserManager<User>>(new Mock<IUserStore<User>>().Object, null, null, null, null, null, null, null, null);
+            mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(users[1]);
 
             var mockService = new Mock<IAdminUsersService>();
             mockService
                 .Setup(service => service.GetUsersWithourCurrentUser("222"))
                 .Returns(new[]
-            {                
-                new UserShortViewModel() { Id = "111" },
-                new UserShortViewModel() { Id = "333" },
-                new UserShortViewModel() { Id = "444" },
-            });
-              
+                {
+                    new UserShortViewModel() { Id = "111" },
+                    new UserShortViewModel() { Id = "333" },
+                    new UserShortViewModel() { Id = "444" },
+                });
+
             var controller = new UsersController(mockUserManager.Object, mockService.Object);
 
             //2. act:
-            var result = controller.Index() as ViewResult;
+            var result = await controller.Index() as ViewResult;
 
-            //. assert:
+            //3. assert:
             Assert.IsNotNull(result);
             var model = result.Model as IEnumerable<UserShortViewModel>;
-            CollectionAssert.AreEqual(new[] { "111", "333", "444" },
-                                            model.Select(u => u.Id).ToArray());
+            CollectionAssert.AreEqual(new[] { "111", "333", "444" }, model.Select(u => u.Id).ToArray());
         }
     }
 }

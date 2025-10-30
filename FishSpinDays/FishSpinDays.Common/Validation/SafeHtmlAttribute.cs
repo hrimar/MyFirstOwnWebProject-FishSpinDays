@@ -78,8 +78,7 @@ namespace FishSpinDays.Common.Validation
         private static double CountScriptLikeContent(string html)
         {
             var scriptIndicators = new[] { "function", "var ", "let ", "const ", "=", ";", "{", "}", "(", ")" };
-            var count = scriptIndicators.Sum(indicator =>
-                html.Split(new[] { indicator }, StringSplitOptions.None).Length - 1);
+            var count = scriptIndicators.Sum(indicator => html.Split(new[] { indicator }, StringSplitOptions.None).Length - 1);
 
             return Math.Min(1.0, (double)count / html.Length * 10);
         }

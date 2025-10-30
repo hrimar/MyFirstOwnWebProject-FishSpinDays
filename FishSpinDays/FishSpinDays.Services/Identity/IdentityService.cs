@@ -57,7 +57,7 @@
 
                 logger.LogDebug("Adding publication to database context");
                 this.DbContext.Publications.Add(publication);
-                await this.DbContext.SaveChangesAsync(cancellationToken);
+                await this.DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
                 stopwatch.Stop();
                 logger.LogInformation("Publication created successfully after {ElapsedMs}ms - ID: {PublicationId}, Title: {Title}, AuthorId: {AuthorId}", 
@@ -113,7 +113,7 @@
                 var user = await this.DbContext.Users
                     .Include(u => u.Publications)
                     .ThenInclude(u => u.Comments)
-                    .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+                    .FirstOrDefaultAsync(u => u.Id == id, cancellationToken).ConfigureAwait(false);
 
                 stopwatch.Stop();
 
