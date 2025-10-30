@@ -12,8 +12,7 @@ namespace FishSpinDays.Web.Controllers
     using Microsoft.Extensions.Logging;
     using FishSpinDays.Web.Helpers.Filters;
     using System.Linq;
-    using System.ComponentModel.DataAnnotations;
-    using FishSpinDays.Services.Identity;
+    using FishSpinDays.Common.API.Models.Users;
 
     /// <summary>
     /// API Controller for user management
@@ -29,7 +28,10 @@ namespace FishSpinDays.Web.Controllers
         private readonly IIdentityService identityService;
         private readonly ILogger<UsersAPIController> logger;
 
-        public UsersAPIController(UserManager<User> userManager, IdentityService identityService, ILogger<UsersAPIController> logger)
+        public UsersAPIController(
+            UserManager<User> userManager,
+            IIdentityService identityService,
+            ILogger<UsersAPIController> logger)
         {
             this.userManager = userManager;
             this.identityService = identityService;
@@ -234,14 +236,5 @@ namespace FishSpinDays.Web.Controllers
                 return StatusCode(500, new { Message = "An error occurred while updating the profile." });
             }
         }
-    }
-
-    /// <summary>
-    /// Model for updating user information
-    /// </summary>
-    public class UpdateUserModel
-    {
-        [EmailAddress(ErrorMessage = "Invalid email format.")]
-        public string Email { get; set; }
     }
 }

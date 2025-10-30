@@ -27,9 +27,9 @@ namespace FishSpinDays.Web.Controllers
         private readonly ILogger<StatsAPIController> logger;
 
         public StatsAPIController(
-                IBasePublicationsService basePublicationsService,
-       IIdentityService identityService,
-                ILogger<StatsAPIController> logger)
+            IBasePublicationsService basePublicationsService,
+            IIdentityService identityService,
+            ILogger<StatsAPIController> logger)
         {
             this.basePublicationsService = basePublicationsService;
             this.identityService = identityService;

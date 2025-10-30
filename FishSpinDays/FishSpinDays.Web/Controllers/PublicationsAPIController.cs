@@ -19,7 +19,7 @@
     using FishSpinDays.Web.Helpers.Filters;
     using System.Collections.Generic;
 
-    [Route("api/publications")] // for url: http://localhost:51034/api/publications
+    [Route("api/publications")] // for url: http://localhost:44331/api/publications
     [ApiController]
     [IgnoreAntiforgeryToken]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

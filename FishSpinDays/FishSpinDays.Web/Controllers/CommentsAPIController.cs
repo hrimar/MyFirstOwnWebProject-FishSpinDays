@@ -11,7 +11,7 @@ namespace FishSpinDays.Web.Controllers
     using System.Threading;
     using Microsoft.Extensions.Logging;
     using FishSpinDays.Web.Helpers.Filters;
-    using System.ComponentModel.DataAnnotations;
+    using FishSpinDays.Common.API.Models.Comments;
 
     /// <summary>
     /// API Controller for managing comments
@@ -27,7 +27,10 @@ namespace FishSpinDays.Web.Controllers
         private readonly IIdentityService identityService;
         private readonly ILogger<CommentsAPIController> logger;
 
-        public CommentsAPIController(UserManager<User> userManager, IIdentityService identityService, ILogger<CommentsAPIController> logger)
+        public CommentsAPIController(
+            UserManager<User> userManager,
+            IIdentityService identityService,
+            ILogger<CommentsAPIController> logger)
         {
             this.userManager = userManager;
             this.identityService = identityService;
@@ -195,19 +198,5 @@ namespace FishSpinDays.Web.Controllers
                 return StatusCode(500, new { Message = "An error occurred while unliking the comment." });
             }
         }
-    }
-
-    /// <summary>
-    /// Model for adding comments
-    /// </summary>
-    public class AddCommentModel
-    {
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Publication ID must be a valid positive number.")]
-        public int PublicationId { get; set; }
-
-        [Required(ErrorMessage = "Comment text is required.")]
-        [StringLength(1000, MinimumLength = 10, ErrorMessage = "Comment must be between 10 and 1000 characters.")]
-        public string Text { get; set; }
     }
 }

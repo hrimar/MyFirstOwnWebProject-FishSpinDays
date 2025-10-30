@@ -12,7 +12,7 @@ namespace FishSpinDays.Web.Controllers
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
     using System.Linq;
-    using System.ComponentModel.DataAnnotations;
+    using FishSpinDays.Common.API.Models.Search;
 
     /// <summary>
     /// API Controller for search functionality
@@ -78,10 +78,7 @@ namespace FishSpinDays.Web.Controllers
                 // Implement basic pagination
                 var totalResults = highlightedResults.Count;
                 var totalPages = (int)Math.Ceiling(totalResults / (double)pageSize);
-                var pagedResults = highlightedResults
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToList();
+                var pagedResults = highlightedResults.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
                 var searchResults = new SearchResultsModel
                 {
@@ -204,39 +201,11 @@ namespace FishSpinDays.Web.Controllers
             if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(searchTerm))
                 return text;
 
-            return Regex.Replace(text, $"({Regex.Escape(searchTerm)})", match => $"<mark>{match.Groups[0].Value}</mark>",
-             RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            return Regex.Replace(
+                text,
+                $"({Regex.Escape(searchTerm)})",
+                match => $"<mark>{match.Groups[0].Value}</mark>",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled);
         }
-    }
-
-    /// <summary>
-    /// Model for search results with pagination
-    /// </summary>
-    public class SearchResultsModel
-    {
-        public string SearchTerm { get; set; }
-        public int TotalResults { get; set; }
-        public int Page { get; set; }
-        public int PageSize { get; set; }
-        public int TotalPages { get; set; }
-        public List<SearchPublicationViewModel> Results { get; set; }
-    }
-
-    /// <summary>
-    /// Model for advanced search
-    /// </summary>
-    public class AdvancedSearchModel
-    {
-        [Required]
-        [StringLength(100, MinimumLength = 2)]
-        public string SearchTerm { get; set; }
-
-        public int Page { get; set; } = 1;
-        public int PageSize { get; set; } = 10;
-
-        // Additional filter properties can be added here
-        // public string Section { get; set; }
-        // public DateTime? FromDate { get; set; }
-        // public DateTime? ToDate { get; set; }
     }
 }
