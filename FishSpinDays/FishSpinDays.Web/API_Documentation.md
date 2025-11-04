@@ -4,7 +4,7 @@ A RESTful API for FishSpinDays app.
 
 ## Authentication
 
-This API use JWT Bearer token authentication. To access the protected endpoints you must include the Authorization header:
+This API uses JWT Bearer token authentication. To access protected endpoints, include the Authorization header in your requests:
 
 ```
 Authorization: Bearer <your-jwt-token>
