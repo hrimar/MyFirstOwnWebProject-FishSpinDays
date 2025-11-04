@@ -643,5 +643,32 @@
             logger.LogInformation("Search completed - SearchTerm: {SearchTerm}, Results: {ResultCount}", searchTerm, foundPublications.Count);
             return foundPublications;
         }
+
+        public async Task<List<Comment>> GetCommentsByAuthorIdAsync(string authorId, CancellationToken cancellationToken = default)
+        {
+            logger.LogDebug("Getting comments by author ID: {AuthorId}", authorId);
+
+            try
+            {
+                var comments = await this.DbContext.Comments
+                    .Include(c => c.Publication) // Include publication for title
+                    .Where(c => c.AuthorId == authorId)
+                    .OrderByDescending(c => c.CreationDate)
+                    .ToListAsync(cancellationToken);
+
+                logger.LogInformation("Retrieved {CommentCount} comments for author: {AuthorId}", comments.Count, authorId);
+                return comments;
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                logger.LogInformation("GetCommentsByAuthorId cancelled - AuthorId: {AuthorId}", authorId);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error getting comments by author ID: {AuthorId}", authorId);
+                throw;
+            }
+        }
     }
 }

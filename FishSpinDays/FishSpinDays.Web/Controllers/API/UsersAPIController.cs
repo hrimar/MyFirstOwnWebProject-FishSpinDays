@@ -13,6 +13,8 @@ namespace FishSpinDays.Web.Controllers.API
     using FishSpinDays.Web.Helpers.Filters;
     using System.Linq;
     using FishSpinDays.Common.API.Models.Users;
+    using FishSpinDays.Common.API.Models.Comments;
+    using FishSpinDays.Common.API.Models.Publications;
 
     /// <summary>
     /// API Controller for user management
@@ -55,7 +57,7 @@ namespace FishSpinDays.Web.Controllers.API
 
                 var roles = await userManager.GetRolesAsync(user);
 
-                return Ok(new
+                return Ok(new CurrentUserResponseModel
                 {
                     Id = user.Id,
                     UserName = user.UserName,
@@ -92,7 +94,7 @@ namespace FishSpinDays.Web.Controllers.API
                     return NotFound(new { Message = "User not found." });
                 }
 
-                return Ok(new
+                return Ok(new UserResponseModel
                 {
                     Id = user.Id,
                     UserName = user.UserName,
@@ -128,7 +130,7 @@ namespace FishSpinDays.Web.Controllers.API
                     return NotFound(new { Message = "User not found." });
                 }
 
-                var publications = user.Publications?.Select(p => new
+                var publications = user.Publications?.Select(p => new UserPublicationResponseModel
                 {
                     Id = p.Id,
                     Title = p.Title,
@@ -136,7 +138,7 @@ namespace FishSpinDays.Web.Controllers.API
                     Likes = p.Likes,
                     Section = p.Section?.Name,
                     CommentsCount = p.Comments?.Count ?? 0
-                }).OrderByDescending(p => p.CreationDate) ?? Enumerable.Empty<object>();
+                }).OrderByDescending(p => p.CreationDate) ?? Enumerable.Empty<UserPublicationResponseModel>();
 
                 return Ok(publications);
             }
@@ -167,19 +169,22 @@ namespace FishSpinDays.Web.Controllers.API
                     return NotFound(new { Message = "User not found." });
                 }
 
-                // TODO: Fix this query
-                var comments = user.Comments?.Select(c => new
+                // Use proper method to get comments by AuthorId instead of user.Comments navigation
+                var comments = await identityService.GetCommentsByAuthorIdAsync(id, cancellationToken);
+
+                var commentResponseModels = comments.Select(c => new CommentResponseModel
                 {
                     Id = c.Id,
                     Text = c.Text,
                     CreationDate = c.CreationDate,
+                    Author = c.Author?.UserName,
                     Likes = c.Likes,
                     UnLikes = c.UnLikes,
                     PublicationId = c.PublicationId,
                     PublicationTitle = c.Publication?.Title
-                }).OrderByDescending(c => c.CreationDate) ?? Enumerable.Empty<object>();
+                }).ToList();
 
-                return Ok(comments);
+                return Ok(commentResponseModels);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {

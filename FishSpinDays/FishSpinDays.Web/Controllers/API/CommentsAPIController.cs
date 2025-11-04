@@ -28,7 +28,7 @@ namespace FishSpinDays.Web.Controllers.API
         private readonly ILogger<CommentsAPIController> logger;
 
         public CommentsAPIController(
-       UserManager<User> userManager,
+            UserManager<User> userManager,
             IIdentityService identityService,
             ILogger<CommentsAPIController> logger)
         {
@@ -109,7 +109,7 @@ namespace FishSpinDays.Web.Controllers.API
                     return NotFound(new { Message = "Comment not found." });
                 }
 
-                return Ok(new
+                return Ok(new CommentResponseModel
                 {
                     Id = comment.Id,
                     Text = comment.Text,
@@ -117,7 +117,8 @@ namespace FishSpinDays.Web.Controllers.API
                     Author = comment.Author?.UserName,
                     Likes = comment.Likes,
                     UnLikes = comment.UnLikes,
-                    PublicationId = comment.PublicationId
+                    PublicationId = comment.PublicationId,
+                    PublicationTitle = comment.Publication?.Title
                 });
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
