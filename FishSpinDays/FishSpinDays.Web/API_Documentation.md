@@ -2,6 +2,11 @@
 
 A RESTful API for FishSpinDays app.
 
+## Interactive API Documentation (Swagger)
+
+- **Development:** `https://localhost:44331/api/docs`
+- **Production:** `https://fishspindays-prod-ne-app.azurewebsites.net/api/docs`
+
 ## Authentication
 
 This API uses JWT Bearer token authentication. To access protected endpoints, include the Authorization header in your requests:
@@ -30,6 +35,17 @@ Content-Type: application/json
   "tokenType": "Bearer"
 }
 ```
+
+### Using JWT Token in Swagger UI
+
+1. **Get Token**: First call `/api/Auth` endpoint to get your JWT token
+2. **Click "Authorize"**: Click the "Authorize" button in Swagger UI (upper right corner)  
+3. **Enter Token**: In the "Value" field, enter **ONLY the token** (without "Bearer "):
+   ```
+   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ...
+   ```
+4. **Click "Authorize"**: Swagger will automatically add "Bearer " prefix
+5. **Test Endpoints**: Now you can test protected endpoints like `/api/users/me`
 
 ## Publications API
 
@@ -188,7 +204,7 @@ GET /api/sections/{id}
 GET /api/sections/by-name/{sectionName}
 ```
 
-## 🔍 Search API
+## Search API
 
 ### Basic Search
 ```http
@@ -251,7 +267,7 @@ GET /api/stats/popular
 
 ## Base URLs
 
-- **Development:** `http://localhost:51034`
+- **Development:** `https://localhost:44331`
 - **Production:** `https://fishspindays-prod-ne-app.azurewebsites.net`
 
 ## Response Format
@@ -292,6 +308,30 @@ All API endpoints returns JSON in the following format:
 - `404 Not Found` - Resource not found
 - `500 Internal Server Error` - Server error
 
+## Troubleshooting JWT Authentication
+
+### Common 401 Issues:
+
+1. **Token Format**: In Swagger UI, enter ONLY the token without "Bearer " prefix
+2. **Token Expiration**: Tokens expire after 1440 minutes (24 hours) in development
+3. **Invalid Credentials**: Check username/password in `/api/Auth` call
+4. **Case Sensitivity**: Ensure exact username/password match
+
+### Development JWT Settings:
+```json
+{
+  "Jwt": {
+    "Issuer": "https://localhost:44331",
+    "Audience": "fishspindays-dev-api",
+    "Key": "supersecretsupersecretsupersecretsupersecret",
+    "ExpirationMinutes": 1440,
+    "RequireHttpsMetadata": false,
+    "SaveToken": true,
+    "ClockSkew": 5
+  }
+}
+```
+
 ## Frontend Integration Examples
 
 ### JavaScript (Fetch API)
@@ -303,11 +343,14 @@ const publications = await response.json();
 // Create publication (with auth)
 const response = await fetch('/api/publications', {
   method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  },
-  body: JSON.stringify({
+  headers:
+```json
+{
+  "Content-Type": "application/json",
+  "Authorization": "Bearer " + token
+},
+```javascript
+body: JSON.stringify({
     title: 'My Fishing Adventure',
     description: '<p>Great day at the lake...</p>',
     section: 'Freshwater fishing'
@@ -322,12 +365,12 @@ const [publications, setPublications] = useState([]);
 useEffect(() => {
   const fetchPublications = async () => {
     try {
-   const response = await fetch('/api/publications');
-  const data = await response.json();
+      const response = await fetch('/api/publications');
+      const data = await response.json();
       setPublications(data.publications);
     } catch (error) {
       console.error('Error fetching publications:', error);
-    }
+}
   };
   
   fetchPublications();
@@ -336,9 +379,9 @@ useEffect(() => {
 
 ## Configuration
 
-To use the APIin production environment:
+To use the API in production environment:
 
-1. Set JWT settings в `appsettings.json`
+1. Set JWT settings в `appsettings.Production.json`
 2. Configure CORS policies
 3. Set logging и monitoring
 4. Set rate limiting if needed

@@ -389,6 +389,7 @@
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         [Route("Home/Error")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult Error()
         {
             var requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
@@ -398,6 +399,7 @@
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         [Route("Home/Error/{statusCode:int}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult Error(int statusCode)
         {
             var requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
