@@ -31,9 +31,9 @@ namespace FishSpinDays.Web.Controllers.API
         private readonly JwtSettings jwtSettings;
 
         public AuthController(
-  UserManager<User> userManager,
-        IConfiguration configuration,
- ILogger<AuthController> logger)
+            UserManager<User> userManager,
+            IConfiguration configuration,
+            ILogger<AuthController> logger)
         {
             this.userManager = userManager;
             this.configuration = configuration;
@@ -105,21 +105,20 @@ namespace FishSpinDays.Web.Controllers.API
         {
             // Use JWT Key if configured, otherwise fallback to existing TokenValidationParameter
             var signingKey = !string.IsNullOrEmpty(jwtSettings.Key)
-    ? jwtSettings.Key
-      : configuration.GetSection("TokenValidationParameter").Value;
+                    ? jwtSettings.Key
+                    : configuration.GetSection("TokenValidationParameter").Value;
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>
-{
-      new Claim(ClaimTypes.NameIdentifier, user.Id),
-    new Claim(ClaimTypes.Name, user.UserName),
-      new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-   new Claim(JwtRegisteredClaimNames.Iat,
-        new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString(),
-   ClaimValueTypes.Integer64)
+            {
+                  new Claim(ClaimTypes.NameIdentifier, user.Id),
+                  new Claim(ClaimTypes.Name, user.UserName),
+                  new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                  new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                  new Claim(JwtRegisteredClaimNames.Iat,
+                  new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
             };
 
             // Add roles as separate claims (better for authorization)
@@ -129,11 +128,11 @@ namespace FishSpinDays.Web.Controllers.API
             }
 
             var token = new JwtSecurityToken(
-               issuer: jwtSettings.Issuer,
-            audience: jwtSettings.Audience,
-      claims: claims,
-              expires: DateTime.UtcNow.AddMinutes(jwtSettings.ExpirationMinutes),
-             signingCredentials: credentials);
+                                issuer: jwtSettings.Issuer,
+                                audience: jwtSettings.Audience,
+                                claims: claims,
+                                expires: DateTime.UtcNow.AddMinutes(jwtSettings.ExpirationMinutes),
+                                signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

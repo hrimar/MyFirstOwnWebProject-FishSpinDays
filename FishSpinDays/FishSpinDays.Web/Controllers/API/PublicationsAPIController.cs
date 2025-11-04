@@ -23,7 +23,7 @@ namespace FishSpinDays.Web.Controllers.API
     [ApiController]
     [IgnoreAntiforgeryToken]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [ApiSecurityValidation] // security validation
+    [ApiSecurityValidation]
     public class PublicationsAPIController : BaseAPIController
     {
         private readonly UserManager<User> userManager;
@@ -32,10 +32,10 @@ namespace FishSpinDays.Web.Controllers.API
 
         public PublicationsAPIController(
             UserManager<User> userManager,
-  IIdentityService identityService,
-IBasePublicationsService baseService,
-   ILogger<PublicationsAPIController> logger)
-: base(baseService)
+            IIdentityService identityService,
+            IBasePublicationsService baseService,
+            ILogger<PublicationsAPIController> logger)
+            : base(baseService)
         {
             this.userManager = userManager;
             this.identityService = identityService;
