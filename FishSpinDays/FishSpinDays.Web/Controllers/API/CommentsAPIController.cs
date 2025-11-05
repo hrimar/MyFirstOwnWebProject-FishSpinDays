@@ -71,7 +71,7 @@ namespace FishSpinDays.Web.Controllers.API
                     return StatusCode(500, new { Message = "Failed to add comment." });
                 }
 
-                return CreatedAtAction(nameof(GetComment), new { id = comment.Id }, new
+                return CreatedAtAction(nameof(GetComment), new { id = comment.Id }, new CommentResponseModel
                 {
                     Id = comment.Id,
                     Text = comment.Text,
@@ -79,7 +79,8 @@ namespace FishSpinDays.Web.Controllers.API
                     Author = author.UserName,
                     Likes = comment.Likes,
                     UnLikes = comment.UnLikes,
-                    Message = "Comment added successfully."
+                    PublicationId = comment.PublicationId,
+                    PublicationTitle = publication.Title
                 });
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -152,7 +153,7 @@ namespace FishSpinDays.Web.Controllers.API
                 {
                     // Reload comment to get updated likes count
                     var updatedComment = await identityService.GetCommentByIdAsync(id, cancellationToken);
-                    return Ok(new { Message = "Comment liked successfully.", NewLikesCount = updatedComment.Likes });
+                    return Ok(new CommentInteractionResultModel { Message = "Comment liked successfully.", NewLikesCount = updatedComment.Likes });
                 }
 
                 return StatusCode(500, new { Message = "Failed to like comment." });
@@ -188,7 +189,7 @@ namespace FishSpinDays.Web.Controllers.API
                 {
                     // Reload comment to get updated unlikes count
                     var updatedComment = await identityService.GetCommentByIdAsync(id, cancellationToken);
-                    return Ok(new { Message = "Comment unliked successfully.", NewUnlikesCount = updatedComment.UnLikes });
+                    return Ok(new CommentInteractionResultModel { Message = "Comment unliked successfully.", NewUnlikesCount = updatedComment.UnLikes });
                 }
 
                 return StatusCode(500, new { Message = "Failed to unlike comment." });

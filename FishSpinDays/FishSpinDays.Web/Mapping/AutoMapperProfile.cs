@@ -6,6 +6,9 @@
     using FishSpinDays.Common.Base.ViewModels;
     using FishSpinDays.Common.Identity.ViewModels;
     using FishSpinDays.Models;
+    using FishSpinDays.Common.API.Models.Publications;
+    using FishSpinDays.Common.API.Models.Sections;
+    using FishSpinDays.Common.API.Models.Comments;
 
     public class AutoMapperProfile : Profile
     {
@@ -29,6 +32,20 @@
                 .ForMember(lvm => lvm.Section, option => option.MapFrom(src => src.Section.Name));
 
             this.CreateMap<Comment, CommentViewModel>();
+
+            // API DTO mappings
+            this.CreateMap<Publication, PublicationShortResponseModel>()
+                .ForMember(d => d.Author, opt => opt.MapFrom(s => s.Author.UserName))
+                .ForMember(d => d.Section, opt => opt.MapFrom(s => s.Section.Name))
+                .ForMember(d => d.CommentsCount, opt => opt.MapFrom(s => s.Comments.Count));
+
+            this.CreateMap<Publication, PublicationResponseModel>()
+                .ForMember(d => d.Author, opt => opt.MapFrom(s => s.Author.UserName))
+                .ForMember(d => d.AuthorId, opt => opt.MapFrom(s => s.AuthorId))
+                .ForMember(d => d.Section, opt => opt.MapFrom(s => s.Section.Name))
+                .ForMember(d => d.CommentsCount, opt => opt.MapFrom(s => s.Comments.Count));
+
+            this.CreateMap<Section, SectionResponseModel>();
         }
 
     }

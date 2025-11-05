@@ -12,6 +12,9 @@ namespace FishSpinDays.Web.Controllers.API
     using Microsoft.Extensions.Logging;
     using FishSpinDays.Web.Helpers.Filters;
     using System.Linq;
+    using AutoMapper;
+    using FishSpinDays.Common.API.Models.Stats;
+    using FishSpinDays.Common.API.Models.Publications;
 
     /// <summary>
     /// API Controller for application statistics and analytics
@@ -25,15 +28,18 @@ namespace FishSpinDays.Web.Controllers.API
         private readonly IBasePublicationsService basePublicationsService;
         private readonly IIdentityService identityService;
         private readonly ILogger<StatsAPIController> logger;
+        private readonly IMapper mapper;
 
         public StatsAPIController(
             IBasePublicationsService basePublicationsService,
             IIdentityService identityService,
-            ILogger<StatsAPIController> logger)
+            ILogger<StatsAPIController> logger,
+            IMapper mapper)
         {
             this.basePublicationsService = basePublicationsService;
             this.identityService = identityService;
             this.logger = logger;
+            this.mapper = mapper;
         }
 
         /// <summary>
@@ -52,7 +58,7 @@ namespace FishSpinDays.Web.Controllers.API
                 var currentYearPublications = await GetCurrentYearPublicationsCountAsync(cancellationToken);
                 var currentMonthPublications = await GetCurrentMonthPublicationsCountAsync(cancellationToken);
 
-                var stats = new
+                var result = new OverviewStatsResponse
                 {
                     TotalPublications = totalPublications,
                     SeaPublications = seaPublications,
@@ -65,7 +71,7 @@ namespace FishSpinDays.Web.Controllers.API
                     LastUpdated = DateTime.UtcNow
                 };
 
-                return Ok(stats);
+                return Ok(result);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -88,18 +94,18 @@ namespace FishSpinDays.Web.Controllers.API
         {
             try
             {
-                var sectionStats = new[]
-                 {
-                    new { Name = WebConstants.SeaSection, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.SeaSection, cancellationToken) },
-                    new { Name = WebConstants.FreshwaterSection, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.FreshwaterSection, cancellationToken) },
-                    new { Name = WebConstants.Rods, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.Rods, cancellationToken) },
-                    new { Name = WebConstants.Lures, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.Lures, cancellationToken) },
-                    new { Name = WebConstants.HandLures, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.HandLures, cancellationToken) },
-                    new { Name = WebConstants.Eco, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.Eco, cancellationToken) },
-                    new { Name = WebConstants.School, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.School, cancellationToken) },
-                    new { Name = WebConstants.Anti, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.Anti, cancellationToken) },
-                    new { Name = WebConstants.Breeding, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.Breeding, cancellationToken) }
-            }.OrderByDescending(s => s.Count);
+                var sectionStats = new List<SectionCountItem>
+                {
+                    new SectionCountItem { Name = WebConstants.SeaSection, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.SeaSection, cancellationToken) },
+                    new SectionCountItem { Name = WebConstants.FreshwaterSection, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.FreshwaterSection, cancellationToken) },
+                    new SectionCountItem { Name = WebConstants.Rods, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.Rods, cancellationToken) },
+                    new SectionCountItem { Name = WebConstants.Lures, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.Lures, cancellationToken) },
+                    new SectionCountItem { Name = WebConstants.HandLures, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.HandLures, cancellationToken) },
+                    new SectionCountItem { Name = WebConstants.Eco, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.Eco, cancellationToken) },
+                    new SectionCountItem { Name = WebConstants.School, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.School, cancellationToken) },
+                    new SectionCountItem { Name = WebConstants.Anti, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.Anti, cancellationToken) },
+                    new SectionCountItem { Name = WebConstants.Breeding, Count = await basePublicationsService.TotalPublicationsCountAsync(WebConstants.Breeding, cancellationToken) }
+                }.OrderByDescending(s => s.Count);
 
                 return Ok(sectionStats);
             }
@@ -128,11 +134,11 @@ namespace FishSpinDays.Web.Controllers.API
                 var currentMonth = DateTime.UtcNow.Month;
 
                 // Get monthly stats for current year
-                var monthlyStats = new List<object>();
+                var monthlyStats = new List<TrendMonthlyItem>();
                 for (int month = 1; month <= 12; month++)
                 {
                     var publications = await basePublicationsService.GetAllPublicationsInThisMonthAsync(month, cancellationToken);
-                    monthlyStats.Add(new
+                    monthlyStats.Add(new TrendMonthlyItem
                     {
                         Month = month,
                         MonthName = new DateTime(currentYear, month, 1).ToString("MMMM"),
@@ -142,15 +148,14 @@ namespace FishSpinDays.Web.Controllers.API
                 }
 
                 // Get yearly stats
-                var yearlyStats = new
+                var yearlyStats = new TrendYearlyItem
                 {
                     CurrentYear = currentYear,
                     Count = await GetCurrentYearPublicationsCountAsync(cancellationToken),
-                    PreviousYear = currentYear - 1,
-                    // we could add previous year count here if needed
+                    PreviousYear = currentYear - 1
                 };
 
-                var trends = new
+                var trends = new TrendStatsResponse
                 {
                     Monthly = monthlyStats,
                     Yearly = yearlyStats,
@@ -181,18 +186,18 @@ namespace FishSpinDays.Web.Controllers.API
             try
             {
                 var mostRatedPublication = await basePublicationsService.MostReadedAsync(cancellationToken);
-
-                var popularStats = new
+                var popularStats = new PopularStatsResponse
                 {
-                    MostRatedPublication = mostRatedPublication != null ? new
+                    MostRatedPublication = mostRatedPublication != null ? new PublicationShortResponseModel
                     {
                         Id = mostRatedPublication.Id,
                         Title = mostRatedPublication.Title,
                         Likes = mostRatedPublication.Likes,
                         Author = mostRatedPublication.Author,
-                        Section = mostRatedPublication.Section
+                        Section = mostRatedPublication.Section,
+                        CreationDate = mostRatedPublication.CreationDate,
+                        CommentsCount =0
                     } : null,
-                    // we could add more popular content stats here
                     LastUpdated = DateTime.UtcNow
                 };
 

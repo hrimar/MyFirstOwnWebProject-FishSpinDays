@@ -9,6 +9,7 @@ namespace FishSpinDays.Web.Controllers.API
     using Microsoft.Extensions.Logging;
     using FishSpinDays.Web.Helpers.Filters;
     using System.Linq;
+    using FishSpinDays.Common.API.Models.Sections;
 
     /// <summary>
     /// API Controller for sections management
@@ -42,7 +43,7 @@ namespace FishSpinDays.Web.Controllers.API
             {
                 var sections = await identityService.GetAllSectionsAsync(cancellationToken);
 
-                var sectionsList = sections.Select(s => new
+                var sectionsList = sections.Select(s => new SectionResponseModel
                 {
                     Id = int.Parse(s.Value),
                     Name = s.Text
@@ -78,7 +79,7 @@ namespace FishSpinDays.Web.Controllers.API
                     return NotFound(new { Message = "Section not found." });
                 }
 
-                return Ok(new
+                return Ok(new SectionResponseModel
                 {
                     Id = id,
                     Name = section.Name
@@ -117,7 +118,7 @@ namespace FishSpinDays.Web.Controllers.API
                     return NotFound(new { Message = "Section not found." });
                 }
 
-                return Ok(new
+                return Ok(new SectionResponseModel
                 {
                     Id = section.Id,
                     Name = section.Name
