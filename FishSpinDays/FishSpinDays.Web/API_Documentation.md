@@ -76,6 +76,9 @@ Authorization: Bearer <token>
 ```http
 POST /api/publications/{id}/like
 Authorization: Bearer <token>
+Content-Type: application/json
+
+{}
 ```
 
 ### Get Most Rated Publication
@@ -145,12 +148,18 @@ GET /api/comments/{id}
 ```http
 POST /api/comments/{id}/like
 Authorization: Bearer <token>
+Content-Type: application/json
+
+{}
 ```
 
 ### Unlike Comment (Requires Auth)
 ```http
 POST /api/comments/{id}/unlike
 Authorization: Bearer <token>
+Content-Type: application/json
+
+{}
 ```
 
 ## Users API

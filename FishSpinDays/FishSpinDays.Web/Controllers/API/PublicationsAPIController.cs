@@ -496,7 +496,9 @@ namespace FishSpinDays.Web.Controllers.API
 
                 if (success)
                 {
-                    return Ok(new { Message = "Publication liked successfully.", NewLikesCount = publication.Likes });
+                    // Reload publication to get updated likes count
+                    var updatedPublication = await this.identityService.GetPublicationByIdAsync(id, cancellationToken);
+                    return Ok(new { Message = "Publication liked successfully.", NewLikesCount = updatedPublication.Likes });
                 }
 
                 return StatusCode(500, new { Message = "Failed to like publication." });

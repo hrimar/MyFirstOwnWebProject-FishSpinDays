@@ -150,7 +150,9 @@ namespace FishSpinDays.Web.Controllers.API
                 var success = await identityService.IsLikedCommentAsync(comment, cancellationToken);
                 if (success)
                 {
-                    return Ok(new { Message = "Comment liked successfully.", NewLikesCount = comment.Likes });
+                    // Reload comment to get updated likes count
+                    var updatedComment = await identityService.GetCommentByIdAsync(id, cancellationToken);
+                    return Ok(new { Message = "Comment liked successfully.", NewLikesCount = updatedComment.Likes });
                 }
 
                 return StatusCode(500, new { Message = "Failed to like comment." });
@@ -184,7 +186,9 @@ namespace FishSpinDays.Web.Controllers.API
                 var success = await identityService.IsUnLikedCommentAsync(comment, cancellationToken);
                 if (success)
                 {
-                    return Ok(new { Message = "Comment unliked successfully.", NewUnlikesCount = comment.UnLikes });
+                    // Reload comment to get updated unlikes count
+                    var updatedComment = await identityService.GetCommentByIdAsync(id, cancellationToken);
+                    return Ok(new { Message = "Comment unliked successfully.", NewUnlikesCount = updatedComment.UnLikes });
                 }
 
                 return StatusCode(500, new { Message = "Failed to unlike comment." });

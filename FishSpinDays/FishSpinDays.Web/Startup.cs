@@ -14,6 +14,7 @@ namespace FishSpinDays.Web
     using FishSpinDays.Web.Extensions;
     using FishSpinDays.Web.Hubs;
     using FishSpinDays.Web.Middleware;
+    using FishSpinDays.Web.Helpers.Filters;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -258,6 +259,7 @@ namespace FishSpinDays.Web
             services.AddControllersWithViews(options =>
             {
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                options.Filters.Add<EmptyPostBodyFilter>(); // Handle empty POST requests globally
             });
             services.AddRazorPages();
         }
