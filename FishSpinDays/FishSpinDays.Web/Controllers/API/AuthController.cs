@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -17,7 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
-namespace FishSpinDays.Web.Controllers
+namespace FishSpinDays.Web.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -31,7 +31,7 @@ namespace FishSpinDays.Web.Controllers
         private readonly JwtSettings jwtSettings;
 
         public AuthController(
-            UserManager<User> userManager, 
+            UserManager<User> userManager,
             IConfiguration configuration,
             ILogger<AuthController> logger)
         {
@@ -64,7 +64,7 @@ namespace FishSpinDays.Web.Controllers
                 logger.LogInformation("Authentication attempt - Username: {Username}, UserAgent: {UserAgent}", model.Username, userAgent);
 
                 var user = await this.userManager.FindByNameAsync(model.Username);
-                
+
                 if (user == null)
                 {
                     logger.LogWarning("Authentication failed - User not found: {Username}", model.Username);
@@ -72,7 +72,7 @@ namespace FishSpinDays.Web.Controllers
                 }
 
                 bool isPasswordValid = await userManager.CheckPasswordAsync(user, model.Password);
-                
+
                 if (!isPasswordValid)
                 {
                     logger.LogWarning("Authentication failed - Invalid password: {Username}", model.Username);
@@ -84,10 +84,11 @@ namespace FishSpinDays.Web.Controllers
                 // Generate JWT token using existing TokenValidationParameter or new JWT key
                 var tokenString = GenerateJwtToken(user, roles);
 
-                logger.LogInformation("Authentication successful - User: {Username}, TokenExpires: {TokenExpires}", 
+                logger.LogInformation("Authentication successful - User: {Username}, TokenExpires: {TokenExpires}",
                     model.Username, DateTime.UtcNow.AddMinutes(jwtSettings.ExpirationMinutes));
 
-                return Ok(new { 
+                return Ok(new
+                {
                     Token = tokenString,
                     ExpiresIn = jwtSettings.ExpirationMinutes * 60, // seconds
                     TokenType = "Bearer"
@@ -103,8 +104,8 @@ namespace FishSpinDays.Web.Controllers
         private string GenerateJwtToken(User user, IList<string> roles)
         {
             // Use JWT Key if configured, otherwise fallback to existing TokenValidationParameter
-            var signingKey = !string.IsNullOrEmpty(jwtSettings.Key) 
-                ? jwtSettings.Key 
+            var signingKey = !string.IsNullOrEmpty(jwtSettings.Key)
+                ? jwtSettings.Key
                 : configuration.GetSection("TokenValidationParameter").Value;
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
@@ -112,13 +113,12 @@ namespace FishSpinDays.Web.Controllers
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, 
-                    new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString(), 
-                    ClaimValueTypes.Integer64)
+                  new Claim(ClaimTypes.NameIdentifier, user.Id),
+                  new Claim(ClaimTypes.Name, user.UserName),
+                  new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                  new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                  new Claim(JwtRegisteredClaimNames.Iat,
+                  new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
             };
 
             // Add roles as separate claims (better for authorization)

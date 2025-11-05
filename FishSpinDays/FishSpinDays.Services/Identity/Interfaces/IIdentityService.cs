@@ -42,6 +42,8 @@
         User GetUserById(string id);
         Task<User> GetUserByIdAsync(string id, CancellationToken cancellationToken = default);
 
+        Task<List<Comment>> GetCommentsByAuthorIdAsync(string authorId, CancellationToken cancellationToken = default);
+
         List<SearchPublicationViewModel> FoundPublications(string searchTerm);
         Task<List<SearchPublicationViewModel>> FoundPublicationsAsync(string searchTerm, CancellationToken cancellationToken = default);
     }

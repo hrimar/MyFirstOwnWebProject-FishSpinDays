@@ -87,18 +87,18 @@ namespace FishSpinDays.Web.Helpers.Filters
 
             // Check for common attack patterns
             var suspiciousPatterns = new[]
-          {
-       "sqlmap",
-      "nikto",
-        "nmap",
+            {
+                "sqlmap",
+                "nikto",
+                "nmap",
                 "masscan",
-  "wget",
-       "curl", // Be cautious with curl - might be legitimate
-    "python-requests",
-    "bot", // Generic bot pattern
-       "crawler",
-     "spider"
-    };
+                "wget",
+                "curl", // Be cautious with curl - might be legitimate
+                "python-requests",
+                "bot", // Generic bot pattern
+                "crawler",
+                "spider"
+            };
 
             var lowerUserAgent = userAgent.ToLowerInvariant();
             return suspiciousPatterns.Any(pattern => lowerUserAgent.Contains(pattern));

@@ -1,4 +1,4 @@
-﻿namespace FishSpinDays.Web
+namespace FishSpinDays.Web
 {
     using AutoMapper;
     using FishSpinDays.Data;
@@ -13,6 +13,8 @@
     using FishSpinDays.Web.Configuration;
     using FishSpinDays.Web.Extensions;
     using FishSpinDays.Web.Hubs;
+    using FishSpinDays.Web.Middleware;
+    using FishSpinDays.Web.Helpers.Filters;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -25,10 +27,13 @@
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
+    using Microsoft.OpenApi.Models;
     using System;
-    using System.Buffers.Text;
+    using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Reflection;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -80,6 +85,12 @@
                 // Use JWT Key if configured, otherwise fallback to existing TokenValidationParameter
                 var signingKey = !string.IsNullOrEmpty(jwtSettings.Key) ? jwtSettings.Key : existingTokenKey;
 
+                // Add validation for signing key
+                if (string.IsNullOrEmpty(signingKey))
+                {
+                    throw new InvalidOperationException("JWT signing key is not configured. Please check Jwt:Key or TokenValidationParameter in appsettings files.");
+                }
+
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidateIssuer = jwtSettings.ValidateIssuer,
@@ -97,17 +108,45 @@
                 // event handlers for better logging
                 options.Events = new JwtBearerEvents
                 {
+                    OnMessageReceived = context =>
+                    {
+                        var authHeader = context.Request.Headers.Authorization.FirstOrDefault();
+
+                        if (!string.IsNullOrEmpty(authHeader))
+                        {
+                            string token;
+
+                            // Check if it already has Bearer prefix
+                            if (authHeader.StartsWith("Bearer "))
+                            {
+                                token = authHeader.Substring("Bearer ".Length).Trim();
+                            }
+                            // If no Bearer prefix, treat the entire header as token (Swagger UI compatibility)
+                            else if (authHeader.Contains('.') && authHeader.Split('.').Length == 3)
+                            {
+                                token = authHeader.Trim();
+                            }
+                            else
+                            {
+                                return Task.CompletedTask;
+                            }
+
+                            context.Token = token;
+                        }
+
+                        return Task.CompletedTask;
+                    },
                     OnAuthenticationFailed = context =>
                     {
-                        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
-                        logger.LogWarning("JWT Authentication failed: {Exception}", context.Exception.Message);
-                        return Task.CompletedTask;
+                         var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                         logger.LogWarning("JWT Authentication failed: {Exception}", context.Exception.Message);
+                         return Task.CompletedTask;
                     },
                     OnTokenValidated = context =>
                     {
-                        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
-                        logger.LogDebug("JWT Token validated for user: {UserId}", context.Principal?.Identity?.Name);
-                        return Task.CompletedTask;
+                         var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                         logger.LogDebug("JWT Token validated for user: {UserId}", context.Principal?.Identity?.Name);
+                         return Task.CompletedTask;
                     }
                 };
             });
@@ -150,15 +189,67 @@
 
             services.AddAutoMapper();
 
-            // Register the Swagger services
-            services.AddSwaggerDocument(config =>
+            // Configure proper Swagger/OpenAPI
+            services.AddSwaggerGen(c =>
             {
-                config.PostProcess = document =>
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    document.Info.Version = "v1";
-                    document.Info.Title = "Fish Spin Days API";
-                    document.Info.Description = "ASP.NET Core web API";
-                };
+                    Title = "FishSpinDays API",
+                    Version = "v1",
+                    Description = "RESTful API for FishSpinDays fishing platform",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "FishSpinDays Team",
+                        Email = "support@fishspindays.com"
+                    }
+                });
+
+                // JWT Authentication configuration
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                         new OpenApiSecurityScheme
+                         {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                                Scheme = "oauth2",
+                                Name = "Bearer",
+                                In = ParameterLocation.Header,
+                            },
+                            new List<string>()
+                    }
+                });
+
+                // Include XML comments for better documentation
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                if (File.Exists(xmlPath))
+                {
+                    c.IncludeXmlComments(xmlPath);
+                }
+
+                // Group endpoints by controller
+                c.TagActionsBy(api => new[] { api.GroupName ?? api.ActionDescriptor.RouteValues["controller"] });
+                c.DocInclusionPredicate((name, api) => true);
+
+                // Customize operation IDs
+                c.CustomOperationIds(apiDesc =>
+                {
+                    return $"{apiDesc.ActionDescriptor.RouteValues["controller"]}_{apiDesc.ActionDescriptor.RouteValues["action"]}";
+                });
             });
 
             RegisterServiceLayer(services);
@@ -168,6 +259,7 @@
             services.AddControllersWithViews(options =>
             {
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                options.Filters.Add<EmptyPostBodyFilter>(); // Handle empty POST requests globally
             });
             services.AddRazorPages();
         }
@@ -208,15 +300,27 @@
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.UseAuthentication();
-
-            // Register the Swagger generator and the Swagger UI middlewares
-            app.UseOpenApi();
-            app.UseSwaggerUi();
+            // Configure Swagger for development and staging
+            if (env.IsDevelopment() || env.IsStaging())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "FishSpinDays API v1");
+                    c.RoutePrefix = "api/docs"; // Access Swagger UI at /api/docs
+                    c.DefaultModelsExpandDepth(-1); // Disable swagger schemas at bottom
+                    c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None); // Collapse all endpoints by default
+                    c.EnablePersistAuthorization(); // Persist authorization across browser sessions
+                });
+            }
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            // API Error Handling Middleware - AFTER authentication/authorization
+            app.UseMiddleware<ApiErrorHandlingMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
@@ -290,21 +394,21 @@
         private void LoginFromOtherApps(IServiceCollection services)
         {
             services.AddAuthentication()
-           .AddFacebook(options =>
-           {
-               options.AppId = this.Configuration.GetSection("ExternalAuthentication:Facebook:AppId").Value;
-               options.AppSecret = this.Configuration.GetSection("ExternalAuthentication:Facebook:AppSecret").Value;
-           })
-           .AddGoogle(options =>
-           {
-               options.ClientId = this.Configuration.GetSection("ExternalAuthentication:Google:ClientId").Value;
-               options.ClientSecret = this.Configuration.GetSection("ExternalAuthentication:Google:ClientSecret").Value;
-           })
-            .AddGitHub(options =>
-            {
-                options.ClientId = this.Configuration.GetSection("ExternalAuthentication:GitHub:ClientId").Value;
-                options.ClientSecret = this.Configuration.GetSection("ExternalAuthentication:GitHub:ClientSecret").Value;
-            });
+                .AddFacebook(options =>
+                {
+                    options.AppId = this.Configuration.GetSection("ExternalAuthentication:Facebook:AppId").Value;
+                    options.AppSecret = this.Configuration.GetSection("ExternalAuthentication:Facebook:AppSecret").Value;
+                })
+                .AddGoogle(options =>
+                {
+                    options.ClientId = this.Configuration.GetSection("ExternalAuthentication:Google:ClientId").Value;
+                    options.ClientSecret = this.Configuration.GetSection("ExternalAuthentication:Google:ClientSecret").Value;
+                })
+                .AddGitHub(options =>
+                {
+                    options.ClientId = this.Configuration.GetSection("ExternalAuthentication:GitHub:ClientId").Value;
+                    options.ClientSecret = this.Configuration.GetSection("ExternalAuthentication:GitHub:ClientSecret").Value;
+                });
         }
 
         private static void RegisterServiceLayer(IServiceCollection services)

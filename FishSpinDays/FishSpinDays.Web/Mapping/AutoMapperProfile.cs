@@ -3,6 +3,9 @@
     using AutoMapper;
     using FishSpinDays.Common.Admin.BindingModels;
     using FishSpinDays.Common.Admin.ViewModels;
+    using FishSpinDays.Common.API.Models.Comments;
+    using FishSpinDays.Common.API.Models.Publications;
+    using FishSpinDays.Common.API.Models.Sections;
     using FishSpinDays.Common.Base.ViewModels;
     using FishSpinDays.Common.Identity.ViewModels;
     using FishSpinDays.Models;
@@ -29,7 +32,12 @@
                 .ForMember(lvm => lvm.Section, option => option.MapFrom(src => src.Section.Name));
 
             this.CreateMap<Comment, CommentViewModel>();
-        }
 
+            // NOTE: API DTO mappings are handled by manual mappers in FishSpinDays.Common.API.Mappers
+            // to avoid AutoMapper circular reference issues with Comment collections
+            // See PublicationApiMapper.cs for manual mapping implementations
+
+            this.CreateMap<SearchPublicationViewModel, SearchPublicationResponseModel>();
+        }
     }
 }

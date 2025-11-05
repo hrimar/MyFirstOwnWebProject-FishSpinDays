@@ -66,8 +66,7 @@
                 // Log slow operations
                 if (stopwatch.ElapsedMilliseconds > 1000)
                 {
-                    logger.LogWarning("Slow CreatePublication operation - took {ElapsedMs}ms for title: {Title}", 
-                        stopwatch.ElapsedMilliseconds, title);
+                    logger.LogWarning("Slow CreatePublication operation - took {ElapsedMs}ms for title: {Title}", stopwatch.ElapsedMilliseconds, title);
                 }
 
                 return publication;
@@ -75,8 +74,7 @@
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 stopwatch.Stop();
-                logger.LogInformation("CreatePublication was cancelled after {ElapsedMs}ms - Title: {Title}", 
-                    stopwatch.ElapsedMilliseconds, title);
+                logger.LogInformation("CreatePublication was cancelled after {ElapsedMs}ms - Title: {Title}", stopwatch.ElapsedMilliseconds, title);
                 throw;
             }
             catch (Exception ex)
@@ -351,8 +349,7 @@
                 publication.Likes++;
                 await this.DbContext.SaveChangesAsync(cancellationToken);
                 
-                logger.LogInformation("Publication liked - ID: {PublicationId}, New likes: {LikesCount}", 
-                    publication.Id, publication.Likes);
+                logger.LogInformation("Publication liked - ID: {PublicationId}, New likes: {LikesCount}", publication.Id, publication.Likes);
                 return true;
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -376,8 +373,7 @@
                 comment.Likes++;
                 await this.DbContext.SaveChangesAsync(cancellationToken);
                 
-                logger.LogInformation("Comment liked - ID: {CommentId}, New likes: {LikesCount}", 
-                    comment.Id, comment.Likes);
+                logger.LogInformation("Comment liked - ID: {CommentId}, New likes: {LikesCount}", comment.Id, comment.Likes);
                 return true;
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -642,6 +638,33 @@
 
             logger.LogInformation("Search completed - SearchTerm: {SearchTerm}, Results: {ResultCount}", searchTerm, foundPublications.Count);
             return foundPublications;
+        }
+
+        public async Task<List<Comment>> GetCommentsByAuthorIdAsync(string authorId, CancellationToken cancellationToken = default)
+        {
+            logger.LogDebug("Getting comments by author ID: {AuthorId}", authorId);
+
+            try
+            {
+                var comments = await this.DbContext.Comments
+                    .Include(c => c.Publication) // Include publication for title
+                    .Where(c => c.AuthorId == authorId)
+                    .OrderByDescending(c => c.CreationDate)
+                    .ToListAsync(cancellationToken);
+
+                logger.LogInformation("Retrieved {CommentCount} comments for author: {AuthorId}", comments.Count, authorId);
+                return comments;
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                logger.LogInformation("GetCommentsByAuthorId cancelled - AuthorId: {AuthorId}", authorId);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error getting comments by author ID: {AuthorId}", authorId);
+                throw;
+            }
         }
     }
 }
