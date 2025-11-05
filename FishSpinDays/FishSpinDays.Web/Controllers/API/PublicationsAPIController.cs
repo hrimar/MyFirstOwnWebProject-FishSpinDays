@@ -1,23 +1,24 @@
 namespace FishSpinDays.Web.Controllers.API
 {
-    using System;
-    using System.Threading.Tasks;
-    using FishSpinDays.Common.Identity.BindingModels;
+    using FishSpinDays.Common.API.Models.Publications;
     using FishSpinDays.Common.Base.ViewModels;
     using FishSpinDays.Common.Constants;
+    using FishSpinDays.Common.Identity.BindingModels;
     using FishSpinDays.Models;
     using FishSpinDays.Services.Base.Interfaces;
     using FishSpinDays.Services.Identity.Interfaces;
+    using FishSpinDays.Web.Helpers.Filters;
+    using FishSpinDays.Web.Mapping;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
-    using System.Threading;
     using Microsoft.Extensions.Logging;
-    using System.Diagnostics;
-    using System.Linq;
-    using FishSpinDays.Web.Helpers.Filters;
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     [Route("api/publications")] // for url: http://localhost:44331/api/publications
     [ApiController]
@@ -102,7 +103,7 @@ namespace FishSpinDays.Web.Controllers.API
         [HttpGet("")]
         [AllowAnonymous]
         [ImportantOperation(OperationName = "GetAllPublications")]
-        public async Task<ActionResult<PartPublicationsViewModel>> GetAllPublications(int? page, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<PartPublicationsResponseModel>> GetAllPublications(int? page, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -114,22 +115,20 @@ namespace FishSpinDays.Web.Controllers.API
                 int requiredPagesForThisPublications = await ArrangePagesCountAsync(cancellationToken);
                 var publications = await this.BaseService.GetAllPublicationsAsync(page.Value, WebConstants.DefaultResultCount, cancellationToken);
 
-                if (publications == null || !publications.Any())
-                {
-                    return new PartPublicationsViewModel()
-                    {
-                        Id = page.Value,
-                        Count = 0,
-                        Publications = Enumerable.Empty<PublicationShortViewModel>()
-                    };
-                }
+                // Map each publication individually and filter out nulls (defensive programming)
+                var mappedPublications = publications?
+                    .Select(p => PublicationApiMapper.ToShortResponseModel(p))
+                    .Where(p => p != null) // Filter out any null results from mapper
+                    ?? Enumerable.Empty<PublicationShortResponseModel>();
 
-                return new PartPublicationsViewModel()
+                var response = new PartPublicationsResponseModel
                 {
                     Id = page.Value,
                     Count = requiredPagesForThisPublications,
-                    Publications = publications
+                    Publications = mappedPublications
                 };
+
+                return response;
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -221,7 +220,7 @@ namespace FishSpinDays.Web.Controllers.API
         [HttpGet("most-rated")]
         [AllowAnonymous]
         [ImportantOperation(OperationName = "GetMostRatedPublication")]
-        public async Task<ActionResult<PublicationViewModel>> GetMostRatedPublication(CancellationToken cancellationToken = default)
+        public async Task<ActionResult<PublicationResponseModel>> GetMostRatedPublication(CancellationToken cancellationToken = default)
         {
             try
             {
@@ -232,7 +231,16 @@ namespace FishSpinDays.Web.Controllers.API
                     return NotFound(new { Message = "No publications found." });
                 }
 
-                return Ok(publicationModel);
+                var response = PublicationApiMapper.ToResponseModel(publicationModel);
+
+                // Defensive null check after mapping
+                if (response == null)
+                {
+                    logger.LogError("Mapper returned null for most rated publication. Publication ID: {Id}", publicationModel.Id);
+                    return StatusCode(500, new { Message = "An error occurred while processing the publication." });
+                }
+
+                return Ok(response);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -498,7 +506,7 @@ namespace FishSpinDays.Web.Controllers.API
                 {
                     // Reload publication to get updated likes count
                     var updatedPublication = await this.identityService.GetPublicationByIdAsync(id, cancellationToken);
-                    return Ok(new { Message = "Publication liked successfully.", NewLikesCount = updatedPublication.Likes });
+                    return Ok(new PublicationLikeResultModel { Message = "Publication liked successfully.", NewLikesCount = updatedPublication.Likes });
                 }
 
                 return StatusCode(500, new { Message = "Failed to like publication." });
@@ -529,7 +537,7 @@ namespace FishSpinDays.Web.Controllers.API
                 var seaPublications = await this.BaseService.TotalPublicationsCountAsync(WebConstants.SeaSection, cancellationToken);
                 var freshwaterPublications = await this.BaseService.TotalPublicationsCountAsync(WebConstants.FreshwaterSection, cancellationToken);
 
-                var stats = new
+                var stats = new PublicationStatsResponse
                 {
                     TotalPublications = totalPublications,
                     SeaPublications = seaPublications,
@@ -553,7 +561,7 @@ namespace FishSpinDays.Web.Controllers.API
         [HttpGet("search")]
         [AllowAnonymous]
         [SimpleOperation(OperationName = "SearchPublications")]
-        public async Task<ActionResult<List<SearchPublicationViewModel>>> SearchPublications([FromQuery] string searchTerm, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<List<SearchPublicationResponseModel>>> SearchPublications([FromQuery] string searchTerm, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -568,7 +576,15 @@ namespace FishSpinDays.Web.Controllers.API
                 }
 
                 var results = await this.identityService.FoundPublicationsAsync(searchTerm, cancellationToken);
-                return Ok(results ?? new List<SearchPublicationViewModel>());
+ 
+                // Map results and filter out nulls (defensive programming)
+                var response = results?
+                    .Select(r => PublicationApiMapper.ToSearchResponseModel(r))
+                    .Where(r => r != null) // Filter out any null results from mapper
+                    .ToList() 
+                  ?? new List<SearchPublicationResponseModel>();
+
+                return Ok(response);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
