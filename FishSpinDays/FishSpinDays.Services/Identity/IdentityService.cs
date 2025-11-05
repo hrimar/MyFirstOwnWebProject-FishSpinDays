@@ -66,8 +66,7 @@
                 // Log slow operations
                 if (stopwatch.ElapsedMilliseconds > 1000)
                 {
-                    logger.LogWarning("Slow CreatePublication operation - took {ElapsedMs}ms for title: {Title}", 
-                        stopwatch.ElapsedMilliseconds, title);
+                    logger.LogWarning("Slow CreatePublication operation - took {ElapsedMs}ms for title: {Title}", stopwatch.ElapsedMilliseconds, title);
                 }
 
                 return publication;
@@ -75,8 +74,7 @@
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 stopwatch.Stop();
-                logger.LogInformation("CreatePublication was cancelled after {ElapsedMs}ms - Title: {Title}", 
-                    stopwatch.ElapsedMilliseconds, title);
+                logger.LogInformation("CreatePublication was cancelled after {ElapsedMs}ms - Title: {Title}", stopwatch.ElapsedMilliseconds, title);
                 throw;
             }
             catch (Exception ex)
@@ -351,8 +349,7 @@
                 publication.Likes++;
                 await this.DbContext.SaveChangesAsync(cancellationToken);
                 
-                logger.LogInformation("Publication liked - ID: {PublicationId}, New likes: {LikesCount}", 
-                    publication.Id, publication.Likes);
+                logger.LogInformation("Publication liked - ID: {PublicationId}, New likes: {LikesCount}", publication.Id, publication.Likes);
                 return true;
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -376,8 +373,7 @@
                 comment.Likes++;
                 await this.DbContext.SaveChangesAsync(cancellationToken);
                 
-                logger.LogInformation("Comment liked - ID: {CommentId}, New likes: {LikesCount}", 
-                    comment.Id, comment.Likes);
+                logger.LogInformation("Comment liked - ID: {CommentId}, New likes: {LikesCount}", comment.Id, comment.Likes);
                 return true;
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

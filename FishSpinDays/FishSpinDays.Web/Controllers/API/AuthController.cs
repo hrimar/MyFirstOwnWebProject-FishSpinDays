@@ -85,7 +85,7 @@ namespace FishSpinDays.Web.Controllers.API
                 var tokenString = GenerateJwtToken(user, roles);
 
                 logger.LogInformation("Authentication successful - User: {Username}, TokenExpires: {TokenExpires}",
-                         model.Username, DateTime.UtcNow.AddMinutes(jwtSettings.ExpirationMinutes));
+                    model.Username, DateTime.UtcNow.AddMinutes(jwtSettings.ExpirationMinutes));
 
                 return Ok(new
                 {
@@ -105,8 +105,8 @@ namespace FishSpinDays.Web.Controllers.API
         {
             // Use JWT Key if configured, otherwise fallback to existing TokenValidationParameter
             var signingKey = !string.IsNullOrEmpty(jwtSettings.Key)
-                    ? jwtSettings.Key
-                    : configuration.GetSection("TokenValidationParameter").Value;
+                ? jwtSettings.Key
+                : configuration.GetSection("TokenValidationParameter").Value;
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -128,11 +128,11 @@ namespace FishSpinDays.Web.Controllers.API
             }
 
             var token = new JwtSecurityToken(
-                                issuer: jwtSettings.Issuer,
-                                audience: jwtSettings.Audience,
-                                claims: claims,
-                                expires: DateTime.UtcNow.AddMinutes(jwtSettings.ExpirationMinutes),
-                                signingCredentials: credentials);
+                issuer: jwtSettings.Issuer,
+                audience: jwtSettings.Audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(jwtSettings.ExpirationMinutes),
+                signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
