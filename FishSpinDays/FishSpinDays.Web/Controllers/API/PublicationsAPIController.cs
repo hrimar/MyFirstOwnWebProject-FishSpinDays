@@ -11,6 +11,7 @@ namespace FishSpinDays.Web.Controllers.API
     using FishSpinDays.Web.Mapping;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -20,6 +21,10 @@ namespace FishSpinDays.Web.Controllers.API
     using System.Threading;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// API Controller for managing fishing publications
+    /// Provides endpoints for creating, retrieving, and searching publications
+    /// </summary>
     [Route("api/publications")] // for url: http://localhost:44331/api/publications
     [ApiController]
     [IgnoreAntiforgeryToken]
@@ -47,11 +52,27 @@ namespace FishSpinDays.Web.Controllers.API
         // CRITICAL OPERATIONS - Full Logging with Performance Monitoring
         // ============================================================================
 
+        /// <summary>
+        /// Creates a new publication
+        /// </summary>
+        /// <param name="model">Publication data including title, description, and section</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Created publication with ID and success message</returns>
+        /// <response code="201">Publication created successfully</response>
+        /// <response code="400">Invalid model data</response>
+        /// <response code="401">User not authenticated</response>
+        /// <response code="404">User or section not found</response>
+        /// <response code="500">Internal server error</response>
         [HttpPost("")]
         [Authorize] // To use this for API makes AuthController
         [CriticalOperation(OperationName = "CreatePublication", SlowThresholdMs = 1500)]
         [ApiSecurityLogging]
         [ApiMetrics]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreatePublication([FromBody] PublicationBindingModel model, CancellationToken cancellationToken = default)
         {
             try
@@ -100,9 +121,19 @@ namespace FishSpinDays.Web.Controllers.API
         // IMPORTANT OPERATIONS - Moderate Logging  
         // ============================================================================
 
+        /// <summary>
+        /// Get all publications with pagination
+        /// </summary>
+        /// <param name="page">Page number (default: 1)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Paginated list of publications with total page count</returns>
+        /// <response code="200">Returns the paginated publications</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("")]
         [AllowAnonymous]
         [ImportantOperation(OperationName = "GetAllPublications")]
+        [ProducesResponseType(typeof(PartPublicationsResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<PartPublicationsResponseModel>> GetAllPublications(int? page, CancellationToken cancellationToken = default)
         {
             try
@@ -141,9 +172,19 @@ namespace FishSpinDays.Web.Controllers.API
             }
         }
 
+        /// <summary>
+        /// Get sea fishing publications with pagination
+        /// </summary>
+        /// <param name="page">Page number (default: 1)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Paginated list of sea fishing publications</returns>
+        /// <response code="200">Returns the paginated sea fishing publications</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("sea")]
         [AllowAnonymous]
         [ImportantOperation(OperationName = "GetSeaPublications")]
+        [ProducesResponseType(typeof(PartPublicationsViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<PartPublicationsViewModel>> GetSeaPublications(int? page, CancellationToken cancellationToken = default)
         {
             try
@@ -184,9 +225,19 @@ namespace FishSpinDays.Web.Controllers.API
             }
         }
 
+        /// <summary>
+        /// Get freshwater fishing publications with pagination
+        /// </summary>
+        /// <param name="page">Page number (default: 1)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Paginated list of freshwater fishing publications</returns>
+        /// <response code="200">Returns the paginated freshwater fishing publications</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("freshwater")]
         [AllowAnonymous]
         [ImportantOperation(OperationName = "GetFreshwaterPublications")]
+        [ProducesResponseType(typeof(PartPublicationsViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<PartPublicationsViewModel>> GetFreshwaterPublications(int? page, CancellationToken cancellationToken = default)
         {
             try
@@ -217,9 +268,20 @@ namespace FishSpinDays.Web.Controllers.API
             }
         }
 
+        /// <summary>
+        /// Get the most rated (most liked) publication
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The publication with the highest number of likes</returns>
+        /// <response code="200">Returns the most rated publication</response>
+        /// <response code="404">No publications found</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("most-rated")]
         [AllowAnonymous]
         [ImportantOperation(OperationName = "GetMostRatedPublication")]
+        [ProducesResponseType(typeof(PublicationResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<PublicationResponseModel>> GetMostRatedPublication(CancellationToken cancellationToken = default)
         {
             try
@@ -257,9 +319,18 @@ namespace FishSpinDays.Web.Controllers.API
         // SECTION-BASED OPERATIONS
         // ============================================================================
 
+        /// <summary>
+        /// Get all publications in the 'Rods and Reels' section
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of publications about rods and reels</returns>
+        /// <response code="200">Returns publications from the rods section</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("sections/rods")]
         [AllowAnonymous]
         [SimpleOperation(OperationName = "GetRodsPublications")]
+        [ProducesResponseType(typeof(IEnumerable<PublicationShortViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<PublicationShortViewModel>>> GetRodsPublications(CancellationToken cancellationToken = default)
         {
             try
@@ -278,9 +349,18 @@ namespace FishSpinDays.Web.Controllers.API
             }
         }
 
+        /// <summary>
+        /// Get all publications in the 'Lures' section
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of publications about fishing lures</returns>
+        /// <response code="200">Returns publications from the lures section</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("sections/lures")]
         [AllowAnonymous]
         [SimpleOperation(OperationName = "GetLuresPublications")]
+        [ProducesResponseType(typeof(IEnumerable<PublicationShortViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<PublicationShortViewModel>>> GetLuresPublications(CancellationToken cancellationToken = default)
         {
             try
@@ -299,9 +379,18 @@ namespace FishSpinDays.Web.Controllers.API
             }
         }
 
+        /// <summary>
+        /// Get all publications in the 'Handmade Lures' section
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of publications about handmade fishing lures</returns>
+        /// <response code="200">Returns publications from the handmade lures section</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("sections/handmade")]
         [AllowAnonymous]
         [SimpleOperation(OperationName = "GetHandmadePublications")]
+        [ProducesResponseType(typeof(IEnumerable<PublicationShortViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<PublicationShortViewModel>>> GetHandmadePublications(CancellationToken cancellationToken = default)
         {
             try
@@ -320,9 +409,18 @@ namespace FishSpinDays.Web.Controllers.API
             }
         }
 
+        /// <summary>
+        /// Get all publications in the 'Eco Fishing' section
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of publications about ecological fishing practices</returns>
+        /// <response code="200">Returns publications from the eco fishing section</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("sections/eco")]
         [AllowAnonymous]
         [SimpleOperation(OperationName = "GetEcoPublications")]
+        [ProducesResponseType(typeof(IEnumerable<PublicationShortViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<PublicationShortViewModel>>> GetEcoPublications(CancellationToken cancellationToken = default)
         {
             try
@@ -341,9 +439,18 @@ namespace FishSpinDays.Web.Controllers.API
             }
         }
 
+        /// <summary>
+        /// Get all publications in the 'Fishing Schools' section
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of publications about fishing schools and education</returns>
+        /// <response code="200">Returns publications from the fishing schools section</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("sections/school")]
         [AllowAnonymous]
         [SimpleOperation(OperationName = "GetSchoolPublications")]
+        [ProducesResponseType(typeof(IEnumerable<PublicationShortViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<PublicationShortViewModel>>> GetSchoolPublications(CancellationToken cancellationToken = default)
         {
             try
@@ -362,9 +469,18 @@ namespace FishSpinDays.Web.Controllers.API
             }
         }
 
+        /// <summary>
+        /// Get all publications in the 'Anti-Poaching' section
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of publications about anti-poaching and conservation</returns>
+        /// <response code="200">Returns publications from the anti-poaching section</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("sections/anti")]
         [AllowAnonymous]
         [SimpleOperation(OperationName = "GetAntiPublications")]
+        [ProducesResponseType(typeof(IEnumerable<PublicationShortViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<PublicationShortViewModel>>> GetAntiPublications(CancellationToken cancellationToken = default)
         {
             try
@@ -383,9 +499,18 @@ namespace FishSpinDays.Web.Controllers.API
             }
         }
 
+        /// <summary>
+        /// Get all publications in the 'Fish Breeding' section
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of publications about fish breeding and aquaculture</returns>
+        /// <response code="200">Returns publications from the fish breeding section</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("sections/breeding")]
         [AllowAnonymous]
         [SimpleOperation(OperationName = "GetBreedingPublications")]
+        [ProducesResponseType(typeof(IEnumerable<PublicationShortViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<PublicationShortViewModel>>> GetBreedingPublications(CancellationToken cancellationToken = default)
         {
             try
@@ -408,9 +533,19 @@ namespace FishSpinDays.Web.Controllers.API
         // TIME-BASED OPERATIONS
         // ============================================================================
 
+        /// <summary>
+        /// Get all publications from a specific year
+        /// </summary>
+        /// <param name="year">Year to filter by (e.g., 2024)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of publications from the specified year</returns>
+        /// <response code="200">Returns publications from the specified year</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("year/{year}")]
         [AllowAnonymous]
         [SimpleOperation(OperationName = "GetPublicationsByYear")]
+        [ProducesResponseType(typeof(IEnumerable<PublicationShortViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<PublicationShortViewModel>>> GetPublicationsByYear(int year, CancellationToken cancellationToken = default)
         {
             try
@@ -429,9 +564,21 @@ namespace FishSpinDays.Web.Controllers.API
             }
         }
 
+        /// <summary>
+        /// Get all publications from a specific month
+        /// </summary>
+        /// <param name="month">Month number (1-12)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of publications from the specified month</returns>
+        /// <response code="200">Returns publications from the specified month</response>
+        /// <response code="400">Invalid month number (must be 1-12)</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("month/{month}")]
         [AllowAnonymous]
         [SimpleOperation(OperationName = "GetPublicationsByMonth")]
+        [ProducesResponseType(typeof(IEnumerable<PublicationShortViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<PublicationShortViewModel>>> GetPublicationsByMonth(int month, CancellationToken cancellationToken = default)
         {
             try
@@ -459,9 +606,21 @@ namespace FishSpinDays.Web.Controllers.API
         // SIMPLE OPERATIONS - Minimal Logging
         // ============================================================================
 
+        /// <summary>
+        /// Get a specific publication by ID
+        /// </summary>
+        /// <param name="id">Publication ID</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Publication details including title, description, author, and comments</returns>
+        /// <response code="200">Returns the requested publication</response>
+        /// <response code="404">Publication not found</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("{id}", Name = "GetPublication")]
         [AllowAnonymous]
         [SimpleOperation(OperationName = "GetPublication")]
+        [ProducesResponseType(typeof(PublicationViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPublication(int id, CancellationToken cancellationToken = default)
         {
             try
@@ -486,9 +645,23 @@ namespace FishSpinDays.Web.Controllers.API
             }
         }
 
+        /// <summary>
+        /// Like a publication (increment likes counter)
+        /// </summary>
+        /// <param name="id">Publication ID</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Success message with updated likes count</returns>
+        /// <response code="200">Publication liked successfully</response>
+        /// <response code="401">User not authenticated</response>
+        /// <response code="404">Publication not found</response>
+        /// <response code="500">Failed to like publication</response>
         [HttpPost("{id}/like")]
         [Authorize]
         [SimpleOperation(OperationName = "LikePublication")]
+        [ProducesResponseType(typeof(PublicationLikeResultModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> LikePublication(int id, CancellationToken cancellationToken = default)
         {
             try
@@ -526,9 +699,18 @@ namespace FishSpinDays.Web.Controllers.API
         // UTILITY ENDPOINTS
         // ============================================================================
 
+        /// <summary>
+        /// Get publication statistics (total counts by category)
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Statistics including total, sea, freshwater, and other publications count</returns>
+        /// <response code="200">Returns publication statistics</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("stats")]
         [AllowAnonymous]
         [SimpleOperation(OperationName = "GetPublicationStats")]
+        [ProducesResponseType(typeof(PublicationStatsResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPublicationStats(CancellationToken cancellationToken = default)
         {
             try
@@ -558,9 +740,21 @@ namespace FishSpinDays.Web.Controllers.API
             }
         }
 
+        /// <summary>
+        /// Search publications by keyword in description
+        /// </summary>
+        /// <param name="searchTerm">Search keyword (minimum 3 characters)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of publications matching the search criteria</returns>
+        /// <response code="200">Returns matching publications</response>
+        /// <response code="400">Invalid search term (empty or too short)</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("search")]
         [AllowAnonymous]
         [SimpleOperation(OperationName = "SearchPublications")]
+        [ProducesResponseType(typeof(List<SearchPublicationResponseModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<List<SearchPublicationResponseModel>>> SearchPublications([FromQuery] string searchTerm, CancellationToken cancellationToken = default)
         {
             try
