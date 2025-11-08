@@ -12,7 +12,8 @@
             // Only call Migrate if using a relational provider
             if (this.Database.IsRelational())
             {
-                this.Database.Migrate(); // or do the initial Migration in StartUp.cs
+                // this.Database.Migrate(); // or do the initial Migration in StartUp.cs
+                // Migrations should be handled in Startup.cs
             }
         }
         public DbSet<MainSection> MainSections { get; set; }

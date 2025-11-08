@@ -1,0 +1,28 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: fishspindays_sql
+    environment:
+      SA_PASSWORD: "FishSpinSAPassword123!"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "14333:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fishspindays_web
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__FishSpinDays: Server=sqlserver;Database=FishSpinDays;User=fishspin_user;Password=FishSpinPassword123!;TrustServerCertificate=True;MultipleActiveResultSets=true;
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sqlserver
+
+volumes:
+  sql_data:

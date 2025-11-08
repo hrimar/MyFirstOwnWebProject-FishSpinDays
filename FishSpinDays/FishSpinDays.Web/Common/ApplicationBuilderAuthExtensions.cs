@@ -27,53 +27,63 @@
 
         public static async void SeedDatabase(this IApplicationBuilder app)
         {
-            var serviceFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
-            var scope = serviceFactory.CreateScope();
-            using (scope)
+            try
             {
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-
-                foreach (var role in roles)
+                var serviceFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
+                var scope = serviceFactory.CreateScope();
+                using (scope)
                 {
-                    if (!await roleManager.RoleExistsAsync(role.Name))
+                    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+                    foreach (var role in roles)
                     {
-                        var result = await roleManager.CreateAsync(role);
+                        if (!await roleManager.RoleExistsAsync(role.Name))
+                        {
+                            var result = await roleManager.CreateAsync(role);
+                        }
+                    }
+
+                    var admin = await userManager.FindByNameAsync("admin");
+                    if (admin == null)
+                    {
+                        admin = new User()
+                        {
+                            UserName = "admin",
+                            Email = "admin@example.com"
+                        };
+
+                        var result = await userManager.CreateAsync(admin, DefaultAdminPasswprd);
+
+                        result = await userManager.AddToRoleAsync(admin, roles[0].Name);
+                    }
+
+                    // -----seed of main sections and sections:
+                    var context = scope.ServiceProvider.GetService<FishSpinDaysDbContext>();
+
+                    context.Database.Migrate();
+
+                    if (!context.MainSections.Any())
+                    {
+                        var jsonMainSections = File.ReadAllText("wwwroot/seedfiles/mainsections.json");
+                        var mainSectionDtos = JsonConvert.DeserializeObject<MainSectionDto[]>(jsonMainSections);
+
+                        SeedMainSections(context, mainSectionDtos);
+                    }
+
+                    //-----seed of publication:
+                    if (!context.Publications.Any())
+                    {
+                        SeedPublication(context);
                     }
                 }
-
-                var admin = await userManager.FindByNameAsync("admin");
-                if (admin == null)
-                {
-                    admin = new User()
-                    {
-                        UserName = "admin",
-                        Email = "admin@example.com"
-                    };
-
-                    var result = await userManager.CreateAsync(admin, DefaultAdminPasswprd);
-
-                    result = await userManager.AddToRoleAsync(admin, roles[0].Name);
-                }
-
-                // -----seed of main sections and sections:
-                var context = scope.ServiceProvider.GetService<FishSpinDaysDbContext>();
-
-                context.Database.Migrate();
-
-                if (!context.MainSections.Any())
-                {
-                    var jsonMainSections = File.ReadAllText(@"wwwroot\seedfiles\mainsections.json");
-                    var mainSectionDtos = JsonConvert.DeserializeObject<MainSectionDto[]>(jsonMainSections);
-
-                    SeedMainSections(context, mainSectionDtos);
-                }
-
-                //-----seed of publication:
-                if (!context.Publications.Any())
-                {
-                    SeedPublication(context);
-                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception - TODO: add proper logging
+                // var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+                // var logger = loggerFactory.CreateLogger("Seeding");
+                // logger.LogError(ex, "An error occurred during database seeding.");
             }
         }
 

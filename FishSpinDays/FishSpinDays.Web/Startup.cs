@@ -276,15 +276,28 @@ namespace FishSpinDays.Web
             if (env.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // app.UseDeveloperExceptionPage(); // for debugging
                 app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
-                app.SeedDatabase();
+
+                // Run migrations and seed in Development
+                using (var scope = app.ApplicationServices.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<FishSpinDaysDbContext>();
+                    try
+                    {
+                        db.Database.Migrate();
+                        app.SeedDatabase(); // Seed data after migrations
+                    }
+                    catch (Exception ex)
+                    {
+                        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Startup>>();
+                        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+                    }
+                }
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
-
                 app.UseHsts();
 
                 var runMigrations = Configuration.GetValue<bool>("RunMigrationsOnStartup");
@@ -296,7 +309,7 @@ namespace FishSpinDays.Web
                 }
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection(); // Commented out for Docker HTTP
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
