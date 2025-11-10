@@ -332,3 +332,8 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+# Docker and environment files
+.env
+sql_data/
+logs/
