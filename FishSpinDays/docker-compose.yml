@@ -2,8 +2,10 @@ services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: fishspindays_sql
+    env_file:
+      - .env
     environment:
-      SA_PASSWORD: "FishSpinSAPassword123!"
+      SA_PASSWORD: ${SA_PASSWORD}
       ACCEPT_EULA: "Y"
     ports:
       - "14333:1433"
@@ -16,9 +18,11 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: fishspindays_web
+    env_file:
+      - .env
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__FishSpinDays: Server=sqlserver;Database=FishSpinDays;User=fishspin_user;Password=FishSpinPassword123!;TrustServerCertificate=True;MultipleActiveResultSets=true;
+      ConnectionStrings__FishSpinDays: Server=sqlserver;Database=${DATABASE_NAME};User=fishspin_user;Password=${DB_PASSWORD};TrustServerCertificate=True;MultipleActiveResultSets=true;
     ports:
       - "8080:8080"
     depends_on:
