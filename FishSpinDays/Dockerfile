@@ -3,13 +3,24 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY . .
 RUN dotnet restore ./FishSpinDays.Web/FishSpinDays.Web.csproj
+RUN dotnet build ./FishSpinDays.Web/FishSpinDays.Web.csproj -c Release
+
+# Test stage - start unit tests
+FROM build AS test
+WORKDIR /src
+RUN dotnet test ./FishSpinDays.Tests/FishSpinDays.Tests.csproj --no-build --verbosity normal
+
+# Publish the application
+FROM build AS publish
+WORKDIR /src
 RUN dotnet publish ./FishSpinDays.Web/FishSpinDays.Web.csproj -c Release -o /app
 
 # Use official .NET 8 ASP.NET runtime image for run
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 RUN apt-get update && apt-get install -y netcat-openbsd dos2unix && rm -rf /var/lib/apt/lists/*
-COPY --from=build /app .
+
+COPY --from=publish /app .
 COPY FishSpinDays.Web/wwwroot ./wwwroot
 COPY FishSpinDays.Web/wait-for-sqlserver.sh /wait-for-sqlserver.sh
 RUN dos2unix /wait-for-sqlserver.sh
