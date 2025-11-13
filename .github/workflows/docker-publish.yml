@@ -23,7 +23,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Run .NET Unit Tests
-      run: dotnet test ./FishSpinDays.Tests/FishSpinDays.Tests.csproj --verbosity normal
+      run: dotnet test ./FishSpinDays/FishSpinDays.Tests/FishSpinDays.Tests.csproj --verbosity normal
 
     - name: Build and push
       uses: docker/build-push-action@v4
