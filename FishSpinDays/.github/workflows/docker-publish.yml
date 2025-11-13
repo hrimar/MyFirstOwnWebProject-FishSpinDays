@@ -27,13 +27,15 @@ jobs:
 
     - name: Set safe Docker tag
       id: vars
-      run: echo "TAG_NAME=${GITHUB_REF_NAME//\//-}" >> $GITHUB_ENV
+      run: |
+        SAFE_TAG_NAME=$(echo "${GITHUB_REF_NAME}" | tr '/' '-')
+        echo "TAG_NAME=$SAFE_TAG_NAME" >> $GITHUB_ENV
 
     - name: Build and push
       uses: docker/build-push-action@v4
       with:
         context: .
-        file: FishSpinDays/Dockerfile
+        file: Dockerfile
         push: true
         tags: |
           hrimar/fishspin:${{ env.TAG_NAME }}
