@@ -25,12 +25,18 @@ jobs:
     - name: Run .NET Unit Tests
       run: dotnet test ./FishSpinDays/FishSpinDays.Tests/FishSpinDays.Tests.csproj --verbosity normal
 
+    - name: Set safe Docker tag
+      id: vars
+      run: |
+        SAFE_TAG_NAME=$(echo "${GITHUB_REF_NAME}" | tr '/' '-')
+        echo "TAG_NAME=$SAFE_TAG_NAME" >> $GITHUB_ENV
+
     - name: Build and push
       uses: docker/build-push-action@v4
       with:
         context: .
-        file: FishSpinDays.Web/Dockerfile
+        file: Dockerfile
         push: true
         tags: |
-          hrimar/fishspin:${{ github.ref_name }}
-          ${{ github.ref_name == 'master' && 'hrimar/fishspin:latest' || '' }}
+          hrimar/fishspin:${{ env.TAG_NAME }}
+          ${{ env.TAG_NAME == 'master' && 'hrimar/fishspin:latest' || '' }}
