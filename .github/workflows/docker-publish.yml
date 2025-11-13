@@ -35,7 +35,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: ./FishSpinDays
-        file: Dockerfile
+        file: ./FishSpinDays/Dockerfile
         push: true
         tags: |
           hrimar/fishspin:${{ env.TAG_NAME }}
