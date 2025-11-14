@@ -66,6 +66,25 @@ The application is separated into multiple Layers (Data, Services, Web) with Are
 - **Error Handling** - Custom error pages and logging
 - **Build Validation** - Compilation checks
 
+## Docker & Containerization
+
+> Docker integration is available only in the `feature/Docker-integration` branch.
+
+- Build and run locally with Docker Compose:
+```
+docker compose up -d
+```
+- Build and push Docker image to Docker Hub (via GitHub Actions):
+  - On push to `feature/Docker-integration`, the image is built and tagged with the branch name.
+  - The image is available at `hrimar/fishspin:<branch-name>`.
+
+- Manual database initialization (if needed):
+```
+docker run --rm --network container:fishspindays_sql -v $(pwd)/init.sql:/init.sql mcr.microsoft.com/mssql-tools /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P <SA_PASSWORD> -i /init.sql
+```
+
+- For production deployment, see Azure section below.
+
 ## Project Structure
 
 ```
@@ -74,11 +93,11 @@ FishSpinDays/
 ├── FishSpinDays.Data/       # Entity Framework context and migrations
 ├── FishSpinDays.Models/     # Domain entities
 ├── FishSpinDays.Services/   # Business logic layer
-├── FishSpinDays.Web/		 # Web application (Razor Pages + MVC)
-└── FishSpinDays.Tests/		 # Unit and integration tests
+├── FishSpinDays.Web/        # Web application (Razor Pages + MVC)
+└── FishSpinDays.Tests/      # Unit and integration tests
 ```
 
 ## Live Demo
 
 Production: `https://fishspindays-prod-ne-app.azurewebsites.net`
-Custom domains: `fishspindays.com`, `www.fishspindays.com` // still not configurated
+Custom domains: `fishspindays.com`, `www.fishspindays.com` (still not configurated)
